@@ -3,19 +3,18 @@
 import { useEffect, useRef, useState } from 'react'
 
 const CONFIG = {
-  frameFolder: 'Raasta hero frames',
+  frameFolder: 'hero-frames-optimized',
   filePrefix: 'img_',
   padDigits: 5,
-  extension: '.jpg',
-  totalFrames: 481,
-  scrollHeightVH: 2, // Map to full sections defined by layout height
+  extension: '.webp',
+  totalFrames: 241,
+  scrollHeightVH: 2,
   interpolationAlpha: 0.85,
   easing: 'easeInOutQuad' as const,
 }
 
 function frameUrl(index1Based: number) {
   const name = `${CONFIG.filePrefix}${String(index1Based).padStart(CONFIG.padDigits, '0')}${CONFIG.extension}`
-  // Use raw space string, let browser encode it
   return `/${CONFIG.frameFolder}/${name}`
 }
 

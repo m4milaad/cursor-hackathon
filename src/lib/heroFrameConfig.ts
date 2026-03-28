@@ -1,4 +1,4 @@
-/** Static assets in `public/Raasta hero frames/` */
+/** Static assets in `public/hero-frames-optimized/` */
 export const HERO_FRAME_FOLDER = 'hero-frames-optimized'
 export const HERO_FRAME_PREFIX = 'img_'
 export const HERO_FRAME_PAD = 5
