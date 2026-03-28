@@ -1,4 +1,60 @@
+'use client'
+
+import { analyzeCropImage } from '@/lib/vision'
+import { explainCropAdvice } from '@/lib/llm'
+import { useI18n } from '@/lib/i18n/context'
+import { speakForLocale, stopSpeaking } from '@/lib/tts'
+import { useCallback, useRef, useState } from 'react'
+
 export default function ZameenPage() {
+  const { locale } = useI18n()
+  const [selectedImage, setSelectedImage] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [analyzing, setAnalyzing] = useState(false)
+  const [result, setResult] = useState<string | null>(null)
+  const [mandiInfo, setMandiInfo] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setSelectedImage(file)
+      setImagePreview(URL.createObjectURL(file))
+      setResult(null)
+      setMandiInfo(null)
+    }
+  }, [])
+
+  const handleAnalyze = useCallback(async () => {
+    if (!selectedImage) return
+    
+    setAnalyzing(true)
+    setResult(null)
+    stopSpeaking()
+    
+    try {
+      // Step 1: Analyze the image using vision API
+      const analysis = await analyzeCropImage(selectedImage)
+      setMandiInfo(analysis.mandiHint)
+      
+      // Step 2: Get detailed advice from LLM
+      const advice = await explainCropAdvice(analysis.summary, analysis.mandiHint, locale)
+      setResult(advice)
+      
+      // Step 3: Speak the result
+      await speakForLocale(advice, locale)
+    } catch (error) {
+      console.error('Analysis error:', error)
+      setResult('Unable to analyze image. Please try again.')
+    } finally {
+      setAnalyzing(false)
+    }
+  }, [selectedImage, locale])
+
+  const triggerFileSelect = useCallback(() => {
+    fileInputRef.current?.click()
+  }, [])
+
   return (
     <main className="leaf-pattern flex-grow pt-24 min-h-screen">
       {/* Hero Section */}
@@ -24,15 +80,25 @@ export default function ZameenPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Analyze Crop Column */}
           <div className="lg:col-span-7 flex flex-col gap-8">
-            {/* Image Showcase */}
+            {/* Image Showcase / Preview */}
             <div className="relative h-[400px] overflow-hidden grayscale hover:grayscale-0 transition-all duration-700">
-              <img
-                alt="Kashmiri wheat fields"
-                className="w-full h-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCC6X08VKCuZvJlFsbKKEDXFoxRw0wJylMybFVS7evqgGCOmQIJOVg6dfHviiUJINi24ThueGX_n6N3e-hijDuDFndN0qWXCBQM-4AzHAdj7_eEYxwpaGUb9b1WislmEZaOcELh0qnnd8ZFZGtmfNhGSTloY91n2HEXGI-eiRpVsRgp1JVqwAcxg_6i4UbXcFuDHazckiePOnYw7ut5RTPxD_b1Ifkc26_iejCdqut944fV7itDFfa8bjHeMHqIkcxkvFtoiFAMy8Y"
-              />
+              {imagePreview ? (
+                <img
+                  alt="Selected crop image"
+                  className="w-full h-full object-cover"
+                  src={imagePreview}
+                />
+              ) : (
+                <img
+                  alt="Kashmiri wheat fields"
+                  className="w-full h-full object-cover"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCC6X08VKCuZvJlFsbKKEDXFoxRw0wJylMybFVS7evqgGCOmQIJOVg6dfHviiUJINi24ThueGX_n6N3e-hijDuDFndN0qWXCBQM-4AzHAdj7_eEYxwpaGUb9b1WislmEZaOcELh0qnnd8ZFZGtmfNhGSTloY91n2HEXGI-eiRpVsRgp1JVqwAcxg_6i4UbXcFuDHazckiePOnYw7ut5RTPxD_b1Ifkc26_iejCdqut944fV7itDFfa8bjHeMHqIkcxkvFtoiFAMy8Y"
+                />
+              )}
               <div className="absolute bottom-0 left-0 bg-[var(--color-primary)] p-6 text-[var(--color-on-primary)]">
-                <p className="font-headline italic text-lg tracking-tight">The Archival Gaze: Wheat Strains 2024</p>
+                <p className="font-headline italic text-lg tracking-tight">
+                  {imagePreview ? 'Your Crop Image' : 'The Archival Gaze: Wheat Strains 2024'}
+                </p>
               </div>
             </div>
 
@@ -43,19 +109,64 @@ export default function ZameenPage() {
               </p>
               <h2 className="font-headline text-3xl mb-8">Analyze Crop</h2>
               
-              <div className="border-2 border-dashed border-[var(--color-outline-variant)] p-12 flex flex-col items-center justify-center text-center hover:bg-[var(--color-surface-container-lowest)] transition-colors cursor-pointer group">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+              
+              <div 
+                onClick={triggerFileSelect}
+                className="border-2 border-dashed border-[var(--color-outline-variant)] p-12 flex flex-col items-center justify-center text-center hover:bg-[var(--color-surface-container-lowest)] transition-colors cursor-pointer group"
+              >
                 <span className="material-symbols-outlined text-4xl text-[var(--color-outline)] mb-4 group-hover:text-[var(--color-secondary)] transition-colors">
                   upload_file
                 </span>
                 <p className="font-body text-sm text-[var(--color-on-surface-variant)] max-w-xs mx-auto">
-                  Drop your harvest imagery here for AI-driven disease detection and soil nutrient mapping.
+                  {selectedImage 
+                    ? `Selected: ${selectedImage.name}` 
+                    : 'Drop your harvest imagery here for AI-driven disease detection and soil nutrient mapping.'}
                 </p>
-                <button className="mt-8 bg-[var(--color-primary)] text-[var(--color-on-primary)] px-8 py-3 font-label text-[10px] uppercase tracking-widest hover:bg-[var(--color-secondary)] transition-colors">
+                <button 
+                  type="button"
+                  className="mt-8 bg-[var(--color-primary)] text-[var(--color-on-primary)] px-8 py-3 font-label text-[10px] uppercase tracking-widest hover:bg-[var(--color-secondary)] transition-colors"
+                >
                   Select Archive File
                 </button>
               </div>
               
+              {selectedImage && (
+                <button
+                  type="button"
+                  onClick={handleAnalyze}
+                  disabled={analyzing}
+                  className={`w-full mt-6 bg-[var(--color-secondary)] text-[var(--color-on-secondary)] py-4 font-label text-[10px] uppercase tracking-[0.2em] transition-all ${analyzing ? 'opacity-50' : 'hover:bg-opacity-90'}`}
+                >
+                  {analyzing ? 'Analyzing...' : 'Analyze Crop Image'}
+                </button>
+              )}
             </div>
+
+            {/* Analysis Result */}
+            {result && (
+              <div className="bg-[var(--color-surface-container-high)] p-8 border-l-4 border-[var(--color-secondary)]">
+                <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary)] mb-4">
+                  AI Analysis Result
+                </p>
+                <div className="font-body text-base text-[var(--color-on-surface)] leading-relaxed whitespace-pre-wrap">
+                  {result}
+                </div>
+                {mandiInfo && (
+                  <div className="mt-6 pt-4 border-t border-[var(--color-outline-variant)]">
+                    <p className="font-label text-[10px] uppercase tracking-widest text-[var(--color-on-surface-variant)]">
+                      Market Info: {mandiInfo}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Live Mandi Column */}
@@ -83,11 +194,11 @@ export default function ZameenPage() {
                 <div className="border-b border-opacity-20 border-[var(--color-on-primary-fixed-variant)] pb-4">
                   <div className="flex justify-between items-end mb-2">
                     <span className="font-headline text-xl italic">Saffron (Grade A)</span>
-                    <span className="font-body text-2xl font-bold text-[var(--color-secondary)]">₹245,000 / kg</span>
+                    <span className="font-body text-2xl font-bold text-[var(--color-secondary)]">Rs.245,000 / kg</span>
                   </div>
                   <div className="flex justify-between items-center text-[10px] font-label uppercase tracking-widest opacity-60">
                     <span>Pampore Hub</span>
-                    <span className="text-[var(--color-secondary-fixed-dim)]">+2.4% ↑</span>
+                    <span className="text-[var(--color-secondary-fixed-dim)]">+2.4% </span>
                   </div>
                 </div>
                 
@@ -95,11 +206,11 @@ export default function ZameenPage() {
                 <div className="border-b border-opacity-20 border-[var(--color-on-primary-fixed-variant)] pb-4">
                   <div className="flex justify-between items-end mb-2">
                     <span className="font-headline text-xl italic">Walnuts (Shelled)</span>
-                    <span className="font-body text-2xl font-bold text-[var(--color-secondary)]">₹850 / kg</span>
+                    <span className="font-body text-2xl font-bold text-[var(--color-secondary)]">Rs.850 / kg</span>
                   </div>
                   <div className="flex justify-between items-center text-[10px] font-label uppercase tracking-widest opacity-60">
                     <span>Srinagar Central</span>
-                    <span className="text-[var(--color-error)]">−0.8% ↓</span>
+                    <span className="text-[var(--color-error)]">-0.8% </span>
                   </div>
                 </div>
 
@@ -107,11 +218,11 @@ export default function ZameenPage() {
                 <div className="border-b border-opacity-20 border-[var(--color-on-primary-fixed-variant)] pb-4">
                   <div className="flex justify-between items-end mb-2">
                     <span className="font-headline text-xl italic">Apples (Kullu)</span>
-                    <span className="font-body text-2xl font-bold text-[var(--color-secondary)]">₹1,200 / box</span>
+                    <span className="font-body text-2xl font-bold text-[var(--color-secondary)]">Rs.1,200 / box</span>
                   </div>
                   <div className="flex justify-between items-center text-[10px] font-label uppercase tracking-widest opacity-60">
                     <span>Sopore Mandi</span>
-                    <span className="text-[var(--color-secondary-fixed-dim)]">+5.1% ↑</span>
+                    <span className="text-[var(--color-secondary-fixed-dim)]">+5.1% </span>
                   </div>
                 </div>
               </div>
