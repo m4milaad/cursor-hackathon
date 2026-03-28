@@ -16,6 +16,27 @@ export default function SamjhoPage() {
   const [confidence, setConfidence] = useState<number>(0)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  const archiveFeatures = [
+    'Smart document history with auto-tagging (land, legal, agriculture, etc.)',
+    'Search & filter (by date, type, urgency, language)',
+    'Timeline view of documents (deadlines, notices, actions)',
+    'AI-generated summaries for each archived document',
+    'Next Steps tracker with reminders & notifications',
+    'Voice playback of past analyses',
+    'Multi-language re-translation of archived results',
+    'Document comparison (compare old vs new notices/records)',
+    'Highlight critical alerts (expiry, deadlines, legal risks)',
+    'Save & organize into folders/collections',
+    'Share/export summaries (PDF, WhatsApp-ready format)',
+    'Offline access to previously analyzed documents',
+    'Re-analyze with updated AI (improved insights over time)',
+    'Confidence score & verification layer for each analysis',
+    'Notes/annotations by user on each document',
+    'Integration with calendar for deadline syncing',
+    'Duplicate detection (avoid re-uploading same document)',
+    'Visual insights dashboard (types of documents, trends)',
+  ] as const
+
   const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
@@ -140,12 +161,18 @@ export default function SamjhoPage() {
           </div>
 
           {/* Primary Action */}
-          <button 
+          <button
             type="button"
-            onClick={handleAnalyze}
-            disabled={!selectedImage || analyzing}
+            onClick={() => {
+              if (!selectedImage) {
+                triggerFileSelect()
+                return
+              }
+              void handleAnalyze()
+            }}
+            disabled={analyzing}
             className={`w-full bg-[var(--color-primary-container)] text-[var(--color-on-primary)] py-6 flex items-center justify-center space-x-4 group transition-colors ${
-              !selectedImage || analyzing ? 'opacity-50' : 'hover:bg-[var(--color-primary)]'
+              analyzing ? 'opacity-50' : 'hover:bg-[var(--color-primary)]'
             }`}
           >
             <span className="font-label text-xs uppercase tracking-[0.3em]">
@@ -259,6 +286,25 @@ export default function SamjhoPage() {
                     <p className="font-body text-sm text-[var(--color-on-surface-variant)] leading-relaxed">
                       3. Receive a simple, clear explanation with deadlines and next steps - read aloud in your language.
                     </p>
+                  </div>
+
+                  {/* Analyze Archive Features */}
+                  <div className="pt-10 border-t border-[var(--color-outline-variant)] opacity-90">
+                    <h4 className="font-headline text-xl text-[var(--color-primary)] mb-4">
+                      Analyze Archive
+                    </h4>
+                    <p className="font-body text-sm text-[var(--color-on-surface-variant)] mb-6">
+                      A living archive that keeps every document useful over time.
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {archiveFeatures.map((feature) => (
+                        <div key={feature} className="bg-[var(--color-surface-container-low)] p-4">
+                          <p className="font-body text-xs text-[var(--color-on-surface-variant)] leading-relaxed">
+                            {feature}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </>
               )}

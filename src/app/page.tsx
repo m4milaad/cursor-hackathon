@@ -1,7 +1,39 @@
+'use client'
+
 import { HomeHero } from '@/components/HomeHero'
 import Link from 'next/link'
+import { useMemo, useState } from 'react'
 
 export default function Page() {
+  const [openProtocol, setOpenProtocol] = useState(false)
+  const protocolFeatures = useMemo(
+    () => [
+      'Full protocol document viewer (clean, readable format)',
+      'Structured layout with headings, sections, spacing',
+      'Highlighted keywords (legal terms, deadlines)',
+      'Scroll + section navigation with sticky sidebar',
+      'Simplified Easy Summary (Explain Like I am 15)',
+      'Key highlights section (bullet insights, no jargon)',
+      'Action steps checklist with priority tagging',
+      'Voice narration (Urdu, Kashmiri, Hindi) + speed control',
+      'Multi-language toggle across all sections',
+      'Download protocol (PDF/offline, printable)',
+      'Bookmark/save protocol to personal library',
+      'Ask AI about this protocol (chat with document)',
+      'Visual diagrams/maps for complex systems',
+      'Impact section (farmer/user outcomes)',
+      'Deadline & compliance tracker with reminders',
+      'Related protocols/documents suggestions',
+      'Version history (old vs updated changes)',
+      'Expert tips/recommendations layer',
+      'Risk alerts (legal/financial consequences)',
+      'Share feature (WhatsApp + simplified summary)',
+      'Feedback/clarity rating',
+      'Highlight important sections (color-coded insights)',
+    ],
+    [],
+  )
+
   return (
     <main className="flex-grow w-full bg-[#fbf9f4]">
       {/* Scroll-Animation Integrated Hero Section */}
@@ -112,13 +144,58 @@ export default function Page() {
               Our latest AI update introduces advanced topographic mapping for traditional water management systems in high-altitude wetlands.
             </p>
             <div>
-              <button className="bg-[var(--color-secondary)] text-[var(--color-on-secondary)] px-8 py-4 font-label text-xs uppercase tracking-widest hover:opacity-90 transition-opacity">
+              <button
+                type="button"
+                onClick={() => setOpenProtocol(true)}
+                className="inline-flex bg-[var(--color-secondary)] text-[var(--color-on-secondary)] px-8 py-4 font-label text-xs uppercase tracking-widest hover:opacity-90 transition-opacity"
+              >
                 Read the Protocol
               </button>
             </div>
           </div>
         </div>
       </section>
+
+      {openProtocol ? (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-[rgba(0,0,0,0.55)] px-6"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="w-full max-w-5xl bg-[var(--color-surface-container-lowest)] border border-[var(--color-outline-variant)] shadow-2xl max-h-[85vh] overflow-y-auto">
+            <div className="flex items-start justify-between gap-6 p-6 md:p-10 border-b border-[var(--color-outline-variant)]">
+              <div>
+                <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary)] mb-3">
+                  Read The Protocol
+                </p>
+                <h3 className="font-headline text-3xl md:text-4xl text-[var(--color-primary)]">
+                  Full Protocol Viewer & Action Layer
+                </h3>
+                <p className="mt-3 text-sm text-[var(--color-on-surface-variant)] max-w-2xl">
+                  Clean document reading, clear next steps, and a guided AI layer for farmers and families.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setOpenProtocol(false)}
+                className="raasta-btn-secondary text-sm"
+              >
+                Close
+              </button>
+            </div>
+            <div className="p-6 md:p-10 grid grid-cols-1 md:grid-cols-3 gap-5">
+              {protocolFeatures.map((item) => (
+                <div
+                  key={item}
+                  className="bg-[var(--color-surface-container-low)] p-4 text-sm text-[var(--color-on-surface-variant)] leading-relaxed border border-[var(--color-outline-variant)]"
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
 
     </main>
   )
