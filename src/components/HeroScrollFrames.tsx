@@ -74,18 +74,22 @@ function loadFrame(
   })
 }
 
-async function preloadAllFrames(
+async function preloadFrames(
   images: (HTMLImageElement | null)[],
-  onProgress: (loaded: number, total: number) => void,
+  startIndex: number,
+  endIndex: number,
+  onProgress?: (loaded: number, total: number) => void,
 ): Promise<void> {
-  const total = HERO_TOTAL_FRAMES
-  for (let i = 0; i < total; i += PRELOAD_BATCH) {
+  const total = endIndex - startIndex;
+  let loadedCount = 0;
+  for (let i = startIndex; i < endIndex; i += PRELOAD_BATCH) {
     const batch: Promise<HTMLImageElement>[] = []
-    for (let j = i; j < Math.min(i + PRELOAD_BATCH, total); j++) {
+    for (let j = i; j < Math.min(i + PRELOAD_BATCH, endIndex); j++) {
       batch.push(loadFrame(images, j))
     }
     await Promise.all(batch)
-    onProgress(Math.min(i + PRELOAD_BATCH, total), total)
+    loadedCount += batch.length;
+    if (onProgress) onProgress(loadedCount, total)
   }
 }
 
@@ -240,17 +244,24 @@ export function HeroScrollFrames({
 
   useEffect(() => {
     const images = imagesRef.current
-    void preloadAllFrames(images, (loaded, total) => {
+    const initialLoadCount = Math.min(20, HERO_TOTAL_FRAMES)
+
+    void preloadFrames(images, 0, initialLoadCount, (loaded, total) => {
       setLoadPct(Math.round((100 * loaded) / total))
     })
       .then(() => {
         setReady(true)
         needsDrawRef.current = true
         scheduleDraw()
+
+        // Lazily load remaining frames in background
+        if (initialLoadCount < HERO_TOTAL_FRAMES) {
+          preloadFrames(images, initialLoadCount, HERO_TOTAL_FRAMES).catch(console.error)
+        }
       })
       .catch((e: unknown) => {
         console.error(e)
-        setErr('Could not load hero frames — check public/Raasta hero frames')
+        setErr('Could not load hero frames')
       })
   }, [scheduleDraw])
 
