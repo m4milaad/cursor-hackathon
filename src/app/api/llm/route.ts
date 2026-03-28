@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { generateText } from 'ai'
 import {
   demoSamjho,
   demoZameen,
@@ -7,41 +8,28 @@ import {
 import { localeInstruction, parseUiLocale, type UiLocale } from '@/lib/localeForLlm'
 import { taleemDemoFallback, taleemPrompts } from '@/lib/taleem-server'
 
-const MODEL = process.env.OPENAI_MODEL ?? 'gpt-4o-mini'
+const MODEL = 'openai/gpt-4o-mini'
 
 function withLocale(system: string, locale: UiLocale): string {
   return `${system.trim()}\n\n${localeInstruction(locale)}`
 }
 
-async function openaiChat(
+async function aiChat(
   system: string,
   user: string,
 ): Promise<string | null> {
-  const key = process.env.OPENAI_API_KEY
-  if (!key) return null
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${key}`,
-    },
-    body: JSON.stringify({
+  try {
+    const result = await generateText({
       model: MODEL,
-      messages: [
-        { role: 'system', content: system },
-        { role: 'user', content: user },
-      ],
+      system,
+      prompt: user,
       temperature: 0.4,
-    }),
-  })
-  if (!res.ok) {
-    console.error('OpenAI chat error', await res.text())
+    })
+    return result.text?.trim() ?? null
+  } catch (error) {
+    console.error('AI Gateway chat error', error)
     return null
   }
-  const data = (await res.json()) as {
-    choices?: Array<{ message?: { content?: string } }>
-  }
-  return data.choices?.[0]?.message?.content?.trim() ?? null
 }
 
 export async function POST(req: Request) {
@@ -66,10 +54,10 @@ export async function POST(req: Request) {
       )
       const user = `Document text:\n${body.ocrText}\n\nExplain what this means and what the reader should do.`
       const text =
-        (await openaiChat(system, user)) ?? demoSamjho(locale)
+        (await aiChat(system, user)) ?? demoSamjho(locale)
       return NextResponse.json({
         text,
-        usedModel: Boolean(process.env.OPENAI_API_KEY),
+        usedModel: true,
       })
     }
 
@@ -82,10 +70,10 @@ export async function POST(req: Request) {
       )
       const user = `Vision summary: ${body.visionSummary}\nMarket note: ${mandi}`
       const text =
-        (await openaiChat(system, user)) ?? demoZameen(locale)
+        (await aiChat(system, user)) ?? demoZameen(locale)
       return NextResponse.json({
         text,
-        usedModel: Boolean(process.env.OPENAI_API_KEY),
+        usedModel: true,
       })
     }
 
@@ -95,11 +83,11 @@ export async function POST(req: Request) {
         locale,
       )
       const text =
-        (await openaiChat(system, body.question)) ??
+        (await aiChat(system, body.question)) ??
         fallbackRaahAnswer(body.question, locale)
       return NextResponse.json({
         text,
-        usedModel: Boolean(process.env.OPENAI_API_KEY),
+        usedModel: true,
       })
     }
 
@@ -123,10 +111,10 @@ export async function POST(req: Request) {
         return NextResponse.json({ text: fallback, usedModel: false })
       }
       const system = withLocale(prompts.system, locale)
-      const text = (await openaiChat(system, prompts.user)) ?? fallback
+      const text = (await aiChat(system, prompts.user)) ?? fallback
       return NextResponse.json({
         text,
-        usedModel: Boolean(process.env.OPENAI_API_KEY),
+        usedModel: true,
       })
     }
 

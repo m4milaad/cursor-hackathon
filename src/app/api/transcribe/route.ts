@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
-  const key = process.env.OPENAI_API_KEY
   let form: FormData
   try {
     form = await req.formData()
@@ -14,33 +13,43 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Missing audio file' }, { status: 400 })
   }
 
-  if (!key) {
-    await new Promise((r) => setTimeout(r, 500))
-    return NextResponse.json({ text: '', demo: true })
+  // Use OpenAI Whisper API through the gateway or directly
+  // The AI Gateway supports whisper at: https://gateway.vercel.ai/v1/audio/transcriptions
+  const gatewayUrl = 'https://gateway.vercel.ai/v1/audio/transcriptions'
+  
+  try {
+    const outbound = new FormData()
+    outbound.append('file', file, 'audio.webm')
+    outbound.append('model', 'whisper-1')
+
+    const res = await fetch(gatewayUrl, {
+      method: 'POST',
+      body: outbound,
+    })
+
+    if (!res.ok) {
+      const err = await res.text()
+      console.error('Whisper transcription error', err)
+      // Fallback to demo mode
+      return NextResponse.json({
+        text: '',
+        demo: true,
+        error: 'Transcription service unavailable',
+      })
+    }
+
+    const data = (await res.json()) as { text?: string }
+    return NextResponse.json({
+      text: data.text?.trim() ?? '',
+      demo: false,
+    })
+  } catch (error) {
+    console.error('Transcription error', error)
+    // Return demo mode fallback
+    return NextResponse.json({
+      text: '',
+      demo: true,
+      error: 'Transcription failed',
+    })
   }
-
-  const outbound = new FormData()
-  outbound.append('file', file, 'audio.webm')
-  outbound.append('model', 'whisper-1')
-
-  const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${key}` },
-    body: outbound,
-  })
-
-  if (!res.ok) {
-    const err = await res.text()
-    console.error('Whisper error', err)
-    return NextResponse.json(
-      { text: '', error: 'Transcription failed' },
-      { status: 502 },
-    )
-  }
-
-  const data = (await res.json()) as { text?: string }
-  return NextResponse.json({
-    text: data.text?.trim() ?? '',
-    demo: false,
-  })
 }
