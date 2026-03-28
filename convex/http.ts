@@ -77,17 +77,35 @@ http.route({
       );
     }
 
-    const result = await ctx.runAction(api.workflows.submitPrompt, {
+    // Create request first
+    const requestId = await ctx.runMutation(api.requests.createRequest, {
       mode: body.mode,
       pillar: body.pillar,
       sub: body.sub,
       locale: body.locale,
       input: body.input,
       deviceId: body.deviceId,
+    });
+
+    // Build system prompt based on mode
+    let system = "Act as a concise assistant for rural support use-cases.";
+    if (body.mode === "samjho") {
+      system = "Explain legal or government text in simple language with clear next steps.";
+    } else if (body.mode === "zameen") {
+      system = "Give practical crop and mandi guidance in concise voice-friendly wording.";
+    } else if (body.mode === "taleem") {
+      system = "Guide youth with practical education, jobs, and scheme advice.";
+    }
+
+    // Generate AI reply
+    const result = await ctx.runAction(api.ai.generateReply, {
+      requestId,
+      system,
+      prompt: body.input,
       model: body.model,
     });
 
-    return new Response(JSON.stringify(result), {
+    return new Response(JSON.stringify({ requestId, ...result }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
