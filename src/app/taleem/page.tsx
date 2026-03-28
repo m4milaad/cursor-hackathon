@@ -1,47 +1,53 @@
-import Link from 'next/link'
+'use client'
+
 import { PageIntro } from '@/components/PageIntro'
+import { useI18n } from '@/lib/i18n/context'
+import Link from 'next/link'
 
 const pillars = [
   {
     href: '/taleem/hunarmand',
     emoji: '🚀',
-    title: 'Hunarmand',
-    subtitle: 'Business coach · schemes · mentor',
+    titleKey: 'taleem.p.hunarmand.title',
+    subKey: 'taleem.p.hunarmand.sub',
   },
   {
     href: '/taleem/sukoon',
     emoji: '🌙',
-    title: 'Sukoon',
-    subtitle: 'Check-in · peer stories · helpline',
+    titleKey: 'taleem.p.sukoon.title',
+    subKey: 'taleem.p.sukoon.sub',
   },
   {
     href: '/taleem/kaam',
     emoji: '💼',
-    title: 'Kaam Dhundo',
-    subtitle: 'Skills · gigs · freelance',
+    titleKey: 'taleem.p.kaam.title',
+    subKey: 'taleem.p.kaam.sub',
   },
 ] as const
 
 const quick = [
-  { href: '/taleem/naukri', label: 'Naukri', emoji: '📋' },
-  { href: '/taleem/cv', label: 'CV awaaz se', emoji: '📝' },
-  { href: '/taleem/exam', label: 'Exam prep', emoji: '📚' },
-  { href: '/taleem/scholarship', label: 'Scholarship', emoji: '🎓' },
+  { href: '/taleem/naukri', labelKey: 'taleem.q.naukri', emoji: '📋' },
+  { href: '/taleem/cv', labelKey: 'taleem.q.cv', emoji: '📝' },
+  { href: '/taleem/exam', labelKey: 'taleem.q.exam', emoji: '📚' },
+  { href: '/taleem/scholarship', labelKey: 'taleem.q.scholarship', emoji: '🎓' },
 ] as const
 
 export default function TaleemHubPage() {
+  const { t } = useI18n()
+
   return (
     <div className="pb-16 pt-2">
-      <PageIntro backHref="/" backLabel="← Ghar" title="Taleem">
-        <p>
-          Kashmir ke youth — naukri, skills, dimaag ki sehat, aur apna karobar.
-          Teeno raste ek jagah.
-        </p>
+      <PageIntro
+        backHref="/"
+        backLabel={t('nav.backHome')}
+        title={t('taleem.title')}
+      >
+        <p>{t('taleem.lead')}</p>
       </PageIntro>
 
       <section aria-labelledby="taleem-pillars">
         <span id="taleem-pillars" className="raasta-section-label">
-          Teen stambh
+          {t('taleem.pillars')}
         </span>
         <div className="flex flex-col gap-3 sm:gap-4">
           {pillars.map((p) => (
@@ -58,10 +64,10 @@ export default function TaleemHubPage() {
               </span>
               <div className="min-w-0 flex-1 text-left">
                 <p className="font-display text-lg font-semibold text-[var(--chinar-deep)]">
-                  {p.title}
+                  {t(p.titleKey)}
                 </p>
                 <p className="mt-0.5 text-sm text-[var(--raasta-muted)]">
-                  {p.subtitle}
+                  {t(p.subKey)}
                 </p>
               </div>
               <span
@@ -77,7 +83,7 @@ export default function TaleemHubPage() {
 
       <section className="mt-12" aria-labelledby="taleem-quick">
         <span id="taleem-quick" className="raasta-section-label">
-          Tez rasta
+          {t('taleem.quick')}
         </span>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
           {quick.map((q) => (
@@ -90,7 +96,7 @@ export default function TaleemHubPage() {
                 {q.emoji}
               </span>
               <span className="text-[11px] font-semibold leading-tight text-[var(--chinar-deep)] sm:text-xs">
-                {q.label}
+                {t(q.labelKey)}
               </span>
             </Link>
           ))}

@@ -1,5 +1,7 @@
 'use client'
 
+import { useI18n } from '@/lib/i18n/context'
+
 export type TaleemTab = { id: string; label: string }
 
 type Props = {
@@ -9,10 +11,12 @@ type Props = {
 }
 
 export function TaleemSubTabs({ tabs, active, onChange }: Props) {
+  const { t } = useI18n()
+
   return (
     <div
       role="tablist"
-      aria-label="Taleem sections"
+      aria-label={t('taleem.tabsAria')}
       className="mb-6 flex flex-wrap gap-2 border-b border-[var(--raasta-border)] pb-3.5"
     >
       {tabs.map((t) => (

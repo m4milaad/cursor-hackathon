@@ -3,71 +3,67 @@
 import { PageIntro } from '@/components/PageIntro'
 import { TaleemSubTabs } from '@/components/TaleemSubTabs'
 import { TaleemVoiceForm } from '@/components/TaleemVoiceForm'
+import { useI18n } from '@/lib/i18n/context'
 import { taleemLlm } from '@/lib/taleemApi'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
-const tabs = [
-  { id: 'checkin', label: 'Check-in' },
-  { id: 'stories', label: 'Peer stories' },
-  { id: 'helpline', label: 'Helpline' },
-] as const
-
-const STORIES = [
-  {
-    title: 'Naukri ke baad intezar',
-    body: `Main ne 2 saal tak roz form bhare. Kabhi lagta tha sab bekaar hai. Phir ek chhota course aur local NGO ke through volunteering se confidence lauta. Ab main Khud ko zyada narmi se dekhta hoon — waqt lagta hai, lekin rukna nahi padta.`,
-  },
-  {
-    title: 'Ghar walon ki umeed',
-    body: `Ami ke sawal roz same: "Aaj kya hua?" Jawab nahi hota tha to dil ghut ta tha. Main ne Sukoon jaisi baat kisi dost se share ki — pata chala yeh feeling aksar youth mein hai. Chhota qadam: roz 10 minute walk, phir ek hi kaam list.`,
-  },
+const STORY_KEYS = [
+  { titleKey: 'suk.story1t', bodyKey: 'suk.story1b' },
+  { titleKey: 'suk.story2t', bodyKey: 'suk.story2b' },
 ] as const
 
 export default function SukoonPage() {
+  const { locale, t } = useI18n()
   const [tab, setTab] = useState<string>('checkin')
+
+  const tabs = useMemo(
+    () => [
+      { id: 'checkin', label: t('tab.checkin') },
+      { id: 'stories', label: t('tab.stories') },
+      { id: 'helpline', label: t('tab.helpline') },
+    ],
+    [t],
+  )
 
   return (
     <div className="pb-16 pt-2">
-      <PageIntro backHref="/taleem" backLabel="← Taleem" title="Sukoon">
-        <p>
-          Be-hisabi pressure ke beech saans — anonymous stories aur professional
-          madad ek tap door.
-        </p>
+      <PageIntro
+        backHref="/taleem"
+        backLabel={t('nav.backTaleem')}
+        title={t('sukoon.title')}
+      >
+        <p>{t('sukoon.lead')}</p>
       </PageIntro>
 
       <div className="mt-2">
-        <TaleemSubTabs tabs={[...tabs]} active={tab} onChange={setTab} />
+        <TaleemSubTabs tabs={tabs} active={tab} onChange={setTab} />
       </div>
 
       {tab === 'checkin' && (
         <>
           <TaleemVoiceForm
-            label="Aaj dil kya keh raha hai?"
-            placeholder='Misaal: "Bahut frustrated hoon, kaam nahi mil raha"'
-            submitLabel="Sukoon se jawab"
+            label={t('suk.check.label')}
+            placeholder={t('suk.check.ph')}
+            submitLabel={t('suk.check.btn')}
             onSubmit={(message) =>
-              taleemLlm({ pillar: 'sukoon', sub: 'checkin', message })
+              taleemLlm({ locale, pillar: 'sukoon', sub: 'checkin', message })
             }
           />
           <p className="mt-4 text-xs text-[var(--raasta-muted)]">
-            Yeh medical ilaj nahi hai. Agar khud nuksan ya shadeed khayal aayein
-            to turant helpline tab kholein.
+            {t('suk.warn')}
           </p>
         </>
       )}
 
       {tab === 'stories' && (
         <ul className="space-y-4">
-          {STORIES.map((s) => (
-            <li
-              key={s.title}
-              className="raasta-card p-4"
-            >
+          {STORY_KEYS.map((s) => (
+            <li key={s.titleKey} className="raasta-card p-4">
               <p className="font-display text-base font-semibold text-[var(--chinar-deep)]">
-                {s.title}
+                {t(s.titleKey)}
               </p>
               <p className="mt-2 text-sm leading-relaxed text-[var(--raasta-ink)]">
-                {s.body}
+                {t(s.bodyKey)}
               </p>
             </li>
           ))}
@@ -76,25 +72,20 @@ export default function SukoonPage() {
 
       {tab === 'helpline' && (
         <div className="space-y-4">
-          <p className="text-sm text-[var(--raasta-muted)]">
-            Crisis mein akele mat rehna — yeh numbers India ke mashhur mental
-            health lines hain. Official site se number verify karte rahein.
-          </p>
+          <p className="text-sm text-[var(--raasta-muted)]">{t('suk.help.p')}</p>
           <a
             href="tel:9999666555"
             className="block rounded-[var(--radius-lg)] border-2 border-[var(--chinar-amber)] bg-[var(--chinar-glow)] px-4 py-4 text-center font-semibold text-[var(--chinar-deep)]"
           >
-            Vandrevala Foundation — 9999 666 555
+            {t('suk.help.v')}
           </a>
           <a
             href="tel:9152987821"
             className="raasta-card block px-4 py-4 text-center font-semibold text-[var(--chinar-deep)]"
           >
-            iCall (TISS) — 91529 87821
+            {t('suk.help.i')}
           </a>
-          <p className="text-xs text-[var(--raasta-muted)]">
-            Emergency 112 / local hospital agar khatra ho.
-          </p>
+          <p className="text-xs text-[var(--raasta-muted)]">{t('suk.help.e')}</p>
         </div>
       )}
     </div>

@@ -3,8 +3,10 @@
 import { MicButton } from '@/components/MicButton'
 import { PageIntro } from '@/components/PageIntro'
 import { VoiceOutput } from '@/components/VoiceOutput'
+import { useI18n } from '@/lib/i18n/context'
 import { answerVoiceQuestion } from '@/lib/llm'
-import { speakText, stopSpeaking } from '@/lib/tts'
+import { speechRecognitionLang } from '@/lib/localeForLlm'
+import { speakForLocale, stopSpeaking } from '@/lib/tts'
 import { transcribeAudio } from '@/lib/whisper'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -27,7 +29,7 @@ type SpeechControl = {
   onEnd: (handler: () => void) => void
 }
 
-function createSpeechRecognition(): SpeechControl | null {
+function createSpeechRecognition(lang: string): SpeechControl | null {
   const W = window as unknown as {
     SpeechRecognition?: new () => WebSpeechRec
     webkitSpeechRecognition?: new () => WebSpeechRec
@@ -35,7 +37,7 @@ function createSpeechRecognition(): SpeechControl | null {
   const Ctor = W.SpeechRecognition ?? W.webkitSpeechRecognition
   if (!Ctor) return null
   const rec = new Ctor()
-  rec.lang = 'hi-IN'
+  rec.lang = lang
   rec.continuous = false
   rec.interimResults = false
   return {
@@ -56,6 +58,7 @@ function createSpeechRecognition(): SpeechControl | null {
 }
 
 export default function RaahPage() {
+  const { locale, t } = useI18n()
   const [question, setQuestion] = useState('')
   const [answer, setAnswer] = useState('')
   const [busy, setBusy] = useState(false)
@@ -65,48 +68,49 @@ export default function RaahPage() {
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const chunks = useRef<Blob[]>([])
 
-  const ask = useCallback(async (q: string) => {
-    const trimmed = q.trim()
-    if (!trimmed) return
-    setBusy(true)
-    setAnswer('')
-    stopSpeaking()
-    try {
-      const a = await answerVoiceQuestion(trimmed)
-      setAnswer(a)
-      await speakText(a)
-    } finally {
-      setBusy(false)
-    }
-  }, [])
+  const ask = useCallback(
+    async (q: string) => {
+      const trimmed = q.trim()
+      if (!trimmed) return
+      setBusy(true)
+      setAnswer('')
+      stopSpeaking()
+      try {
+        const a = await answerVoiceQuestion(trimmed, locale)
+        setAnswer(a)
+        await speakForLocale(a, locale)
+      } finally {
+        setBusy(false)
+      }
+    },
+    [locale],
+  )
 
   const startBrowserSTT = useCallback(() => {
-    const api = createSpeechRecognition()
+    const api = createSpeechRecognition(speechRecognitionLang(locale))
     if (!api) {
-      setRecErr(
-        'Is browser mein live recognition limit ho sakti hai — neeche type karein.',
-      )
+      setRecErr(t('raah.errBrowser'))
       return
     }
     setRecErr(null)
     setBrowserListen(true)
-    api.onResult((t) => {
-      setQuestion(t)
+    api.onResult((spoken) => {
+      setQuestion(spoken)
       setBrowserListen(false)
-      void ask(t)
+      void ask(spoken)
     })
     api.onError(() => {
       setBrowserListen(false)
-      setRecErr('Sun na paye — dubara koshish ya type karein.')
+      setRecErr(t('raah.errHear'))
     })
     api.onEnd(() => setBrowserListen(false))
     try {
       api.start()
     } catch {
       setBrowserListen(false)
-      setRecErr('Mic start na ho saka.')
+      setRecErr(t('raah.errMicStart'))
     }
-  }, [ask])
+  }, [ask, locale, t])
 
   const stopRecordWhisper = useCallback(() => {
     const mr = mediaRecorder.current
@@ -126,7 +130,7 @@ export default function RaahPage() {
       }
       mr.onstop = async () => {
         setRecording(false)
-        stream.getTracks().forEach((t) => t.stop())
+        stream.getTracks().forEach((tr) => tr.stop())
         const blob = new Blob(chunks.current, { type: 'audio/webm' })
         chunks.current = []
         setBusy(true)
@@ -139,13 +143,11 @@ export default function RaahPage() {
             await ask(text)
           } else {
             setRecErr(
-              demo
-                ? 'Server par OPENAI_API_KEY set karein Whisper ke liye, ya neeche "PM Kisan" / type karein.'
-                : 'Whisper ne kuch na suna — dubara boliye.',
+              demo ? t('raah.errWhisperKey') : t('raah.errWhisperEmpty'),
             )
           }
         } catch {
-          setRecErr('Transcription fail — type karke bhejein.')
+          setRecErr(t('raah.errTranscribe'))
         } finally {
           setBusy(false)
         }
@@ -153,9 +155,9 @@ export default function RaahPage() {
       mr.start()
       setRecording(true)
     } catch {
-      setRecErr('Microphone ki ijazat darkaar hai.')
+      setRecErr(t('raah.errMicPerm'))
     }
-  }, [ask])
+  }, [ask, t])
 
   useEffect(() => {
     return () => {
@@ -170,16 +172,17 @@ export default function RaahPage() {
 
   return (
     <div className="pb-16 pt-2">
-      <PageIntro backHref="/" backLabel="← Ghar" title="Raah">
-        <p>
-          Urdu, Hindi ya Kashmiri (Roman) — Whisper + LLM + TTS. Yojana, fasal,
-          kagaz.
-        </p>
+      <PageIntro
+        backHref="/"
+        backLabel={t('nav.backHome')}
+        title={t('raah.title')}
+      >
+        <p>{t('raah.lead')}</p>
       </PageIntro>
 
       <div className="mt-6 flex flex-col items-center gap-4">
         <p className="text-center text-xs text-[var(--raasta-muted)]">
-          Bada mic — browser sunega. Whisper ke liye record.
+          {t('raah.micHelp')}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4">
           <MicButton onActivate={startBrowserSTT} />
@@ -189,20 +192,20 @@ export default function RaahPage() {
             onClick={recording ? stopRecordWhisper : startRecordWhisper}
             disabled={busy || browserListen}
           >
-            {recording ? '● Rok' : '⏺ Whisper'}
+            {recording ? t('raah.whisperStop') : t('raah.whisperRec')}
           </button>
         </div>
         <button
           type="button"
           className="text-xs font-medium text-[var(--chinar-gold)] underline decoration-[var(--chinar-amber)] underline-offset-2"
           onClick={() => {
-            const q = 'Mujhe PM Kisan yojana ke baare mein batao'
+            const q = t('raah.demoQuery')
             setQuestion(q)
             void ask(q)
           }}
           disabled={busy}
         >
-          Demo: PM Kisan (script)
+          {t('raah.demoPm')}
         </button>
       </div>
 
@@ -217,13 +220,13 @@ export default function RaahPage() {
 
       <div className="mt-6">
         <label htmlFor="raah-q" className="sr-only">
-          Sawal
+          {t('raah.askLabel')}
         </label>
         <textarea
           id="raah-q"
           rows={3}
           className="raasta-input w-full resize-none"
-          placeholder="Yahan likh sakte hain: e.g. Yeh kagaz kyaa kehta hai?"
+          placeholder={t('raah.placeholder')}
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
         />
@@ -233,11 +236,11 @@ export default function RaahPage() {
           disabled={busy || !question.trim()}
           onClick={() => void ask(question)}
         >
-          {busy ? 'Soch rahe hain…' : 'Bhejein'}
+          {busy ? t('common.thinking') : t('common.send')}
         </button>
       </div>
 
-      <VoiceOutput text={answer} label="Raah ka jawab" />
+      <VoiceOutput text={answer} label={t('raah.out')} />
     </div>
   )
 }

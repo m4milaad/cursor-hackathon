@@ -1,4 +1,7 @@
+import type { UiLocale } from '@/lib/localeForLlm'
+
 export type TaleemRequest = {
+  locale: UiLocale
   pillar: string
   sub?: string
   message?: string

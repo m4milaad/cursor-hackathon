@@ -2,11 +2,13 @@
 
 import { PageIntro } from '@/components/PageIntro'
 import { VoiceOutput } from '@/components/VoiceOutput'
+import { useI18n } from '@/lib/i18n/context'
 import { taleemLlm } from '@/lib/taleemApi'
-import { speakText } from '@/lib/tts'
+import { speakForLocale } from '@/lib/tts'
 import { useState } from 'react'
 
 export default function CvPage() {
+  const { locale, t } = useI18n()
   const [s1, setS1] = useState('')
   const [s2, setS2] = useState('')
   const [s3, setS3] = useState('')
@@ -19,11 +21,9 @@ export default function CvPage() {
     setOut('')
     const message = `Sentence 1: ${s1.trim()}\nSentence 2: ${s2.trim()}\nSentence 3: ${s3.trim()}`
     try {
-      const text = await taleemLlm({ pillar: 'cv', message })
+      const text = await taleemLlm({ locale, pillar: 'cv', message })
       setOut(text)
-      await speakText(
-        'CV English mein tayyar ho gaya. Neeche download bhi kar sakte hain.',
-      )
+      await speakForLocale(t('cv.ttsDone'), locale)
     } finally {
       setBusy(false)
     }
@@ -42,16 +42,18 @@ export default function CvPage() {
 
   return (
     <div className="pb-16 pt-2">
-      <PageIntro backHref="/taleem" backLabel="← Taleem" title="CV — awaaz se">
-        <p>
-          Teen jumley Urdu / Roman Urdu mein — clean English CV (text file).
-        </p>
+      <PageIntro
+        backHref="/taleem"
+        backLabel={t('nav.backTaleem')}
+        title={t('cv.title')}
+      >
+        <p>{t('cv.lead')}</p>
       </PageIntro>
 
       <div className="mt-2 space-y-3">
         <div>
           <label className="mb-1 block text-xs font-medium text-[var(--raasta-muted)]">
-            Pehla jumlaa — kaun hain aap?
+            {t('cv.l1')}
           </label>
           <textarea
             className="raasta-input min-h-[72px] w-full resize-y"
@@ -61,7 +63,7 @@ export default function CvPage() {
         </div>
         <div>
           <label className="mb-1 block text-xs font-medium text-[var(--raasta-muted)]">
-            Doosra — kya seekha / kya kiya?
+            {t('cv.l2')}
           </label>
           <textarea
             className="raasta-input min-h-[72px] w-full resize-y"
@@ -71,7 +73,7 @@ export default function CvPage() {
         </div>
         <div>
           <label className="mb-1 block text-xs font-medium text-[var(--raasta-muted)]">
-            Teesra — kya karna chahte hain?
+            {t('cv.l3')}
           </label>
           <textarea
             className="raasta-input min-h-[72px] w-full resize-y"
@@ -87,7 +89,7 @@ export default function CvPage() {
         disabled={busy || (!s1.trim() && !s2.trim() && !s3.trim())}
         onClick={() => void run()}
       >
-        {busy ? 'English CV bana rahe hain…' : 'CV banao'}
+        {busy ? t('cv.busy') : t('cv.btn')}
       </button>
 
       {out ? (
@@ -96,11 +98,11 @@ export default function CvPage() {
           className="raasta-btn-secondary mt-3 text-sm"
           onClick={download}
         >
-          ⬇ Download .txt
+          ⬇ {t('common.downloadTxt')}
         </button>
       ) : null}
 
-      <VoiceOutput text={out} label="English CV" />
+      <VoiceOutput text={out} label={t('cv.out')} />
     </div>
   )
 }

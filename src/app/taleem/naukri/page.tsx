@@ -2,27 +2,27 @@
 
 import { PageIntro } from '@/components/PageIntro'
 import { TaleemVoiceForm } from '@/components/TaleemVoiceForm'
+import { useI18n } from '@/lib/i18n/context'
 import { taleemLlm } from '@/lib/taleemApi'
 
 export default function NaukriPage() {
+  const { locale, t } = useI18n()
+
   return (
     <div className="pb-16 pt-2">
       <PageIntro
         backHref="/taleem"
-        backLabel="← Taleem"
-        title="Naukri orientation"
+        backLabel={t('nav.backTaleem')}
+        title={t('naukri.title')}
       >
-        <p>
-          Qualification bol kar likhein — sarkari / public jobs kis taraf dekhni
-          hain, deadlines ka culture, Roman Urdu mein seedha jawab.
-        </p>
+        <p>{t('naukri.lead')}</p>
       </PageIntro>
       <div className="mt-2">
         <TaleemVoiceForm
-          label="Aapki qualification aur maqsad"
-          placeholder="Misaal: 12th Science, JKSSB Class IV ki taiyaari"
-          submitLabel="Match batao"
-          onSubmit={(message) => taleemLlm({ pillar: 'naukri', message })}
+          label={t('naukri.label')}
+          placeholder={t('naukri.ph')}
+          submitLabel={t('naukri.btn')}
+          onSubmit={(message) => taleemLlm({ locale, pillar: 'naukri', message })}
         />
       </div>
     </div>

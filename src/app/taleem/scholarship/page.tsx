@@ -3,12 +3,14 @@
 import { ImageUploader } from '@/components/ImageUploader'
 import { PageIntro } from '@/components/PageIntro'
 import { VoiceOutput } from '@/components/VoiceOutput'
+import { useI18n } from '@/lib/i18n/context'
 import { extractMarksheetText } from '@/lib/ocr'
 import { taleemLlm } from '@/lib/taleemApi'
-import { speakText } from '@/lib/tts'
+import { speakForLocale } from '@/lib/tts'
 import { useState } from 'react'
 
 export default function ScholarshipPage() {
+  const { locale, t } = useI18n()
   const [file, setFile] = useState<File | null>(null)
   const [out, setOut] = useState('')
   const [busy, setBusy] = useState(false)
@@ -19,9 +21,9 @@ export default function ScholarshipPage() {
     setOut('')
     try {
       const ocrText = await extractMarksheetText(file)
-      const text = await taleemLlm({ pillar: 'scholarship', ocrText })
+      const text = await taleemLlm({ locale, pillar: 'scholarship', ocrText })
       setOut(text)
-      await speakText(text)
+      await speakForLocale(text, locale)
     } finally {
       setBusy(false)
     }
@@ -31,18 +33,15 @@ export default function ScholarshipPage() {
     <div className="pb-16 pt-2">
       <PageIntro
         backHref="/taleem"
-        backLabel="← Taleem"
-        title="Scholarship finder"
+        backLabel={t('nav.backTaleem')}
+        title={t('sch.title')}
       >
-        <p>
-          Marksheet ki photo — OCR + AI batayega kis qism ki scholarships dekhi
-          jaayein (official portal hamesha verify karein).
-        </p>
+        <p>{t('sch.lead')}</p>
       </PageIntro>
 
       <div className="mt-2">
         <ImageUploader
-          label="Marksheet / marks card"
+          label={t('sch.upload')}
           onFile={setFile}
           capture="environment"
         />
@@ -54,10 +53,10 @@ export default function ScholarshipPage() {
         disabled={!file || busy}
         onClick={() => void run()}
       >
-        {busy ? 'Padh rahe hain…' : 'Scholarships match karo'}
+        {busy ? t('sch.loading') : t('sch.btn')}
       </button>
 
-      <VoiceOutput text={out} label="Scholarship mashwara" />
+      <VoiceOutput text={out} label={t('sch.out')} />
     </div>
   )
 }

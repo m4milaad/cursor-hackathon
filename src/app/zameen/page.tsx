@@ -3,12 +3,14 @@
 import { ImageUploader } from '@/components/ImageUploader'
 import { PageIntro } from '@/components/PageIntro'
 import { VoiceOutput } from '@/components/VoiceOutput'
+import { useI18n } from '@/lib/i18n/context'
 import { explainCropAdvice } from '@/lib/llm'
 import { analyzeCropImage } from '@/lib/vision'
-import { speakText } from '@/lib/tts'
+import { speakForLocale } from '@/lib/tts'
 import { useState } from 'react'
 
 export default function ZameenPage() {
+  const { locale, t } = useI18n()
   const [file, setFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
   const [advice, setAdvice] = useState('')
@@ -19,9 +21,9 @@ export default function ZameenPage() {
     setAdvice('')
     try {
       const { summary, mandiHint } = await analyzeCropImage(file)
-      const out = await explainCropAdvice(summary, mandiHint)
+      const out = await explainCropAdvice(summary, mandiHint, locale)
       setAdvice(out)
-      await speakText(out)
+      await speakForLocale(out, locale)
     } finally {
       setLoading(false)
     }
@@ -29,16 +31,17 @@ export default function ZameenPage() {
 
   return (
     <div className="pb-16 pt-2">
-      <PageIntro backHref="/" backLabel="← Ghar" title="Zameen">
-        <p>
-          Pattay ya fasal ki tasveer — vision model se beemaari, ilaaj, aur mandi
-          bhav.
-        </p>
+      <PageIntro
+        backHref="/"
+        backLabel={t('nav.backHome')}
+        title={t('zameen.title')}
+      >
+        <p>{t('zameen.lead')}</p>
       </PageIntro>
 
       <div className="mt-2">
         <ImageUploader
-          label="Crop / pattay ki photo"
+          label={t('zameen.upload')}
           onFile={setFile}
           capture="environment"
         />
@@ -50,10 +53,10 @@ export default function ZameenPage() {
         disabled={!file || loading}
         onClick={() => void run()}
       >
-        {loading ? 'Dekh rahe hain…' : 'Jaanch karein'}
+        {loading ? t('zameen.btnLoading') : t('zameen.btn')}
       </button>
 
-      <VoiceOutput text={advice} label="Zameen ki salah" />
+      <VoiceOutput text={advice} label={t('zameen.out')} />
     </div>
   )
 }

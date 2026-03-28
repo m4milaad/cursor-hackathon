@@ -2,27 +2,29 @@
 
 import { PageIntro } from '@/components/PageIntro'
 import { VoiceOutput } from '@/components/VoiceOutput'
+import { useI18n } from '@/lib/i18n/context'
 import { taleemLlm } from '@/lib/taleemApi'
-import { speakText } from '@/lib/tts'
+import { speakForLocale } from '@/lib/tts'
 import { useState } from 'react'
 
-const DEMO_Q = `JKSSB General Knowledge (demo): Bharat ki pehli all-India census kis saal hui thi — (a) 1861 (b) 1872 (c) 1881 (d) 1891?`
-
 export default function ExamPage() {
+  const { locale, t } = useI18n()
   const [ans, setAns] = useState('')
   const [out, setOut] = useState('')
   const [busy, setBusy] = useState(false)
 
+  const demoQ = t('exam.demoQuestion')
+
   async function run() {
-    const t = ans.trim()
-    if (!t) return
+    const trimmed = ans.trim()
+    if (!trimmed) return
     setBusy(true)
     setOut('')
-    const message = `Sawal:\n${DEMO_Q}\n\nStudent ka jawab:\n${t}`
+    const message = `Question:\n${demoQ}\n\nStudent answer:\n${trimmed}`
     try {
-      const text = await taleemLlm({ pillar: 'exam', message })
+      const text = await taleemLlm({ locale, pillar: 'exam', message })
       setOut(text)
-      await speakText(text)
+      await speakForLocale(text, locale)
     } finally {
       setBusy(false)
     }
@@ -30,23 +32,24 @@ export default function ExamPage() {
 
   return (
     <div className="pb-16 pt-2">
-      <PageIntro backHref="/taleem" backLabel="← Taleem" title="Exam prep">
-        <p>
-          Rozana practice — ek sawal, awaaz ya type se jawab, chhota feedback
-          Roman Urdu mein.
-        </p>
+      <PageIntro
+        backHref="/taleem"
+        backLabel={t('nav.backTaleem')}
+        title={t('exam.title')}
+      >
+        <p>{t('exam.lead')}</p>
       </PageIntro>
 
       <div className="raasta-card mt-2 p-4 text-sm leading-relaxed text-[var(--raasta-ink)]">
-        {DEMO_Q}
+        {demoQ}
       </div>
 
       <label className="mt-4 mb-1 block text-sm font-medium text-[var(--raasta-ink)]">
-        Apna jawab
+        {t('exam.answerLabel')}
       </label>
       <textarea
         className="raasta-input min-h-[88px] w-full resize-y"
-        placeholder="Option ya explanation Urdu / English mix mein"
+        placeholder={t('exam.placeholder')}
         value={ans}
         onChange={(e) => setAns(e.target.value)}
       />
@@ -56,10 +59,10 @@ export default function ExamPage() {
         disabled={busy || !ans.trim()}
         onClick={() => void run()}
       >
-        {busy ? 'Feedback…' : 'Check karein'}
+        {busy ? t('exam.busy') : t('exam.btn')}
       </button>
 
-      <VoiceOutput text={out} label="Coach ka feedback" />
+      <VoiceOutput text={out} label={t('exam.out')} />
     </div>
   )
 }

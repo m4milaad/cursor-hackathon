@@ -1,7 +1,8 @@
 'use client'
 
 import { VoiceOutput } from '@/components/VoiceOutput'
-import { speakText } from '@/lib/tts'
+import { useI18n } from '@/lib/i18n/context'
+import { speakForLocale } from '@/lib/tts'
 import { useState } from 'react'
 
 type Props = {
@@ -17,21 +18,23 @@ export function TaleemVoiceForm({
   placeholder,
   submitLabel,
   onSubmit,
-  busyMessage = 'Soch rahe hain…',
+  busyMessage,
 }: Props) {
+  const { locale, t } = useI18n()
+  const busyText = busyMessage ?? t('common.thinking')
   const [text, setText] = useState('')
   const [out, setOut] = useState('')
   const [busy, setBusy] = useState(false)
 
   async function run() {
-    const t = text.trim()
-    if (!t) return
+    const trimmed = text.trim()
+    if (!trimmed) return
     setBusy(true)
     setOut('')
     try {
-      const reply = await onSubmit(t)
+      const reply = await onSubmit(trimmed)
       setOut(reply)
-      await speakText(reply)
+      await speakForLocale(reply, locale)
     } finally {
       setBusy(false)
     }
@@ -54,9 +57,9 @@ export function TaleemVoiceForm({
         disabled={busy || !text.trim()}
         onClick={() => void run()}
       >
-        {busy ? busyMessage : submitLabel}
+        {busy ? busyText : submitLabel}
       </button>
-      <VoiceOutput text={out} label="Jawaab" />
+      <VoiceOutput text={out} />
     </div>
   )
 }

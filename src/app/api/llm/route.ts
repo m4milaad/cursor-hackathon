@@ -1,12 +1,17 @@
 import { NextResponse } from 'next/server'
 import {
-  DEMO_PM_KISAN,
-  DEMO_SAMJHO_EXPLANATION,
-  DEMO_ZAMEEN_RESULT,
-} from '@/lib/demoCopy'
+  demoSamjho,
+  demoZameen,
+  fallbackRaahAnswer,
+} from '@/lib/demoLocalized'
+import { localeInstruction, parseUiLocale, type UiLocale } from '@/lib/localeForLlm'
 import { taleemDemoFallback, taleemPrompts } from '@/lib/taleem-server'
 
 const MODEL = process.env.OPENAI_MODEL ?? 'gpt-4o-mini'
+
+function withLocale(system: string, locale: UiLocale): string {
+  return `${system.trim()}\n\n${localeInstruction(locale)}`
+}
 
 async function openaiChat(
   system: string,
@@ -39,20 +44,6 @@ async function openaiChat(
   return data.choices?.[0]?.message?.content?.trim() ?? null
 }
 
-function fallbackRaah(question: string): string {
-  const q = question.toLowerCase()
-  if (q.includes('pm kisan') || q.includes('kisan') || q.includes('yojana')) {
-    return DEMO_PM_KISAN
-  }
-  if (q.includes('seb') || q.includes('apple') || q.includes('fasal')) {
-    return `Is mausam mein seb ke liye spray aur nami par nazar rakhein. Zameen mode se pattiyon ki tasveer bhej kar beemaari jaanch sakte hain.`
-  }
-  if (q.includes('kagaz') || q.includes('notice') || q.includes('document')) {
-    return `Samjho mode mein kagaz ki tasveer lein — hum aapko seedhe alfaz mein samjha denge.`
-  }
-  return `Main RAASTA hoon. Aap Samjho se kagaz, Zameen se fasal, Taleem se naukri / CV / exam / scholarship, aur mujhse seedhe sawaal Urdu, Hindi ya Kashmiri (Roman) mein poochh sakte hain.`
-}
-
 export async function POST(req: Request) {
   try {
     const body = (await req.json()) as {
@@ -64,12 +55,18 @@ export async function POST(req: Request) {
       pillar?: string
       sub?: string
       message?: string
+      locale?: string
     }
+    const locale = parseUiLocale(body.locale)
 
     if (body.mode === 'samjho' && typeof body.ocrText === 'string') {
-      const system = `You are Samjho, powered by HAQQ. Explain government or legal documents in simple spoken language for people with low literacy. Use Roman Urdu by default; use Kashmiri (Latin script) phrases only when the document or user context clearly fits Kashmir. Short paragraphs, warm and clear. Include deadlines and next steps.`
+      const system = withLocale(
+        `You are Samjho, powered by HAQQ. Explain government or legal documents in simple language for people with low literacy. Short paragraphs, warm and clear. Include deadlines and next steps.`,
+        locale,
+      )
       const user = `Document text:\n${body.ocrText}\n\nExplain what this means and what the reader should do.`
-      const text = (await openaiChat(system, user)) ?? DEMO_SAMJHO_EXPLANATION
+      const text =
+        (await openaiChat(system, user)) ?? demoSamjho(locale)
       return NextResponse.json({
         text,
         usedModel: Boolean(process.env.OPENAI_API_KEY),
@@ -79,9 +76,13 @@ export async function POST(req: Request) {
     if (body.mode === 'zameen' && typeof body.visionSummary === 'string') {
       const mandi =
         typeof body.mandiHint === 'string' ? body.mandiHint : ''
-      const system = `You are Zameen, powered by WADI. Give practical crop and disease advice in Roman Urdu or Kashmiri (Latin script) as fits the user. Mention treatment timing and mandi (market) price when data is provided. Keep it voice-friendly.`
+      const system = withLocale(
+        `You are Zameen, powered by WADI. Give practical crop and disease advice. Mention treatment timing and mandi (market) price when data is provided. Keep it voice-friendly.`,
+        locale,
+      )
       const user = `Vision summary: ${body.visionSummary}\nMarket note: ${mandi}`
-      const text = (await openaiChat(system, user)) ?? DEMO_ZAMEEN_RESULT
+      const text =
+        (await openaiChat(system, user)) ?? demoZameen(locale)
       return NextResponse.json({
         text,
         usedModel: Boolean(process.env.OPENAI_API_KEY),
@@ -89,10 +90,13 @@ export async function POST(req: Request) {
     }
 
     if (body.mode === 'raah' && typeof body.question === 'string') {
-      const system = `You are Raah, the voice layer of RAASTA. Help rural people in Kashmir and India with government schemes, farming, documents, jobs, and education (Taleem). Answer in concise Roman Urdu / Hindi / Kashmiri (Latin) mix as appropriate for text-to-speech. No long bullet lists unless asked.`
+      const system = withLocale(
+        `You are Raah, the voice layer of RAASTA. Help people in Kashmir and rural India with government schemes, farming, documents, jobs, and education (Taleem). Be concise. No long bullet lists unless asked.`,
+        locale,
+      )
       const text =
         (await openaiChat(system, body.question)) ??
-        fallbackRaah(body.question)
+        fallbackRaahAnswer(body.question, locale)
       return NextResponse.json({
         text,
         usedModel: Boolean(process.env.OPENAI_API_KEY),
@@ -106,16 +110,20 @@ export async function POST(req: Request) {
         message: body.message,
         ocrText: body.ocrText,
       })
-      const fallback = taleemDemoFallback({
-        pillar: body.pillar,
-        sub: body.sub,
-        message: body.message,
-        ocrText: body.ocrText,
-      })
+      const fallback = taleemDemoFallback(
+        {
+          pillar: body.pillar,
+          sub: body.sub,
+          message: body.message,
+          ocrText: body.ocrText,
+        },
+        locale,
+      )
       if (!prompts) {
         return NextResponse.json({ text: fallback, usedModel: false })
       }
-      const text = (await openaiChat(prompts.system, prompts.user)) ?? fallback
+      const system = withLocale(prompts.system, locale)
+      const text = (await openaiChat(system, prompts.user)) ?? fallback
       return NextResponse.json({
         text,
         usedModel: Boolean(process.env.OPENAI_API_KEY),

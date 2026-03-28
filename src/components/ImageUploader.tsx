@@ -1,5 +1,6 @@
 'use client'
 
+import { useI18n } from '@/lib/i18n/context'
 import { useCallback, useId, useState, type ChangeEvent } from 'react'
 
 type Props = {
@@ -15,6 +16,7 @@ export function ImageUploader({
   onFile,
   capture,
 }: Props) {
+  const { t } = useI18n()
   const id = useId()
   const [preview, setPreview] = useState<string | null>(null)
 
@@ -75,7 +77,7 @@ export function ImageUploader({
       />
       {preview && (
         <button type="button" className="raasta-ghost text-sm" onClick={clear}>
-          Photo hata dein
+          {t('image.clear')}
         </button>
       )}
     </div>

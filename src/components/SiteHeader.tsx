@@ -1,16 +1,19 @@
 'use client'
 
 import { ChinarLeafMark } from '@/components/chinar/ChinarLeafMark'
+import { LanguageToggle } from '@/components/LanguageToggle'
+import { useI18n } from '@/lib/i18n/context'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 export function SiteHeader() {
   const path = usePathname() ?? ''
   const isHome = path === '/'
+  const { t } = useI18n()
 
   return (
     <header className="raasta-header sticky top-0 z-50">
-      <div className="mx-auto flex h-[var(--header-h)] max-w-xl items-center justify-between gap-3 px-4 sm:max-w-2xl">
+      <div className="mx-auto flex h-[var(--header-h)] max-w-xl items-center justify-between gap-2 px-4 sm:max-w-2xl">
         <Link
           href="/"
           className="group flex min-w-0 items-center gap-2.5 rounded-lg py-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--chinar-amber)]"
@@ -26,44 +29,47 @@ export function SiteHeader() {
               RAASTA
             </span>
             <span className="hidden text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--raasta-muted)] sm:block">
-              Kashmir · companion
+              {t('nav.brandTag')}
             </span>
           </span>
         </Link>
 
-        <nav
-          className="flex shrink-0 items-center gap-1"
-          aria-label="Main"
-        >
-          {!isHome ? (
+        <div className="flex shrink-0 items-center gap-2">
+          <LanguageToggle />
+          <nav
+            className="flex shrink-0 items-center gap-1"
+            aria-label={t('nav.ariaMain')}
+          >
+            {!isHome ? (
+              <Link
+                href="/"
+                className="rounded-full px-2.5 py-1.5 text-sm font-medium text-[var(--raasta-muted)] transition hover:bg-[var(--chinar-mist)] hover:text-[var(--chinar-deep)] sm:px-3"
+              >
+                {t('nav.home')}
+              </Link>
+            ) : null}
             <Link
-              href="/"
-              className="rounded-full px-3 py-1.5 text-sm font-medium text-[var(--raasta-muted)] transition hover:bg-[var(--chinar-mist)] hover:text-[var(--chinar-deep)]"
+              href="/taleem"
+              className={`rounded-full px-2.5 py-1.5 text-sm font-medium transition sm:px-3 ${
+                path.startsWith('/taleem')
+                  ? 'bg-[var(--chinar-mist)] text-[var(--chinar-deep)]'
+                  : 'text-[var(--raasta-muted)] hover:bg-[var(--chinar-mist)] hover:text-[var(--chinar-deep)]'
+              }`}
             >
-              Ghar
+              {t('nav.taleem')}
             </Link>
-          ) : null}
-          <Link
-            href="/taleem"
-            className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${
-              path.startsWith('/taleem')
-                ? 'bg-[var(--chinar-mist)] text-[var(--chinar-deep)]'
-                : 'text-[var(--raasta-muted)] hover:bg-[var(--chinar-mist)] hover:text-[var(--chinar-deep)]'
-            }`}
-          >
-            Taleem
-          </Link>
-          <Link
-            href="/raah"
-            className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${
-              path === '/raah'
-                ? 'bg-[var(--chinar-mist)] text-[var(--chinar-deep)]'
-                : 'text-[var(--raasta-muted)] hover:bg-[var(--chinar-mist)] hover:text-[var(--chinar-deep)]'
-            }`}
-          >
-            Raah
-          </Link>
-        </nav>
+            <Link
+              href="/raah"
+              className={`rounded-full px-2.5 py-1.5 text-sm font-medium transition sm:px-3 ${
+                path === '/raah'
+                  ? 'bg-[var(--chinar-mist)] text-[var(--chinar-deep)]'
+                  : 'text-[var(--raasta-muted)] hover:bg-[var(--chinar-mist)] hover:text-[var(--chinar-deep)]'
+              }`}
+            >
+              {t('nav.raah')}
+            </Link>
+          </nav>
+        </div>
       </div>
     </header>
   )
