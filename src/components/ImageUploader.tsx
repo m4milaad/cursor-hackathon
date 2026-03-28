@@ -46,24 +46,34 @@ export function ImageUploader({
     <div className="flex flex-col gap-3">
       <label
         htmlFor={id}
-        className="raasta-card flex cursor-pointer flex-col items-center justify-center gap-3 border-2 border-dashed border-[var(--raasta-border)] px-4 py-10 transition hover:border-[var(--chinar-amber)] hover:bg-[var(--chinar-mist)]"
+        className="upload-zone group flex cursor-pointer flex-col items-center justify-center gap-4 px-5 py-12 transition-all duration-300"
       >
         {preview ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={preview}
             alt=""
-            className="max-h-48 w-full max-w-xs rounded-lg object-cover shadow-md"
+            className="max-h-52 w-full max-w-xs rounded-xl object-cover"
+            style={{
+              boxShadow: 'var(--shadow-elevated)',
+            }}
           />
         ) : (
-          <span className="text-4xl" aria-hidden>
+          <span
+            className="flex h-16 w-16 items-center justify-center rounded-2xl text-4xl transition-all duration-300 group-hover:scale-110"
+            style={{
+              background: 'linear-gradient(145deg, var(--paper-dim), var(--surface-hi))',
+              boxShadow: 'var(--shadow-ambient)',
+            }}
+            aria-hidden
+          >
             📷
           </span>
         )}
-        <span className="text-center font-medium text-[var(--raasta-ink)]">
+        <span className="text-center font-semibold text-[var(--ink)]">
           {label}
         </span>
-        <span className="text-sm text-[var(--raasta-muted)]">
+        <span className="text-sm text-[var(--muted-soft)]">
           Camera ya gallery
         </span>
       </label>

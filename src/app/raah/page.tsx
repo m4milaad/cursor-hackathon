@@ -1,8 +1,6 @@
 'use client'
 
 import { MicButton } from '@/components/MicButton'
-import { PageIntro } from '@/components/PageIntro'
-import { VoiceOutput } from '@/components/VoiceOutput'
 import { useI18n } from '@/lib/i18n/context'
 import { answerVoiceQuestion } from '@/lib/llm'
 import { speechRecognitionLang } from '@/lib/localeForLlm'
@@ -165,82 +163,121 @@ export default function RaahPage() {
       try {
         mediaRecorder.current?.stop()
       } catch {
-        /* noop */
       }
     }
   }, [])
 
   return (
-    <div className="pb-16 pt-2">
-      <PageIntro
-        backHref="/"
-        backLabel={t('nav.backHome')}
-        title={t('raah.title')}
-      >
-        <p>{t('raah.lead')}</p>
-      </PageIntro>
-
-      <div className="mt-6 flex flex-col items-center gap-4">
-        <p className="text-center text-xs text-[var(--raasta-muted)]">
-          {t('raah.micHelp')}
+    <main className="pt-24 pb-24 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto min-h-screen">
+      {/* Header Section */}
+      <header className="mb-16 max-w-3xl">
+        <span className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary)] mb-4 block">
+          Archive 04
+        </span>
+        <h1 className="font-headline text-5xl md:text-7xl font-bold text-[var(--color-primary)] tracking-tight leading-none mb-6">
+          {t('raah.title')}
+        </h1>
+        <p className="font-headline italic text-xl text-[var(--color-on-surface-variant)] leading-relaxed">
+          {t('raah.lead')}
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          <MicButton onActivate={startBrowserSTT} />
-          <button
-            type="button"
-            className={`rounded-full px-5 py-2.5 text-sm font-medium transition ${recording ? 'bg-gradient-to-br from-[var(--chinar-amber)] to-[var(--chinar-gold)] text-[#faf8f4] shadow-sm' : 'raasta-btn-secondary'}`}
-            onClick={recording ? stopRecordWhisper : startRecordWhisper}
-            disabled={busy || browserListen}
-          >
-            {recording ? t('raah.whisperStop') : t('raah.whisperRec')}
-          </button>
+      </header>
+
+      {/* Main Container */}
+      <div className="bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)] opacity-95 p-8 md:p-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          
+          {/* Interaction Column */}
+          <div className="flex flex-col space-y-8">
+            <span className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary)] border-b border-[var(--color-outline-variant)] pb-2 opacity-80 block">
+              Audio Protocol
+            </span>
+            
+            <p className="text-sm font-label uppercase tracking-widest text-[var(--color-on-surface-variant)]">
+              {t('raah.micHelp')}
+            </p>
+
+            {/* Mic Array */}
+            <div className="flex flex-col items-center justify-center p-12 border-2 border-dashed border-[var(--color-outline-variant)] hover:bg-[var(--color-surface-container-lowest)] transition-colors group cursor-pointer">
+              <div className="relative mb-8">
+                <MicButton onActivate={startBrowserSTT} />
+              </div>
+              
+              <button
+                type="button"
+                className={`w-full mt-4 font-label text-[10px] uppercase tracking-widest px-8 py-3 transition-colors duration-300 ${
+                  recording ? 'bg-[var(--color-secondary)] text-[var(--color-on-secondary)] animate-pulse' : 'bg-[var(--color-primary-container)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary)]'
+                }`}
+                onClick={recording ? stopRecordWhisper : startRecordWhisper}
+                disabled={busy || browserListen}
+              >
+                {recording ? t('raah.whisperStop') : t('raah.whisperRec')}
+              </button>
+            </div>
+
+            <button
+              type="button"
+              className="text-[10px] font-label font-bold uppercase tracking-widest text-[var(--color-secondary)] hover:opacity-80 transition-opacity self-start"
+              onClick={() => {
+                const q = t('raah.demoQuery')
+                setQuestion(q)
+                void ask(q)
+              }}
+              disabled={busy}
+            >
+              {t('raah.demoPm')}
+            </button>
+
+            {/* Error display */}
+            {recErr && (
+              <div className="mt-4 border-l-2 border-[var(--color-error)] bg-[var(--color-error-container)] p-4 text-xs font-label uppercase tracking-widest text-[var(--color-error)]">
+                {recErr}
+              </div>
+            )}
+
+            {/* Text Input Block */}
+            <div className="pt-4 border-t border-[var(--color-outline-variant)]">
+               <label htmlFor="raah-q" className="font-label text-[10px] uppercase tracking-widest text-[var(--color-primary-container)] mb-3 block">
+                 Manual Entry
+               </label>
+               <textarea
+                 id="raah-q"
+                 rows={3}
+                 className="w-full bg-[var(--color-surface-container-lowest)] border border-[var(--color-outline-variant)] p-4 font-body text-sm text-[var(--color-on-surface)] focus:outline-none focus:border-[var(--color-secondary)] resize-none transition-colors"
+                 placeholder={t('raah.placeholder')}
+                 value={question}
+                 onChange={(e) => setQuestion(e.target.value)}
+               />
+               <button
+                 type="button"
+                 className={`mt-4 bg-[var(--color-surface-tint)] text-[var(--color-on-primary)] font-label text-[10px] uppercase tracking-[0.2em] w-full py-4 hover:opacity-90 transition-opacity ${busy ? 'opacity-50' : ''}`}
+                 disabled={busy || !question.trim()}
+                 onClick={() => void ask(question)}
+               >
+                 {busy ? t('common.thinking') : t('common.send')}
+               </button>
+            </div>
+          </div>
+
+          {/* Response Column */}
+          <div className="border-l border-[var(--color-outline-variant)] opacity-90 pl-0 lg:pl-12">
+            <span className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary)] border-b border-[var(--color-outline-variant)] pb-2 opacity-80 block mb-8">
+              Intelligence Transcript
+            </span>
+            <div className="h-full min-h-[400px]">
+              {answer ? (
+                 <div className="font-body text-lg text-[var(--color-on-surface)] leading-relaxed italic border-l-4 border-[var(--color-primary)] pl-6 py-2">
+                   {answer}
+                 </div>
+              ) : (
+                <div className="h-full flex items-center justify-center opacity-40 font-headline text-2xl italic text-[var(--color-outline)]">
+                  Contextual insights will appear here...
+                </div>
+              )}
+            </div>
+          </div>
+          
         </div>
-        <button
-          type="button"
-          className="text-xs font-medium text-[var(--chinar-gold)] underline decoration-[var(--chinar-amber)] underline-offset-2"
-          onClick={() => {
-            const q = t('raah.demoQuery')
-            setQuestion(q)
-            void ask(q)
-          }}
-          disabled={busy}
-        >
-          {t('raah.demoPm')}
-        </button>
       </div>
-
-      {recErr ? (
-        <p
-          className="raasta-card mt-4 border-[rgba(196,131,58,0.35)] bg-[var(--chinar-glow)] px-3 py-3 text-sm leading-relaxed text-[var(--raasta-ink)]"
-          role="status"
-        >
-          {recErr}
-        </p>
-      ) : null}
-
-      <div className="mt-6">
-        <label htmlFor="raah-q" className="sr-only">
-          {t('raah.askLabel')}
-        </label>
-        <textarea
-          id="raah-q"
-          rows={3}
-          className="raasta-input w-full resize-none"
-          placeholder={t('raah.placeholder')}
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-        />
-        <button
-          type="button"
-          className="raasta-btn-primary mt-3 w-full"
-          disabled={busy || !question.trim()}
-          onClick={() => void ask(question)}
-        >
-          {busy ? t('common.thinking') : t('common.send')}
-        </button>
-      </div>
-
-      <VoiceOutput text={answer} label={t('raah.out')} />
-    </div>
+    </main>
   )
 }

@@ -19,8 +19,11 @@ export function PageIntro({
   className = '',
 }: Props) {
   return (
-    <header className={`mb-8 ${className}`}>
-      <Link href={backHref} className="raasta-back mb-5 font-medium">
+    <header
+      className={`mb-10 ${className}`}
+      style={{ animation: 'fadeInUp 0.5s ease-out' }}
+    >
+      <Link href={backHref} className="raasta-back group mb-6 inline-flex font-medium">
         {backLabel}
       </Link>
       <h1 className="raasta-page-title">{title}</h1>

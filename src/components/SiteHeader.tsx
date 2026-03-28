@@ -1,76 +1,53 @@
 'use client'
 
-import { ChinarLeafMark } from '@/components/chinar/ChinarLeafMark'
-import { LanguageToggle } from '@/components/LanguageToggle'
-import { useI18n } from '@/lib/i18n/context'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 export function SiteHeader() {
   const path = usePathname() ?? ''
-  const isHome = path === '/'
-  const { t } = useI18n()
+
+  const NavLink = ({ href, label }: { href: string; label: string }) => {
+    const isActive = path.startsWith(href) && href !== '/' || (href === '/' && path === '/')
+    
+    if (isActive) {
+      return (
+        <Link 
+          href={href} 
+          className="font-label text-xs uppercase tracking-widest text-[#885207] border-b-2 border-[#885207] pb-1 transition-colors duration-300"
+        >
+          {label}
+        </Link>
+      )
+    }
+
+    return (
+      <Link 
+        href={href} 
+        className="font-label text-xs uppercase tracking-widest text-[#00271d] dark:text-[#eae8e3] opacity-70 hover:text-[#885207] transition-colors duration-300"
+      >
+        {label}
+      </Link>
+    )
+  }
 
   return (
-    <header className="raasta-header sticky top-0 z-50">
-      <div className="mx-auto flex h-[var(--header-h)] max-w-xl items-center justify-between gap-2 px-4 sm:max-w-2xl">
-        <Link
-          href="/"
-          className="group flex min-w-0 items-center gap-2.5 rounded-lg py-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--chinar-amber)]"
-        >
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--chinar-mist)] text-[var(--chinar-gold)] ring-1 ring-[var(--raasta-border)] transition group-hover:bg-[var(--chinar-glow)] group-hover:ring-[rgba(196,131,58,0.35)]">
-            <ChinarLeafMark
-              className="h-6 w-6 text-[var(--chinar-gold)]"
-              decorative
-            />
-          </span>
-          <span className="min-w-0 text-left">
-            <span className="font-display block text-[1.05rem] font-semibold leading-tight tracking-tight text-[var(--chinar-deep)] sm:text-lg">
-              RAASTA
-            </span>
-            <span className="hidden text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--raasta-muted)] sm:block">
-              {t('nav.brandTag')}
-            </span>
-          </span>
-        </Link>
-
-        <div className="flex shrink-0 items-center gap-2">
-          <LanguageToggle />
-          <nav
-            className="flex shrink-0 items-center gap-1"
-            aria-label={t('nav.ariaMain')}
-          >
-            {!isHome ? (
-              <Link
-                href="/"
-                className="rounded-full px-2.5 py-1.5 text-sm font-medium text-[var(--raasta-muted)] transition hover:bg-[var(--chinar-mist)] hover:text-[var(--chinar-deep)] sm:px-3"
-              >
-                {t('nav.home')}
-              </Link>
-            ) : null}
-            <Link
-              href="/taleem"
-              className={`rounded-full px-2.5 py-1.5 text-sm font-medium transition sm:px-3 ${
-                path.startsWith('/taleem')
-                  ? 'bg-[var(--chinar-mist)] text-[var(--chinar-deep)]'
-                  : 'text-[var(--raasta-muted)] hover:bg-[var(--chinar-mist)] hover:text-[var(--chinar-deep)]'
-              }`}
-            >
-              {t('nav.taleem')}
-            </Link>
-            <Link
-              href="/raah"
-              className={`rounded-full px-2.5 py-1.5 text-sm font-medium transition sm:px-3 ${
-                path === '/raah'
-                  ? 'bg-[var(--chinar-mist)] text-[var(--chinar-deep)]'
-                  : 'text-[var(--raasta-muted)] hover:bg-[var(--chinar-mist)] hover:text-[var(--chinar-deep)]'
-              }`}
-            >
-              {t('nav.raah')}
-            </Link>
-          </nav>
-        </div>
+    <nav className="bg-[#fbf9f4] dark:bg-[#000d08] flex justify-between items-center w-full px-8 h-[64px] max-w-none fixed top-0 z-50 transition-colors duration-300">
+      <Link href="/" className="font-headline text-2xl font-bold tracking-tighter text-[#00271d] dark:text-[#fbf9f4] hover:opacity-80 transition-opacity">
+        RAASTA AI
+      </Link>
+      
+      <div className="hidden md:flex items-center space-x-12">
+        <NavLink href="/samjho" label="Samjho" />
+        <NavLink href="/zameen" label="Zameen" />
+        <NavLink href="/taleem" label="Taleem" />
+        <NavLink href="/raah" label="Raah" />
       </div>
-    </header>
+
+      <div className="flex items-center space-x-4">
+        <span className="material-symbols-outlined text-[#00271d] dark:text-[#fbf9f4] cursor-pointer text-2xl hover:text-[#885207] transition-colors">
+          account_circle
+        </span>
+      </div>
+    </nav>
   )
 }

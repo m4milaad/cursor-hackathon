@@ -1,107 +1,109 @@
 'use client'
 
-import { PageIntro } from '@/components/PageIntro'
 import { useI18n } from '@/lib/i18n/context'
 import Link from 'next/link'
 
 const pillars = [
   {
     href: '/taleem/hunarmand',
-    emoji: '🚀',
+    icon: 'rocket_launch',
     titleKey: 'taleem.p.hunarmand.title',
     subKey: 'taleem.p.hunarmand.sub',
   },
   {
     href: '/taleem/sukoon',
-    emoji: '🌙',
+    icon: 'dark_mode',
     titleKey: 'taleem.p.sukoon.title',
     subKey: 'taleem.p.sukoon.sub',
   },
   {
     href: '/taleem/kaam',
-    emoji: '💼',
+    icon: 'work',
     titleKey: 'taleem.p.kaam.title',
     subKey: 'taleem.p.kaam.sub',
   },
 ] as const
 
 const quick = [
-  { href: '/taleem/naukri', labelKey: 'taleem.q.naukri', emoji: '📋' },
-  { href: '/taleem/cv', labelKey: 'taleem.q.cv', emoji: '📝' },
-  { href: '/taleem/exam', labelKey: 'taleem.q.exam', emoji: '📚' },
-  { href: '/taleem/scholarship', labelKey: 'taleem.q.scholarship', emoji: '🎓' },
+  { href: '/taleem/naukri', labelKey: 'taleem.q.naukri', icon: 'content_paste' },
+  { href: '/taleem/cv', labelKey: 'taleem.q.cv', icon: 'edit_document' },
+  { href: '/taleem/exam', labelKey: 'taleem.q.exam', icon: 'local_library' },
+  { href: '/taleem/scholarship', labelKey: 'taleem.q.scholarship', icon: 'school' },
 ] as const
 
 export default function TaleemHubPage() {
   const { t } = useI18n()
 
   return (
-    <div className="pb-16 pt-2">
-      <PageIntro
-        backHref="/"
-        backLabel={t('nav.backHome')}
-        title={t('taleem.title')}
-      >
-        <p>{t('taleem.lead')}</p>
-      </PageIntro>
+    <main className="pt-24 pb-24 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto min-h-screen">
+      {/* Header Section */}
+      <header className="mb-16 max-w-3xl">
+        <span className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary)] mb-4 block">
+          Archive 03
+        </span>
+        <h1 className="font-headline text-5xl md:text-7xl font-bold text-[var(--color-primary)] tracking-tight leading-none mb-6">
+          {t('taleem.title')}
+        </h1>
+        <p className="font-headline italic text-xl text-[var(--color-on-surface-variant)] leading-relaxed">
+          {t('taleem.lead')}
+        </p>
+      </header>
 
-      <section aria-labelledby="taleem-pillars">
-        <span id="taleem-pillars" className="raasta-section-label">
+      {/* Pillars Layout */}
+      <section className="mb-20">
+        <span className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary)] mb-6 block border-b border-[var(--color-outline-variant)] pb-2 opacity-80">
           {t('taleem.pillars')}
         </span>
-        <div className="flex flex-col gap-3 sm:gap-4">
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {pillars.map((p) => (
             <Link
               key={p.href}
               href={p.href}
-              className="raasta-card group flex items-center gap-4 p-4 transition hover:-translate-y-px sm:p-5"
+              className="group bg-[var(--color-surface-container-low)] hover:bg-[var(--color-surface-container-lowest)] border border-[var(--color-outline-variant)] opacity-90 transition-colors duration-500 cursor-pointer p-8 flex flex-col items-start"
             >
-              <span
-                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[var(--chinar-mist)] text-2xl ring-1 ring-[var(--raasta-border)] transition group-hover:bg-[var(--chinar-glow)] sm:h-14 sm:w-14 sm:rounded-2xl"
-                aria-hidden
-              >
-                {p.emoji}
+              <span className="material-symbols-outlined text-[var(--color-primary-container)] mb-6 text-4xl group-hover:scale-110 transition-transform">
+                {p.icon}
               </span>
-              <div className="min-w-0 flex-1 text-left">
-                <p className="font-display text-lg font-semibold text-[var(--chinar-deep)]">
-                  {t(p.titleKey)}
-                </p>
-                <p className="mt-0.5 text-sm text-[var(--raasta-muted)]">
-                  {t(p.subKey)}
-                </p>
+              <h3 className="font-headline text-2xl font-bold text-[var(--color-primary)] mb-3">
+                {t(p.titleKey)}
+              </h3>
+              <p className="font-body text-sm text-[var(--color-on-surface-variant)] leading-relaxed opacity-80 flex-grow">
+                {t(p.subKey)}
+              </p>
+              
+              <div className="mt-8 flex items-center gap-2 text-[var(--color-secondary)] font-label text-xs uppercase tracking-widest font-bold group-hover:translate-x-2 transition-transform">
+                <span>Explore</span>
+                <span className="material-symbols-outlined text-sm">arrow_forward</span>
               </div>
-              <span
-                className="shrink-0 text-[var(--chinar-gold)] opacity-60 transition group-hover:opacity-100"
-                aria-hidden
-              >
-                →
-              </span>
             </Link>
           ))}
         </div>
       </section>
 
-      <section className="mt-12" aria-labelledby="taleem-quick">
-        <span id="taleem-quick" className="raasta-section-label">
+      {/* Quick Access Layout */}
+      <section>
+        <span className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary)] mb-6 block border-b border-[var(--color-outline-variant)] pb-2 opacity-80">
           {t('taleem.quick')}
         </span>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
+        
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {quick.map((q) => (
             <Link
               key={q.href}
               href={q.href}
-              className="raasta-card flex flex-col items-center gap-1.5 px-2 py-4 text-center transition hover:-translate-y-px"
+              className="bg-[var(--color-surface-container-low)] hover:bg-[var(--color-surface-container-lowest)] border border-[var(--color-outline-variant)] opacity-90 transition-colors p-6 flex flex-col items-center justify-center text-center group"
             >
-              <span className="text-xl" aria-hidden>
-                {q.emoji}
+              <span className="material-symbols-outlined text-[var(--color-secondary)] text-3xl mb-4 group-hover:-translate-y-1 transition-transform">
+                {q.icon}
               </span>
-              <span className="text-[11px] font-semibold leading-tight text-[var(--chinar-deep)] sm:text-xs">
+              <span className="font-label text-[10px] uppercase tracking-widest text-[var(--color-primary-container)] font-bold">
                 {t(q.labelKey)}
               </span>
             </Link>
           ))}
         </div>
       </section>
-    </div>
+    </main>
   )
 }

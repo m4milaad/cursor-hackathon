@@ -1,0 +1,984 @@
+== Source Information ==
+
+These frames were extracted from [[File:upscaled-video_(2).mp4]] using [https://videotojpg.com videotojpg.com].
+
+=== Suggested {{Information}} template ===
+
+<nowiki>
+{{Information
+|description=Frame extracted from [[File:upscaled-video_(2).mp4]]
+|source={{Extracted from|upscaled-video_(2).mp4}}
+|date={{According to Exif data}}
+|author=
+|permission=
+|other versions=
+}}
+</nowiki>
+
+=== Extracted frames ===
+
+* [[File:img_00001.jpg]] - frame at 0s
+* [[File:img_00002.jpg]] - frame at 0s17ms
+* [[File:img_00003.jpg]] - frame at 0s33ms
+* [[File:img_00004.jpg]] - frame at 0s50ms
+* [[File:img_00005.jpg]] - frame at 0s67ms
+* [[File:img_00006.jpg]] - frame at 0s83ms
+* [[File:img_00007.jpg]] - frame at 0s100ms
+* [[File:img_00008.jpg]] - frame at 0s117ms
+* [[File:img_00009.jpg]] - frame at 0s133ms
+* [[File:img_00010.jpg]] - frame at 0s150ms
+* [[File:img_00011.jpg]] - frame at 0s167ms
+* [[File:img_00012.jpg]] - frame at 0s183ms
+* [[File:img_00013.jpg]] - frame at 0s200ms
+* [[File:img_00014.jpg]] - frame at 0s217ms
+* [[File:img_00015.jpg]] - frame at 0s233ms
+* [[File:img_00016.jpg]] - frame at 0s250ms
+* [[File:img_00017.jpg]] - frame at 0s267ms
+* [[File:img_00018.jpg]] - frame at 0s283ms
+* [[File:img_00019.jpg]] - frame at 0s300ms
+* [[File:img_00020.jpg]] - frame at 0s317ms
+* [[File:img_00021.jpg]] - frame at 0s333ms
+* [[File:img_00022.jpg]] - frame at 0s350ms
+* [[File:img_00023.jpg]] - frame at 0s367ms
+* [[File:img_00024.jpg]] - frame at 0s383ms
+* [[File:img_00025.jpg]] - frame at 0s400ms
+* [[File:img_00026.jpg]] - frame at 0s417ms
+* [[File:img_00027.jpg]] - frame at 0s433ms
+* [[File:img_00028.jpg]] - frame at 0s450ms
+* [[File:img_00029.jpg]] - frame at 0s467ms
+* [[File:img_00030.jpg]] - frame at 0s483ms
+* [[File:img_00031.jpg]] - frame at 0s500ms
+* [[File:img_00032.jpg]] - frame at 0s517ms
+* [[File:img_00033.jpg]] - frame at 0s533ms
+* [[File:img_00034.jpg]] - frame at 0s550ms
+* [[File:img_00035.jpg]] - frame at 0s567ms
+* [[File:img_00036.jpg]] - frame at 0s583ms
+* [[File:img_00037.jpg]] - frame at 0s600ms
+* [[File:img_00038.jpg]] - frame at 0s617ms
+* [[File:img_00039.jpg]] - frame at 0s633ms
+* [[File:img_00040.jpg]] - frame at 0s650ms
+* [[File:img_00041.jpg]] - frame at 0s667ms
+* [[File:img_00042.jpg]] - frame at 0s683ms
+* [[File:img_00043.jpg]] - frame at 0s700ms
+* [[File:img_00044.jpg]] - frame at 0s717ms
+* [[File:img_00045.jpg]] - frame at 0s733ms
+* [[File:img_00046.jpg]] - frame at 0s750ms
+* [[File:img_00047.jpg]] - frame at 0s767ms
+* [[File:img_00048.jpg]] - frame at 0s783ms
+* [[File:img_00049.jpg]] - frame at 0s800ms
+* [[File:img_00050.jpg]] - frame at 0s817ms
+* [[File:img_00051.jpg]] - frame at 0s833ms
+* [[File:img_00052.jpg]] - frame at 0s850ms
+* [[File:img_00053.jpg]] - frame at 0s867ms
+* [[File:img_00054.jpg]] - frame at 0s883ms
+* [[File:img_00055.jpg]] - frame at 0s900ms
+* [[File:img_00056.jpg]] - frame at 0s917ms
+* [[File:img_00057.jpg]] - frame at 0s933ms
+* [[File:img_00058.jpg]] - frame at 0s950ms
+* [[File:img_00059.jpg]] - frame at 0s967ms
+* [[File:img_00060.jpg]] - frame at 0s983ms
+* [[File:img_00061.jpg]] - frame at 1s
+* [[File:img_00062.jpg]] - frame at 1s17ms
+* [[File:img_00063.jpg]] - frame at 1s33ms
+* [[File:img_00064.jpg]] - frame at 1s50ms
+* [[File:img_00065.jpg]] - frame at 1s67ms
+* [[File:img_00066.jpg]] - frame at 1s83ms
+* [[File:img_00067.jpg]] - frame at 1s100ms
+* [[File:img_00068.jpg]] - frame at 1s117ms
+* [[File:img_00069.jpg]] - frame at 1s133ms
+* [[File:img_00070.jpg]] - frame at 1s150ms
+* [[File:img_00071.jpg]] - frame at 1s167ms
+* [[File:img_00072.jpg]] - frame at 1s183ms
+* [[File:img_00073.jpg]] - frame at 1s200ms
+* [[File:img_00074.jpg]] - frame at 1s217ms
+* [[File:img_00075.jpg]] - frame at 1s233ms
+* [[File:img_00076.jpg]] - frame at 1s250ms
+* [[File:img_00077.jpg]] - frame at 1s267ms
+* [[File:img_00078.jpg]] - frame at 1s283ms
+* [[File:img_00079.jpg]] - frame at 1s300ms
+* [[File:img_00080.jpg]] - frame at 1s317ms
+* [[File:img_00081.jpg]] - frame at 1s333ms
+* [[File:img_00082.jpg]] - frame at 1s350ms
+* [[File:img_00083.jpg]] - frame at 1s367ms
+* [[File:img_00084.jpg]] - frame at 1s383ms
+* [[File:img_00085.jpg]] - frame at 1s400ms
+* [[File:img_00086.jpg]] - frame at 1s417ms
+* [[File:img_00087.jpg]] - frame at 1s433ms
+* [[File:img_00088.jpg]] - frame at 1s450ms
+* [[File:img_00089.jpg]] - frame at 1s467ms
+* [[File:img_00090.jpg]] - frame at 1s483ms
+* [[File:img_00091.jpg]] - frame at 1s500ms
+* [[File:img_00092.jpg]] - frame at 1s517ms
+* [[File:img_00093.jpg]] - frame at 1s533ms
+* [[File:img_00094.jpg]] - frame at 1s550ms
+* [[File:img_00095.jpg]] - frame at 1s567ms
+* [[File:img_00096.jpg]] - frame at 1s583ms
+* [[File:img_00097.jpg]] - frame at 1s600ms
+* [[File:img_00098.jpg]] - frame at 1s617ms
+* [[File:img_00099.jpg]] - frame at 1s633ms
+* [[File:img_00100.jpg]] - frame at 1s650ms
+* [[File:img_00101.jpg]] - frame at 1s667ms
+* [[File:img_00102.jpg]] - frame at 1s683ms
+* [[File:img_00103.jpg]] - frame at 1s700ms
+* [[File:img_00104.jpg]] - frame at 1s717ms
+* [[File:img_00105.jpg]] - frame at 1s733ms
+* [[File:img_00106.jpg]] - frame at 1s750ms
+* [[File:img_00107.jpg]] - frame at 1s767ms
+* [[File:img_00108.jpg]] - frame at 1s783ms
+* [[File:img_00109.jpg]] - frame at 1s800ms
+* [[File:img_00110.jpg]] - frame at 1s817ms
+* [[File:img_00111.jpg]] - frame at 1s833ms
+* [[File:img_00112.jpg]] - frame at 1s850ms
+* [[File:img_00113.jpg]] - frame at 1s867ms
+* [[File:img_00114.jpg]] - frame at 1s883ms
+* [[File:img_00115.jpg]] - frame at 1s900ms
+* [[File:img_00116.jpg]] - frame at 1s917ms
+* [[File:img_00117.jpg]] - frame at 1s933ms
+* [[File:img_00118.jpg]] - frame at 1s950ms
+* [[File:img_00119.jpg]] - frame at 1s967ms
+* [[File:img_00120.jpg]] - frame at 1s983ms
+* [[File:img_00121.jpg]] - frame at 2s
+* [[File:img_00122.jpg]] - frame at 2s17ms
+* [[File:img_00123.jpg]] - frame at 2s33ms
+* [[File:img_00124.jpg]] - frame at 2s50ms
+* [[File:img_00125.jpg]] - frame at 2s67ms
+* [[File:img_00126.jpg]] - frame at 2s83ms
+* [[File:img_00127.jpg]] - frame at 2s100ms
+* [[File:img_00128.jpg]] - frame at 2s117ms
+* [[File:img_00129.jpg]] - frame at 2s133ms
+* [[File:img_00130.jpg]] - frame at 2s150ms
+* [[File:img_00131.jpg]] - frame at 2s167ms
+* [[File:img_00132.jpg]] - frame at 2s183ms
+* [[File:img_00133.jpg]] - frame at 2s200ms
+* [[File:img_00134.jpg]] - frame at 2s217ms
+* [[File:img_00135.jpg]] - frame at 2s233ms
+* [[File:img_00136.jpg]] - frame at 2s250ms
+* [[File:img_00137.jpg]] - frame at 2s267ms
+* [[File:img_00138.jpg]] - frame at 2s283ms
+* [[File:img_00139.jpg]] - frame at 2s300ms
+* [[File:img_00140.jpg]] - frame at 2s317ms
+* [[File:img_00141.jpg]] - frame at 2s333ms
+* [[File:img_00142.jpg]] - frame at 2s350ms
+* [[File:img_00143.jpg]] - frame at 2s367ms
+* [[File:img_00144.jpg]] - frame at 2s383ms
+* [[File:img_00145.jpg]] - frame at 2s400ms
+* [[File:img_00146.jpg]] - frame at 2s417ms
+* [[File:img_00147.jpg]] - frame at 2s433ms
+* [[File:img_00148.jpg]] - frame at 2s450ms
+* [[File:img_00149.jpg]] - frame at 2s467ms
+* [[File:img_00150.jpg]] - frame at 2s483ms
+* [[File:img_00151.jpg]] - frame at 2s500ms
+* [[File:img_00152.jpg]] - frame at 2s517ms
+* [[File:img_00153.jpg]] - frame at 2s533ms
+* [[File:img_00154.jpg]] - frame at 2s550ms
+* [[File:img_00155.jpg]] - frame at 2s567ms
+* [[File:img_00156.jpg]] - frame at 2s583ms
+* [[File:img_00157.jpg]] - frame at 2s600ms
+* [[File:img_00158.jpg]] - frame at 2s617ms
+* [[File:img_00159.jpg]] - frame at 2s633ms
+* [[File:img_00160.jpg]] - frame at 2s650ms
+* [[File:img_00161.jpg]] - frame at 2s667ms
+* [[File:img_00162.jpg]] - frame at 2s683ms
+* [[File:img_00163.jpg]] - frame at 2s700ms
+* [[File:img_00164.jpg]] - frame at 2s717ms
+* [[File:img_00165.jpg]] - frame at 2s733ms
+* [[File:img_00166.jpg]] - frame at 2s750ms
+* [[File:img_00167.jpg]] - frame at 2s767ms
+* [[File:img_00168.jpg]] - frame at 2s783ms
+* [[File:img_00169.jpg]] - frame at 2s800ms
+* [[File:img_00170.jpg]] - frame at 2s817ms
+* [[File:img_00171.jpg]] - frame at 2s833ms
+* [[File:img_00172.jpg]] - frame at 2s850ms
+* [[File:img_00173.jpg]] - frame at 2s867ms
+* [[File:img_00174.jpg]] - frame at 2s883ms
+* [[File:img_00175.jpg]] - frame at 2s900ms
+* [[File:img_00176.jpg]] - frame at 2s917ms
+* [[File:img_00177.jpg]] - frame at 2s933ms
+* [[File:img_00178.jpg]] - frame at 2s950ms
+* [[File:img_00179.jpg]] - frame at 2s967ms
+* [[File:img_00180.jpg]] - frame at 2s983ms
+* [[File:img_00181.jpg]] - frame at 3s
+* [[File:img_00182.jpg]] - frame at 3s17ms
+* [[File:img_00183.jpg]] - frame at 3s33ms
+* [[File:img_00184.jpg]] - frame at 3s50ms
+* [[File:img_00185.jpg]] - frame at 3s67ms
+* [[File:img_00186.jpg]] - frame at 3s83ms
+* [[File:img_00187.jpg]] - frame at 3s100ms
+* [[File:img_00188.jpg]] - frame at 3s117ms
+* [[File:img_00189.jpg]] - frame at 3s133ms
+* [[File:img_00190.jpg]] - frame at 3s150ms
+* [[File:img_00191.jpg]] - frame at 3s167ms
+* [[File:img_00192.jpg]] - frame at 3s183ms
+* [[File:img_00193.jpg]] - frame at 3s200ms
+* [[File:img_00194.jpg]] - frame at 3s217ms
+* [[File:img_00195.jpg]] - frame at 3s233ms
+* [[File:img_00196.jpg]] - frame at 3s250ms
+* [[File:img_00197.jpg]] - frame at 3s267ms
+* [[File:img_00198.jpg]] - frame at 3s283ms
+* [[File:img_00199.jpg]] - frame at 3s300ms
+* [[File:img_00200.jpg]] - frame at 3s317ms
+* [[File:img_00201.jpg]] - frame at 3s333ms
+* [[File:img_00202.jpg]] - frame at 3s350ms
+* [[File:img_00203.jpg]] - frame at 3s367ms
+* [[File:img_00204.jpg]] - frame at 3s383ms
+* [[File:img_00205.jpg]] - frame at 3s400ms
+* [[File:img_00206.jpg]] - frame at 3s417ms
+* [[File:img_00207.jpg]] - frame at 3s433ms
+* [[File:img_00208.jpg]] - frame at 3s450ms
+* [[File:img_00209.jpg]] - frame at 3s467ms
+* [[File:img_00210.jpg]] - frame at 3s483ms
+* [[File:img_00211.jpg]] - frame at 3s500ms
+* [[File:img_00212.jpg]] - frame at 3s517ms
+* [[File:img_00213.jpg]] - frame at 3s533ms
+* [[File:img_00214.jpg]] - frame at 3s550ms
+* [[File:img_00215.jpg]] - frame at 3s567ms
+* [[File:img_00216.jpg]] - frame at 3s583ms
+* [[File:img_00217.jpg]] - frame at 3s600ms
+* [[File:img_00218.jpg]] - frame at 3s617ms
+* [[File:img_00219.jpg]] - frame at 3s633ms
+* [[File:img_00220.jpg]] - frame at 3s650ms
+* [[File:img_00221.jpg]] - frame at 3s667ms
+* [[File:img_00222.jpg]] - frame at 3s683ms
+* [[File:img_00223.jpg]] - frame at 3s700ms
+* [[File:img_00224.jpg]] - frame at 3s717ms
+* [[File:img_00225.jpg]] - frame at 3s733ms
+* [[File:img_00226.jpg]] - frame at 3s750ms
+* [[File:img_00227.jpg]] - frame at 3s767ms
+* [[File:img_00228.jpg]] - frame at 3s783ms
+* [[File:img_00229.jpg]] - frame at 3s800ms
+* [[File:img_00230.jpg]] - frame at 3s817ms
+* [[File:img_00231.jpg]] - frame at 3s833ms
+* [[File:img_00232.jpg]] - frame at 3s850ms
+* [[File:img_00233.jpg]] - frame at 3s867ms
+* [[File:img_00234.jpg]] - frame at 3s883ms
+* [[File:img_00235.jpg]] - frame at 3s900ms
+* [[File:img_00236.jpg]] - frame at 3s917ms
+* [[File:img_00237.jpg]] - frame at 3s933ms
+* [[File:img_00238.jpg]] - frame at 3s950ms
+* [[File:img_00239.jpg]] - frame at 3s967ms
+* [[File:img_00240.jpg]] - frame at 3s983ms
+* [[File:img_00241.jpg]] - frame at 4s
+* [[File:img_00242.jpg]] - frame at 4s17ms
+* [[File:img_00243.jpg]] - frame at 4s33ms
+* [[File:img_00244.jpg]] - frame at 4s50ms
+* [[File:img_00245.jpg]] - frame at 4s67ms
+* [[File:img_00246.jpg]] - frame at 4s83ms
+* [[File:img_00247.jpg]] - frame at 4s100ms
+* [[File:img_00248.jpg]] - frame at 4s117ms
+* [[File:img_00249.jpg]] - frame at 4s133ms
+* [[File:img_00250.jpg]] - frame at 4s150ms
+* [[File:img_00251.jpg]] - frame at 4s167ms
+* [[File:img_00252.jpg]] - frame at 4s183ms
+* [[File:img_00253.jpg]] - frame at 4s200ms
+* [[File:img_00254.jpg]] - frame at 4s217ms
+* [[File:img_00255.jpg]] - frame at 4s233ms
+* [[File:img_00256.jpg]] - frame at 4s250ms
+* [[File:img_00257.jpg]] - frame at 4s267ms
+* [[File:img_00258.jpg]] - frame at 4s283ms
+* [[File:img_00259.jpg]] - frame at 4s300ms
+* [[File:img_00260.jpg]] - frame at 4s317ms
+* [[File:img_00261.jpg]] - frame at 4s333ms
+* [[File:img_00262.jpg]] - frame at 4s350ms
+* [[File:img_00263.jpg]] - frame at 4s367ms
+* [[File:img_00264.jpg]] - frame at 4s383ms
+* [[File:img_00265.jpg]] - frame at 4s400ms
+* [[File:img_00266.jpg]] - frame at 4s417ms
+* [[File:img_00267.jpg]] - frame at 4s433ms
+* [[File:img_00268.jpg]] - frame at 4s450ms
+* [[File:img_00269.jpg]] - frame at 4s467ms
+* [[File:img_00270.jpg]] - frame at 4s483ms
+* [[File:img_00271.jpg]] - frame at 4s500ms
+* [[File:img_00272.jpg]] - frame at 4s517ms
+* [[File:img_00273.jpg]] - frame at 4s533ms
+* [[File:img_00274.jpg]] - frame at 4s550ms
+* [[File:img_00275.jpg]] - frame at 4s567ms
+* [[File:img_00276.jpg]] - frame at 4s583ms
+* [[File:img_00277.jpg]] - frame at 4s600ms
+* [[File:img_00278.jpg]] - frame at 4s617ms
+* [[File:img_00279.jpg]] - frame at 4s633ms
+* [[File:img_00280.jpg]] - frame at 4s650ms
+* [[File:img_00281.jpg]] - frame at 4s667ms
+* [[File:img_00282.jpg]] - frame at 4s683ms
+* [[File:img_00283.jpg]] - frame at 4s700ms
+* [[File:img_00284.jpg]] - frame at 4s717ms
+* [[File:img_00285.jpg]] - frame at 4s733ms
+* [[File:img_00286.jpg]] - frame at 4s750ms
+* [[File:img_00287.jpg]] - frame at 4s767ms
+* [[File:img_00288.jpg]] - frame at 4s783ms
+* [[File:img_00289.jpg]] - frame at 4s800ms
+* [[File:img_00290.jpg]] - frame at 4s817ms
+* [[File:img_00291.jpg]] - frame at 4s833ms
+* [[File:img_00292.jpg]] - frame at 4s850ms
+* [[File:img_00293.jpg]] - frame at 4s867ms
+* [[File:img_00294.jpg]] - frame at 4s883ms
+* [[File:img_00295.jpg]] - frame at 4s900ms
+* [[File:img_00296.jpg]] - frame at 4s917ms
+* [[File:img_00297.jpg]] - frame at 4s933ms
+* [[File:img_00298.jpg]] - frame at 4s950ms
+* [[File:img_00299.jpg]] - frame at 4s967ms
+* [[File:img_00300.jpg]] - frame at 4s983ms
+* [[File:img_00301.jpg]] - frame at 5s
+* [[File:img_00302.jpg]] - frame at 5s17ms
+* [[File:img_00303.jpg]] - frame at 5s33ms
+* [[File:img_00304.jpg]] - frame at 5s50ms
+* [[File:img_00305.jpg]] - frame at 5s67ms
+* [[File:img_00306.jpg]] - frame at 5s83ms
+* [[File:img_00307.jpg]] - frame at 5s100ms
+* [[File:img_00308.jpg]] - frame at 5s117ms
+* [[File:img_00309.jpg]] - frame at 5s133ms
+* [[File:img_00310.jpg]] - frame at 5s150ms
+* [[File:img_00311.jpg]] - frame at 5s167ms
+* [[File:img_00312.jpg]] - frame at 5s183ms
+* [[File:img_00313.jpg]] - frame at 5s200ms
+* [[File:img_00314.jpg]] - frame at 5s217ms
+* [[File:img_00315.jpg]] - frame at 5s233ms
+* [[File:img_00316.jpg]] - frame at 5s250ms
+* [[File:img_00317.jpg]] - frame at 5s267ms
+* [[File:img_00318.jpg]] - frame at 5s283ms
+* [[File:img_00319.jpg]] - frame at 5s300ms
+* [[File:img_00320.jpg]] - frame at 5s317ms
+* [[File:img_00321.jpg]] - frame at 5s333ms
+* [[File:img_00322.jpg]] - frame at 5s350ms
+* [[File:img_00323.jpg]] - frame at 5s367ms
+* [[File:img_00324.jpg]] - frame at 5s383ms
+* [[File:img_00325.jpg]] - frame at 5s400ms
+* [[File:img_00326.jpg]] - frame at 5s417ms
+* [[File:img_00327.jpg]] - frame at 5s433ms
+* [[File:img_00328.jpg]] - frame at 5s450ms
+* [[File:img_00329.jpg]] - frame at 5s467ms
+* [[File:img_00330.jpg]] - frame at 5s483ms
+* [[File:img_00331.jpg]] - frame at 5s500ms
+* [[File:img_00332.jpg]] - frame at 5s517ms
+* [[File:img_00333.jpg]] - frame at 5s533ms
+* [[File:img_00334.jpg]] - frame at 5s550ms
+* [[File:img_00335.jpg]] - frame at 5s567ms
+* [[File:img_00336.jpg]] - frame at 5s583ms
+* [[File:img_00337.jpg]] - frame at 5s600ms
+* [[File:img_00338.jpg]] - frame at 5s617ms
+* [[File:img_00339.jpg]] - frame at 5s633ms
+* [[File:img_00340.jpg]] - frame at 5s650ms
+* [[File:img_00341.jpg]] - frame at 5s667ms
+* [[File:img_00342.jpg]] - frame at 5s683ms
+* [[File:img_00343.jpg]] - frame at 5s700ms
+* [[File:img_00344.jpg]] - frame at 5s717ms
+* [[File:img_00345.jpg]] - frame at 5s733ms
+* [[File:img_00346.jpg]] - frame at 5s750ms
+* [[File:img_00347.jpg]] - frame at 5s767ms
+* [[File:img_00348.jpg]] - frame at 5s783ms
+* [[File:img_00349.jpg]] - frame at 5s800ms
+* [[File:img_00350.jpg]] - frame at 5s817ms
+* [[File:img_00351.jpg]] - frame at 5s833ms
+* [[File:img_00352.jpg]] - frame at 5s850ms
+* [[File:img_00353.jpg]] - frame at 5s867ms
+* [[File:img_00354.jpg]] - frame at 5s883ms
+* [[File:img_00355.jpg]] - frame at 5s900ms
+* [[File:img_00356.jpg]] - frame at 5s917ms
+* [[File:img_00357.jpg]] - frame at 5s933ms
+* [[File:img_00358.jpg]] - frame at 5s950ms
+* [[File:img_00359.jpg]] - frame at 5s967ms
+* [[File:img_00360.jpg]] - frame at 5s983ms
+* [[File:img_00361.jpg]] - frame at 6s
+* [[File:img_00362.jpg]] - frame at 6s17ms
+* [[File:img_00363.jpg]] - frame at 6s33ms
+* [[File:img_00364.jpg]] - frame at 6s50ms
+* [[File:img_00365.jpg]] - frame at 6s67ms
+* [[File:img_00366.jpg]] - frame at 6s83ms
+* [[File:img_00367.jpg]] - frame at 6s100ms
+* [[File:img_00368.jpg]] - frame at 6s117ms
+* [[File:img_00369.jpg]] - frame at 6s133ms
+* [[File:img_00370.jpg]] - frame at 6s150ms
+* [[File:img_00371.jpg]] - frame at 6s167ms
+* [[File:img_00372.jpg]] - frame at 6s183ms
+* [[File:img_00373.jpg]] - frame at 6s200ms
+* [[File:img_00374.jpg]] - frame at 6s217ms
+* [[File:img_00375.jpg]] - frame at 6s233ms
+* [[File:img_00376.jpg]] - frame at 6s250ms
+* [[File:img_00377.jpg]] - frame at 6s267ms
+* [[File:img_00378.jpg]] - frame at 6s283ms
+* [[File:img_00379.jpg]] - frame at 6s300ms
+* [[File:img_00380.jpg]] - frame at 6s317ms
+* [[File:img_00381.jpg]] - frame at 6s333ms
+* [[File:img_00382.jpg]] - frame at 6s350ms
+* [[File:img_00383.jpg]] - frame at 6s367ms
+* [[File:img_00384.jpg]] - frame at 6s383ms
+* [[File:img_00385.jpg]] - frame at 6s400ms
+* [[File:img_00386.jpg]] - frame at 6s417ms
+* [[File:img_00387.jpg]] - frame at 6s433ms
+* [[File:img_00388.jpg]] - frame at 6s450ms
+* [[File:img_00389.jpg]] - frame at 6s467ms
+* [[File:img_00390.jpg]] - frame at 6s483ms
+* [[File:img_00391.jpg]] - frame at 6s500ms
+* [[File:img_00392.jpg]] - frame at 6s517ms
+* [[File:img_00393.jpg]] - frame at 6s533ms
+* [[File:img_00394.jpg]] - frame at 6s550ms
+* [[File:img_00395.jpg]] - frame at 6s567ms
+* [[File:img_00396.jpg]] - frame at 6s583ms
+* [[File:img_00397.jpg]] - frame at 6s600ms
+* [[File:img_00398.jpg]] - frame at 6s617ms
+* [[File:img_00399.jpg]] - frame at 6s633ms
+* [[File:img_00400.jpg]] - frame at 6s650ms
+* [[File:img_00401.jpg]] - frame at 6s667ms
+* [[File:img_00402.jpg]] - frame at 6s683ms
+* [[File:img_00403.jpg]] - frame at 6s700ms
+* [[File:img_00404.jpg]] - frame at 6s717ms
+* [[File:img_00405.jpg]] - frame at 6s733ms
+* [[File:img_00406.jpg]] - frame at 6s750ms
+* [[File:img_00407.jpg]] - frame at 6s767ms
+* [[File:img_00408.jpg]] - frame at 6s783ms
+* [[File:img_00409.jpg]] - frame at 6s800ms
+* [[File:img_00410.jpg]] - frame at 6s817ms
+* [[File:img_00411.jpg]] - frame at 6s833ms
+* [[File:img_00412.jpg]] - frame at 6s850ms
+* [[File:img_00413.jpg]] - frame at 6s867ms
+* [[File:img_00414.jpg]] - frame at 6s883ms
+* [[File:img_00415.jpg]] - frame at 6s900ms
+* [[File:img_00416.jpg]] - frame at 6s917ms
+* [[File:img_00417.jpg]] - frame at 6s933ms
+* [[File:img_00418.jpg]] - frame at 6s950ms
+* [[File:img_00419.jpg]] - frame at 6s967ms
+* [[File:img_00420.jpg]] - frame at 6s983ms
+* [[File:img_00421.jpg]] - frame at 7s
+* [[File:img_00422.jpg]] - frame at 7s17ms
+* [[File:img_00423.jpg]] - frame at 7s33ms
+* [[File:img_00424.jpg]] - frame at 7s50ms
+* [[File:img_00425.jpg]] - frame at 7s67ms
+* [[File:img_00426.jpg]] - frame at 7s83ms
+* [[File:img_00427.jpg]] - frame at 7s100ms
+* [[File:img_00428.jpg]] - frame at 7s117ms
+* [[File:img_00429.jpg]] - frame at 7s133ms
+* [[File:img_00430.jpg]] - frame at 7s150ms
+* [[File:img_00431.jpg]] - frame at 7s167ms
+* [[File:img_00432.jpg]] - frame at 7s183ms
+* [[File:img_00433.jpg]] - frame at 7s200ms
+* [[File:img_00434.jpg]] - frame at 7s217ms
+* [[File:img_00435.jpg]] - frame at 7s233ms
+* [[File:img_00436.jpg]] - frame at 7s250ms
+* [[File:img_00437.jpg]] - frame at 7s267ms
+* [[File:img_00438.jpg]] - frame at 7s283ms
+* [[File:img_00439.jpg]] - frame at 7s300ms
+* [[File:img_00440.jpg]] - frame at 7s317ms
+* [[File:img_00441.jpg]] - frame at 7s333ms
+* [[File:img_00442.jpg]] - frame at 7s350ms
+* [[File:img_00443.jpg]] - frame at 7s367ms
+* [[File:img_00444.jpg]] - frame at 7s383ms
+* [[File:img_00445.jpg]] - frame at 7s400ms
+* [[File:img_00446.jpg]] - frame at 7s417ms
+* [[File:img_00447.jpg]] - frame at 7s433ms
+* [[File:img_00448.jpg]] - frame at 7s450ms
+* [[File:img_00449.jpg]] - frame at 7s467ms
+* [[File:img_00450.jpg]] - frame at 7s483ms
+* [[File:img_00451.jpg]] - frame at 7s500ms
+* [[File:img_00452.jpg]] - frame at 7s517ms
+* [[File:img_00453.jpg]] - frame at 7s533ms
+* [[File:img_00454.jpg]] - frame at 7s550ms
+* [[File:img_00455.jpg]] - frame at 7s567ms
+* [[File:img_00456.jpg]] - frame at 7s583ms
+* [[File:img_00457.jpg]] - frame at 7s600ms
+* [[File:img_00458.jpg]] - frame at 7s617ms
+* [[File:img_00459.jpg]] - frame at 7s633ms
+* [[File:img_00460.jpg]] - frame at 7s650ms
+* [[File:img_00461.jpg]] - frame at 7s667ms
+* [[File:img_00462.jpg]] - frame at 7s683ms
+* [[File:img_00463.jpg]] - frame at 7s700ms
+* [[File:img_00464.jpg]] - frame at 7s717ms
+* [[File:img_00465.jpg]] - frame at 7s733ms
+* [[File:img_00466.jpg]] - frame at 7s750ms
+* [[File:img_00467.jpg]] - frame at 7s767ms
+* [[File:img_00468.jpg]] - frame at 7s783ms
+* [[File:img_00469.jpg]] - frame at 7s800ms
+* [[File:img_00470.jpg]] - frame at 7s817ms
+* [[File:img_00471.jpg]] - frame at 7s833ms
+* [[File:img_00472.jpg]] - frame at 7s850ms
+* [[File:img_00473.jpg]] - frame at 7s867ms
+* [[File:img_00474.jpg]] - frame at 7s883ms
+* [[File:img_00475.jpg]] - frame at 7s900ms
+* [[File:img_00476.jpg]] - frame at 7s917ms
+* [[File:img_00477.jpg]] - frame at 7s933ms
+* [[File:img_00478.jpg]] - frame at 7s950ms
+* [[File:img_00479.jpg]] - frame at 7s967ms
+* [[File:img_00480.jpg]] - frame at 7s983ms
+* [[File:img_00481.jpg]] - frame at 8s
+
+=== Copy-paste source lines ===
+
+[[File:upscaled-video_(2).mp4|frame at 0s]]
+[[File:upscaled-video_(2).mp4|frame at 0s17ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s33ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s50ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s67ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s83ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s100ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s117ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s133ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s150ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s167ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s183ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s200ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s217ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s233ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s250ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s267ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s283ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s300ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s317ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s333ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s350ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s367ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s383ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s400ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s417ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s433ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s450ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s467ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s483ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s500ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s517ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s533ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s550ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s567ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s583ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s600ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s617ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s633ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s650ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s667ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s683ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s700ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s717ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s733ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s750ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s767ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s783ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s800ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s817ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s833ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s850ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s867ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s883ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s900ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s917ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s933ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s950ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s967ms]]
+[[File:upscaled-video_(2).mp4|frame at 0s983ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s]]
+[[File:upscaled-video_(2).mp4|frame at 1s17ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s33ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s50ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s67ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s83ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s100ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s117ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s133ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s150ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s167ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s183ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s200ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s217ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s233ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s250ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s267ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s283ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s300ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s317ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s333ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s350ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s367ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s383ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s400ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s417ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s433ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s450ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s467ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s483ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s500ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s517ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s533ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s550ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s567ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s583ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s600ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s617ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s633ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s650ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s667ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s683ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s700ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s717ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s733ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s750ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s767ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s783ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s800ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s817ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s833ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s850ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s867ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s883ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s900ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s917ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s933ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s950ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s967ms]]
+[[File:upscaled-video_(2).mp4|frame at 1s983ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s]]
+[[File:upscaled-video_(2).mp4|frame at 2s17ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s33ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s50ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s67ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s83ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s100ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s117ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s133ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s150ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s167ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s183ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s200ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s217ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s233ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s250ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s267ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s283ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s300ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s317ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s333ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s350ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s367ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s383ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s400ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s417ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s433ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s450ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s467ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s483ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s500ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s517ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s533ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s550ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s567ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s583ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s600ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s617ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s633ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s650ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s667ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s683ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s700ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s717ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s733ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s750ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s767ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s783ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s800ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s817ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s833ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s850ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s867ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s883ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s900ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s917ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s933ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s950ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s967ms]]
+[[File:upscaled-video_(2).mp4|frame at 2s983ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s]]
+[[File:upscaled-video_(2).mp4|frame at 3s17ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s33ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s50ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s67ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s83ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s100ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s117ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s133ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s150ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s167ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s183ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s200ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s217ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s233ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s250ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s267ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s283ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s300ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s317ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s333ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s350ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s367ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s383ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s400ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s417ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s433ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s450ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s467ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s483ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s500ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s517ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s533ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s550ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s567ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s583ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s600ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s617ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s633ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s650ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s667ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s683ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s700ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s717ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s733ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s750ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s767ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s783ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s800ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s817ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s833ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s850ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s867ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s883ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s900ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s917ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s933ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s950ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s967ms]]
+[[File:upscaled-video_(2).mp4|frame at 3s983ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s]]
+[[File:upscaled-video_(2).mp4|frame at 4s17ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s33ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s50ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s67ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s83ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s100ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s117ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s133ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s150ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s167ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s183ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s200ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s217ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s233ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s250ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s267ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s283ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s300ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s317ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s333ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s350ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s367ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s383ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s400ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s417ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s433ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s450ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s467ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s483ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s500ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s517ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s533ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s550ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s567ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s583ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s600ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s617ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s633ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s650ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s667ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s683ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s700ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s717ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s733ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s750ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s767ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s783ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s800ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s817ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s833ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s850ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s867ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s883ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s900ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s917ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s933ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s950ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s967ms]]
+[[File:upscaled-video_(2).mp4|frame at 4s983ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s]]
+[[File:upscaled-video_(2).mp4|frame at 5s17ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s33ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s50ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s67ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s83ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s100ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s117ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s133ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s150ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s167ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s183ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s200ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s217ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s233ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s250ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s267ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s283ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s300ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s317ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s333ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s350ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s367ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s383ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s400ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s417ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s433ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s450ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s467ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s483ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s500ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s517ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s533ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s550ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s567ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s583ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s600ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s617ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s633ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s650ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s667ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s683ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s700ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s717ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s733ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s750ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s767ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s783ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s800ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s817ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s833ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s850ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s867ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s883ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s900ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s917ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s933ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s950ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s967ms]]
+[[File:upscaled-video_(2).mp4|frame at 5s983ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s]]
+[[File:upscaled-video_(2).mp4|frame at 6s17ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s33ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s50ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s67ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s83ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s100ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s117ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s133ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s150ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s167ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s183ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s200ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s217ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s233ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s250ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s267ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s283ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s300ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s317ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s333ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s350ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s367ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s383ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s400ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s417ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s433ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s450ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s467ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s483ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s500ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s517ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s533ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s550ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s567ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s583ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s600ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s617ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s633ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s650ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s667ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s683ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s700ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s717ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s733ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s750ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s767ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s783ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s800ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s817ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s833ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s850ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s867ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s883ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s900ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s917ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s933ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s950ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s967ms]]
+[[File:upscaled-video_(2).mp4|frame at 6s983ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s]]
+[[File:upscaled-video_(2).mp4|frame at 7s17ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s33ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s50ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s67ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s83ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s100ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s117ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s133ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s150ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s167ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s183ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s200ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s217ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s233ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s250ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s267ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s283ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s300ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s317ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s333ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s350ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s367ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s383ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s400ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s417ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s433ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s450ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s467ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s483ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s500ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s517ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s533ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s550ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s567ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s583ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s600ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s617ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s633ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s650ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s667ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s683ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s700ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s717ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s733ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s750ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s767ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s783ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s800ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s817ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s833ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s850ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s867ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s883ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s900ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s917ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s933ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s950ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s967ms]]
+[[File:upscaled-video_(2).mp4|frame at 7s983ms]]
+[[File:upscaled-video_(2).mp4|frame at 8s]]

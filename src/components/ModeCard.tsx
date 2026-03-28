@@ -12,26 +12,52 @@ export function ModeCard({ href, emoji, title, subtitle, powered }: Props) {
   return (
     <Link
       href={href}
-      className="raasta-mode-card raasta-card group relative flex flex-col items-center gap-2 overflow-hidden p-4 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--chinar-amber)] sm:p-5"
+      className="raasta-mode-card raasta-card group relative flex flex-col items-center gap-3 p-5 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--amber-mid)] sm:p-6"
     >
+      {/* Gradient side accent — hidden until hover */}
+      <span className="mode-accent" aria-hidden />
+
+      {/* Icon container with glow */}
       <span
-        className="pointer-events-none absolute inset-y-3 left-0 w-[3px] rounded-full bg-gradient-to-b from-[var(--chinar-amber)] to-[var(--chinar-gold)] opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-        aria-hidden
-      />
-      <span
-        className="relative flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--chinar-mist)] text-2xl ring-1 ring-[var(--raasta-border)] transition group-hover:bg-[var(--chinar-glow)] group-hover:ring-[rgba(196,131,58,0.28)] sm:h-14 sm:w-14 sm:rounded-2xl"
+        className="relative flex h-14 w-14 items-center justify-center rounded-2xl text-2xl transition-all duration-300 group-hover:scale-110 sm:h-16 sm:w-16 sm:text-3xl"
+        style={{
+          background: 'linear-gradient(145deg, var(--paper-dim), var(--surface-hi))',
+          boxShadow: 'var(--shadow-ambient)',
+        }}
         aria-hidden
       >
         {emoji}
+        {/* Glow ring on hover */}
+        <span
+          className="absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          style={{
+            boxShadow: '0 0 20px rgba(196, 131, 58, 0.12), 0 0 40px rgba(30, 92, 74, 0.06)',
+          }}
+          aria-hidden
+        />
       </span>
-      <span className="relative font-display text-base font-semibold text-[var(--chinar-deep)] sm:text-lg">
+
+      {/* Title */}
+      <span className="relative font-display text-base font-semibold text-[var(--ink)] sm:text-lg">
         {title}
       </span>
-      <span className="relative text-[11px] leading-snug text-[var(--raasta-muted)] sm:text-xs">
+
+      {/* Subtitle */}
+      <span className="relative text-[11px] leading-relaxed text-[var(--muted)] sm:text-xs">
         {subtitle}
       </span>
+
+      {/* Powered badge */}
       {powered ? (
-        <span className="relative mt-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-[var(--chinar-gold)] sm:text-[10px]">
+        <span
+          className="relative mt-0.5 text-[9px] font-bold uppercase tracking-[0.16em] sm:text-[10px]"
+          style={{
+            background: 'linear-gradient(90deg, var(--amber-deep), var(--amber-mid))',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+          }}
+        >
           {powered}
         </span>
       ) : null}

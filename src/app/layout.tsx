@@ -1,43 +1,39 @@
 import type { Metadata } from 'next'
 import {
-  Fraunces,
-  Noto_Naskh_Arabic,
-  Noto_Sans_Devanagari,
-  Source_Sans_3,
+  Manrope,
+  Noto_Serif,
 } from 'next/font/google'
 import type { ReactNode } from 'react'
 import { AppProviders } from '@/components/AppProviders'
 import { SiteHeader } from '@/components/SiteHeader'
+import { SiteFooter } from '@/components/SiteFooter'
 import './globals.css'
 
-const fraunces = Fraunces({
+const notoSerif = Noto_Serif({
   subsets: ['latin'],
-  variable: '--font-fraunces',
+  variable: '--font-noto-serif',
   display: 'swap',
+  weight: ['400', '700'],
+  style: ['normal', 'italic'],
 })
 
-const sourceSans = Source_Sans_3({
+const manrope = Manrope({
   subsets: ['latin'],
-  variable: '--font-source-sans',
+  variable: '--font-manrope',
   display: 'swap',
-})
-
-const notoDevanagari = Noto_Sans_Devanagari({
-  subsets: ['devanagari', 'latin'],
-  variable: '--font-noto-devanagari',
-  display: 'swap',
-})
-
-const notoArabic = Noto_Naskh_Arabic({
-  subsets: ['arabic', 'latin'],
-  variable: '--font-noto-arabic',
-  display: 'swap',
+  weight: ['300', '400', '500', '600', '700', '800'],
 })
 
 export const metadata: Metadata = {
   title: 'RAASTA — AI Companion for Life & Livelihood',
   description:
-    'Samjho documents, Zameen crops, Taleem for youth, Raah voice — English, Hindi, and Kashmiri. Built for Kashmir and rural India.',
+    'Your AI companion that speaks your language. Understand documents (Samjho), get crop advice (Zameen), build your future (Taleem), or just talk (Raah) — in English, Hindi & Kashmiri. Voice-first, no login required.',
+  keywords: ['AI assistant', 'Kashmir', 'rural India', 'voice AI', 'document understanding', 'crop advice', 'career guidance'],
+  openGraph: {
+    title: 'RAASTA — AI Companion for Life & Livelihood',
+    description: 'Voice-first AI for rural India. Documents, agriculture, education & career — in your language.',
+    type: 'website',
+  },
 }
 
 export default function RootLayout({
@@ -48,16 +44,20 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${sourceSans.variable} ${notoDevanagari.variable} ${notoArabic.variable}`}
+      className={`${notoSerif.variable} ${manrope.variable}`}
+      suppressHydrationWarning
     >
-      <body className="antialiased">
+      <head>
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+        <meta name="theme-color" content="#143d32" />
+        <meta name="color-scheme" content="light dark" />
+      </head>
+      <body className="bg-surface font-body text-on-surface selection:bg-secondary-fixed selection:text-on-secondary-fixed overflow-x-hidden min-h-screen flex flex-col antialiased">
         <AppProviders>
-          <div className="raasta-shell min-h-svh">
-            <SiteHeader />
-            <main className="raasta-main min-h-[calc(100svh-var(--header-h))]">
-              {children}
-            </main>
-          </div>
+          <SiteHeader />
+          <div className="bg-[#eae8e3] dark:bg-[#1b1c19] h-[1px] w-full fixed top-[64px] z-50"></div>
+          {children}
+          <SiteFooter />
         </AppProviders>
       </body>
     </html>

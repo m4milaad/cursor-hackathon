@@ -15,20 +15,41 @@ export function VoiceOutput({ text, label }: Props) {
   if (!text) return null
 
   return (
-    <div className="raasta-voice-out mt-6 text-left">
-      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--raasta-muted)]">
+    <div className="raasta-voice-out mt-8 text-left">
+      {/* Label */}
+      <p
+        className="mb-3 text-xs font-bold uppercase tracking-[0.16em]"
+        style={{
+          background: 'linear-gradient(90deg, var(--amber-deep), var(--amber-mid))',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+        }}
+      >
         {heading}
       </p>
-      <p className="text-[1.05rem] leading-relaxed text-[var(--raasta-ink)]">
+
+      {/* Response text */}
+      <p
+        className="text-[1.05rem] leading-[1.7] text-[var(--ink)]"
+        style={{ animation: 'typeReveal 0.6s ease-out' }}
+      >
         {text}
       </p>
-      <div className="mt-4 flex flex-wrap gap-2">
+
+      {/* Audio controls */}
+      <div className="mt-5 flex flex-wrap gap-3">
         <button
           type="button"
-          className="raasta-btn-secondary text-sm"
+          className="raasta-btn-secondary inline-flex items-center gap-2 text-sm"
           onClick={() => void speakForLocale(text, locale)}
         >
-          ▶ {t('voice.listen')}
+          <span
+            className="inline-block h-2 w-2 rounded-full bg-[var(--chinar-mid)]"
+            style={{ animation: 'breathe 1.5s ease-in-out infinite' }}
+            aria-hidden
+          />
+          {t('voice.listen')}
         </button>
         <button
           type="button"
