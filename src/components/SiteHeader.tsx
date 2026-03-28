@@ -72,45 +72,56 @@ export function SiteHeader() {
         </button>
 
         {panelOpen ? (
-          <div className="absolute right-0 top-[56px] w-[360px] md:w-[440px] bg-[#fbf9f4] border border-[var(--color-outline-variant)] shadow-[0_20px_60px_rgba(0,0,0,0.18)]">
+          <div className="absolute right-0 top-[56px] w-[360px] md:w-[420px] bg-[#fbf9f4] border border-[var(--color-outline-variant)] shadow-[0_20px_60px_rgba(0,0,0,0.18)] max-h-[80vh] overflow-y-auto [mask-image:linear-gradient(to_bottom,transparent,black_8%,black_92%,transparent)] [scrollbar-width:thin]">
             <div className="p-5 border-b border-[var(--color-outline-variant)]">
               <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[#885207] mb-2">
                 Your Next Step
               </p>
-              <p className="text-sm text-[#414845]">
+              <p className="text-sm text-[#00271d] font-semibold">
                 Complete your CV to unlock job applications.
               </p>
             </div>
 
             <div className="p-5 border-b border-[var(--color-outline-variant)]">
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-[#00271d] text-[#fbf9f4] flex items-center justify-center text-xs uppercase tracking-[0.2em]">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-[#00271d] text-[#fbf9f4] flex items-center justify-center text-[10px] uppercase tracking-[0.2em]">
                   RA
                 </div>
                 <div>
-                  <p className="font-headline text-lg text-[#00271d]">Ayesha Khan</p>
-                  <p className="text-xs text-[#414845]">Srinagar, Kashmir</p>
-                  <p className="text-xs text-[#885207] mt-1">Goal: Preparing for Govt Exams</p>
+                  <p className="font-headline text-base text-[#00271d]">Ayesha Khan</p>
+                  <p className="text-xs text-[#885207]">Preparing for Govt Exams</p>
                 </div>
               </div>
-              <p className="mt-3 text-xs text-[#414845] italic">
-                You are on a path to becoming a designer.
-              </p>
             </div>
 
             <div className="p-5 border-b border-[var(--color-outline-variant)]">
               <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[#885207] mb-3">Quick Actions</p>
-              <div className="grid grid-cols-2 gap-3">
-                <Link href="/raah" className="raasta-btn-secondary text-xs text-center">Talk to Raah</Link>
-                <Link href="/taleem/naukri" className="raasta-btn-secondary text-xs text-center">View Jobs</Link>
-                <Link href="/taleem/cv" className="raasta-btn-secondary text-xs text-center">Open CV</Link>
-                <Link href="/taleem/exam" className="raasta-btn-secondary text-xs text-center">Continue Study</Link>
+              <div className="grid grid-cols-2 gap-2">
+                <Link href="/raah" className="raasta-btn-secondary text-[10px] text-center flex items-center justify-center gap-1">
+                  <span className="material-symbols-outlined text-sm">mic</span>
+                  Talk
+                </Link>
+                <Link href="/taleem/naukri" className="raasta-btn-secondary text-[10px] text-center flex items-center justify-center gap-1">
+                  <span className="material-symbols-outlined text-sm">work</span>
+                  Jobs
+                </Link>
+                <Link href="/taleem/cv" className="raasta-btn-secondary text-[10px] text-center flex items-center justify-center gap-1">
+                  <span className="material-symbols-outlined text-sm">description</span>
+                  CV
+                </Link>
+                <Link href="/taleem/exam" className="raasta-btn-secondary text-[10px] text-center flex items-center justify-center gap-1">
+                  <span className="material-symbols-outlined text-sm">school</span>
+                  Study
+                </Link>
               </div>
             </div>
 
-            <div className="p-5 border-b border-[var(--color-outline-variant)]">
-              <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[#885207] mb-3">Your Journey</p>
-              <div className="space-y-3 text-xs text-[#414845]">
+            <details className="border-b border-[var(--color-outline-variant)]">
+              <summary className="cursor-pointer list-none px-5 py-4 flex items-center justify-between text-[#00271d]">
+                <span className="font-label text-[10px] uppercase tracking-[0.2em] text-[#885207]">Your Journey</span>
+                <span className="material-symbols-outlined text-sm">expand_more</span>
+              </summary>
+              <div className="px-5 pb-5 text-xs text-[#414845] space-y-2">
                 <div className="flex items-center justify-between">
                   <span>Taleem: Skills learned</span>
                   <span>3</span>
@@ -123,41 +134,22 @@ export function SiteHeader() {
                   <span>Jobs: Applications</span>
                   <span>1</span>
                 </div>
-                <div className="mt-3 text-[10px] uppercase tracking-widest text-[#885207]">
-                  You are here: Skill Learning to Portfolio to Job Ready
-                </div>
               </div>
-            </div>
+            </details>
 
-            <div className="p-5 border-b border-[var(--color-outline-variant)]">
-              <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[#885207] mb-3">Personal Insights</p>
-              <ul className="text-xs text-[#414845] space-y-2">
-                <li>You are improving consistency.</li>
-                <li>You explore careers often. Try focusing on one.</li>
-                <li>High potential in design and business.</li>
-              </ul>
-            </div>
-
-            <div className="p-5 border-b border-[var(--color-outline-variant)]">
-              <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[#885207] mb-3">My Content</p>
-              <div className="grid grid-cols-2 gap-3 text-xs">
-                <span className="text-[#414845]">CV / Voice CV</span>
-                <span className="text-[#414845]">Journal</span>
-                <span className="text-[#414845]">Ideas</span>
-                <span className="text-[#414845]">Goals</span>
+            <details className="border-b border-[var(--color-outline-variant)]">
+              <summary className="cursor-pointer list-none px-5 py-4 flex items-center justify-between text-[#00271d]">
+                <span className="font-label text-[10px] uppercase tracking-[0.2em] text-[#885207]">Personal Insights</span>
+                <span className="material-symbols-outlined text-sm">expand_more</span>
+              </summary>
+              <div className="px-5 pb-5 text-xs text-[#414845] space-y-2">
+                <div>You are improving consistency.</div>
+                <div>You explore careers often. Try focusing on one.</div>
+                <div>High potential in design and business.</div>
               </div>
-            </div>
+            </details>
 
             <div className="p-5 border-b border-[var(--color-outline-variant)]">
-              <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[#885207] mb-3">Notifications</p>
-              <ul className="text-xs text-[#414845] space-y-2">
-                <li>Job alert: 2 new matches near Srinagar.</li>
-                <li>Scholarship deadline in 4 days.</li>
-                <li>Study reminder at 7:00 PM.</li>
-              </ul>
-            </div>
-
-            <div className="p-5">
               <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[#885207] mb-3">Settings</p>
               <div className="grid grid-cols-2 gap-3 text-xs text-[#414845]">
                 <span>Language</span>
