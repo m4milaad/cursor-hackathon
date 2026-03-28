@@ -13,6 +13,8 @@ const CONFIG = {
   easing: 'easeInOutQuad' as const,
 }
 
+const FIRST_FRAME_SRC = `/${CONFIG.frameFolder}/${CONFIG.filePrefix}${'1'.padStart(CONFIG.padDigits, '0')}${CONFIG.extension}`
+
 function frameUrl(index1Based: number) {
   const name = `${CONFIG.filePrefix}${String(index1Based).padStart(CONFIG.padDigits, '0')}${CONFIG.extension}`
   return `/${CONFIG.frameFolder}/${name}`
@@ -51,14 +53,9 @@ export function HeroScrollAnimation({ scrollContainerRef }: { scrollContainerRef
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const imagesRef = useRef<HTMLImageElement[]>(new Array(CONFIG.totalFrames).fill(null))
   const requestRef = useRef<number>(0)
-  const [loading, setLoading] = useState(true)
+  const [canvasReady, setCanvasReady] = useState(false)
 
   useEffect(() => {
-    // Safety fallback: Never trap the user for more than 4 seconds
-    const fallbackTimer = setTimeout(() => {
-      setLoading(false)
-    }, 4000)
-
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d', { alpha: false })
@@ -88,14 +85,13 @@ export function HeroScrollAnimation({ scrollContainerRef }: { scrollContainerRef
           imagesRef.current[i] = img
           resolve(img)
         }
-        // Fault tolerant: resolve null instead of rejecting
         img.onerror = () => resolve(null)
         img.src = frameUrl(i + 1)
       })
     }
 
     const preloadAllFrames = async () => {
-      const batch = 8
+      const batch = 12
       const total = CONFIG.totalFrames
       for (let i = 0; i < total; i += batch) {
         const slice = []
@@ -103,8 +99,13 @@ export function HeroScrollAnimation({ scrollContainerRef }: { scrollContainerRef
           slice.push(loadImageForIndex(j))
         }
         await Promise.all(slice)
+        // After the first batch lands, the canvas can take over from the static <img>
+        if (i === 0) {
+          needsDraw = true
+          drawFrame()
+          setCanvasReady(true)
+        }
       }
-      setLoading(false)
       needsDraw = true
     }
 
@@ -112,17 +113,11 @@ export function HeroScrollAnimation({ scrollContainerRef }: { scrollContainerRef
       if (!scrollContainerRef.current) return 0
       const container = scrollContainerRef.current
       const rect = container.getBoundingClientRect()
-      
-      // Calculate how far the container has scrolled top-to-bottom
-      // When rect.top = 0, scroll is 0.
-      // When rect.bottom = window.innerHeight, scroll is 1 (done scrolling past hero)
       const scrollDistance = Math.max(0, -rect.top)
       const maxScroll = Math.max(1, rect.height - window.innerHeight)
       const raw = Math.min(1, Math.max(0, scrollDistance / maxScroll))
-      
       const eased = applyEasing(raw, CONFIG.easing)
-      const last = CONFIG.totalFrames - 1
-      return eased * last
+      return eased * (CONFIG.totalFrames - 1)
     }
 
     let lastDrawnKey = -1
@@ -143,10 +138,13 @@ export function HeroScrollAnimation({ scrollContainerRef }: { scrollContainerRef
         return
       }
 
+      if (!img0 || !img0.naturalWidth) {
+        // Fall through — static <img> is visible underneath
+        return
+      }
+
       ctx.fillStyle = '#0a0a0a'
       ctx.fillRect(0, 0, cw, ch)
-
-      if (!img0 || !img0.naturalWidth) return
 
       lastDrawnKey = key
       needsDraw = false
@@ -165,51 +163,49 @@ export function HeroScrollAnimation({ scrollContainerRef }: { scrollContainerRef
     }
 
     const onScroll = () => { needsDraw = true }
-    
+
     const tick = () => {
       if (needsDraw) drawFrame()
       requestRef.current = requestAnimationFrame(tick)
     }
 
-    window.addEventListener('resize', () => {
+    const onResize = () => {
       resizeCanvas()
       needsDraw = true
-    })
-    
+    }
+
+    window.addEventListener('resize', onResize)
     window.addEventListener('scroll', onScroll, { passive: true })
 
-    // Init
     resizeCanvas()
     requestRef.current = requestAnimationFrame(tick)
     preloadAllFrames().catch(console.error)
 
     return () => {
-      clearTimeout(fallbackTimer)
       window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', resizeCanvas)
+      window.removeEventListener('resize', onResize)
       cancelAnimationFrame(requestRef.current)
     }
   }, [scrollContainerRef])
 
   return (
     <>
-      {/* Black ambient background */}
+      {/* Static first frame — visible instantly before any JS runs, acts as poster */}
+      <img
+        src={FIRST_FRAME_SRC}
+        alt=""
+        aria-hidden="true"
+        fetchPriority="high"
+        className={`absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-500 ${canvasReady ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+      />
+      {/* Canvas paints over the static image once frames are loaded */}
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 w-full h-full object-cover z-0 block "
+        className={`absolute inset-0 w-full h-full object-cover z-[1] block transition-opacity duration-500 ${canvasReady ? 'opacity-100' : 'opacity-0'}`}
         aria-hidden="true"
       />
-      {/* Loading overlay for the canvas */}
-      {loading && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#0a0a0a]/90 backdrop-blur-md transition-opacity duration-1000">
-          <div className="flex flex-col items-center gap-4">
-            <span className="inline-block h-6 w-6 rounded-full border-t-2 border-[var(--color-primary-fixed-dim)] animate-spin"></span>
-            <span className="font-label text-xs uppercase tracking-[0.3em] text-[var(--color-on-surface-variant)]">Loading Archival Footage...</span>
-          </div>
-        </div>
-      )}
-      {/* Frame Vignette Mask to blend with the rest of the page */}
-      <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-[var(--color-surface)] via-transparent to-transparent opacity-100 mb-[-2px]"></div>
+      {/* Vignette gradient for page blending */}
+      <div className="absolute inset-0 z-[2] pointer-events-none bg-gradient-to-t from-[var(--color-surface)] via-transparent to-transparent opacity-100 mb-[-2px]"></div>
     </>
   )
 }
