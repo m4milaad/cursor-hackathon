@@ -17,22 +17,22 @@ export function TaleemSubTabs({ tabs, active, onChange }: Props) {
     <div
       role="tablist"
       aria-label={t('taleem.tabsAria')}
-      className="mb-6 flex flex-wrap gap-2 border-b border-[var(--raasta-border)] pb-3.5"
+      className="mb-8 flex flex-wrap gap-2 rounded-full border border-[var(--raasta-border)] bg-[var(--raasta-surface)] p-2"
     >
-      {tabs.map((t) => (
+      {tabs.map((tab) => (
         <button
-          key={t.id}
+          key={tab.id}
           type="button"
           role="tab"
-          aria-selected={active === t.id}
-          onClick={() => onChange(t.id)}
-          className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
-            active === t.id
-              ? 'bg-gradient-to-br from-[var(--chinar-deep)] to-[var(--chinar-mid)] text-[#faf8f4] shadow-sm ring-1 ring-[rgba(196,131,58,0.25)]'
-              : 'bg-[var(--raasta-surface)] text-[var(--raasta-muted)] ring-1 ring-[var(--raasta-border)] hover:bg-[var(--chinar-mist)] hover:text-[var(--chinar-deep)]'
+          aria-selected={active === tab.id}
+          onClick={() => onChange(tab.id)}
+          className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] transition-all ${
+            active === tab.id
+              ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-[0_12px_24px_rgba(0,0,0,0.15)]'
+              : 'text-[var(--raasta-muted)] hover:text-[var(--color-secondary)]'
           }`}
         >
-          {t.label}
+          {tab.label}
         </button>
       ))}
     </div>

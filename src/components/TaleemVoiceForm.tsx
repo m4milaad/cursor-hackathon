@@ -41,24 +41,29 @@ export function TaleemVoiceForm({
   }
 
   return (
-    <div>
+    <div className="raasta-card p-6 md:p-8">
       <label className="mb-2 block text-sm font-medium text-[var(--raasta-ink)]">
         {label}
       </label>
       <textarea
-        className="raasta-input min-h-[100px] w-full resize-y"
+        className="raasta-input min-h-[120px] w-full resize-y"
         placeholder={placeholder}
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
-      <button
-        type="button"
-        className="raasta-btn-primary mt-3 w-full sm:w-auto"
-        disabled={busy || !text.trim()}
-        onClick={() => void run()}
-      >
-        {busy ? busyText : submitLabel}
-      </button>
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          className="raasta-btn-primary"
+          disabled={busy || !text.trim()}
+          onClick={() => void run()}
+        >
+          {busy ? busyText : submitLabel}
+        </button>
+        <span className="text-xs uppercase tracking-[0.16em] text-[var(--raasta-muted)]">
+          Voice-ready response
+        </span>
+      </div>
       <VoiceOutput text={out} />
     </div>
   )

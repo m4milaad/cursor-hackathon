@@ -16,28 +16,14 @@ export function VoiceOutput({ text, label }: Props) {
 
   return (
     <div className="raasta-voice-out mt-8 text-left">
-      {/* Label */}
-      <p
-        className="mb-3 text-xs font-bold uppercase tracking-[0.16em]"
-        style={{
-          background: 'linear-gradient(90deg, var(--amber-deep), var(--amber-mid))',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
-        }}
-      >
+      <p className="mb-3 text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-secondary)]">
         {heading}
       </p>
 
-      {/* Response text */}
-      <p
-        className="text-[1.05rem] leading-[1.7] text-[var(--ink)]"
-        style={{ animation: 'typeReveal 0.6s ease-out' }}
-      >
+      <p className="text-[1.05rem] leading-[1.7] text-[var(--color-on-surface)]" style={{ animation: 'typeReveal 0.6s ease-out' }}>
         {text}
       </p>
 
-      {/* Audio controls */}
       <div className="mt-5 flex flex-wrap gap-3">
         <button
           type="button"
@@ -45,17 +31,13 @@ export function VoiceOutput({ text, label }: Props) {
           onClick={() => void speakForLocale(text, locale)}
         >
           <span
-            className="inline-block h-2 w-2 rounded-full bg-[var(--chinar-mid)]"
+            className="inline-block h-2 w-2 rounded-full bg-[var(--color-secondary)]"
             style={{ animation: 'breathe 1.5s ease-in-out infinite' }}
             aria-hidden
           />
           {t('voice.listen')}
         </button>
-        <button
-          type="button"
-          className="raasta-ghost text-sm"
-          onClick={() => stopSpeaking()}
-        >
+        <button type="button" className="raasta-ghost text-sm" onClick={() => stopSpeaking()}>
           {t('voice.stop')}
         </button>
       </div>

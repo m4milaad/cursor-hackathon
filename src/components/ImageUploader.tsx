@@ -60,22 +60,16 @@ export function ImageUploader({
           />
         ) : (
           <span
-            className="flex h-16 w-16 items-center justify-center rounded-2xl text-4xl transition-all duration-300 group-hover:scale-110"
-            style={{
-              background: 'linear-gradient(145deg, var(--paper-dim), var(--surface-hi))',
-              boxShadow: 'var(--shadow-ambient)',
-            }}
+            className="flex h-16 w-16 items-center justify-center rounded-2xl text-4xl transition-all duration-300 group-hover:scale-110 bg-[var(--color-surface-container-high)] text-[var(--color-secondary)]"
             aria-hidden
           >
-            📷
+            <span className="material-symbols-outlined text-3xl">photo_camera</span>
           </span>
         )}
         <span className="text-center font-semibold text-[var(--ink)]">
           {label}
         </span>
-        <span className="text-sm text-[var(--muted-soft)]">
-          Camera ya gallery
-        </span>
+        <span className="text-sm text-[var(--muted-soft)]">Camera ya gallery</span>
       </label>
       <input
         id={id}
