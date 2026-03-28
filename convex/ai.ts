@@ -5,7 +5,6 @@ import { action } from "./_generated/server";
 import { api } from "./_generated/api";
 
 const DEFAULT_MODEL = "gpt-4o-mini";
-const AI_GATEWAY_URL = "https://gateway.ai.cloudflare.com/v1";
 
 export const generateReply = action({
   args: {
