@@ -7,10 +7,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "convex:dev": "convex dev",
+    "convex:deploy": "convex deploy"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.2.2",
+    "convex": "^1.34.1",
     "next": "^15.5.14",
     "postcss": "^8.5.8",
     "react": "^19.2.4",
