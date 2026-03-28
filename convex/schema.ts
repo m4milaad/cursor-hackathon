@@ -54,4 +54,14 @@ export default defineSchema({
     status: v.string(),
     createdAt: v.number(),
   }).index("by_createdAt", ["createdAt"]),
+
+  auditEvents: defineTable({
+    actor: v.string(),
+    eventType: v.string(),
+    requestId: v.optional(v.id("requests")),
+    metadata: v.optional(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_eventType_and_createdAt", ["eventType", "createdAt"])
+    .index("by_createdAt", ["createdAt"]),
 });

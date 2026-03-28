@@ -9,6 +9,11 @@ export const backendHealth = query({
       .withIndex("by_createdAt")
       .order("desc")
       .take(200);
+    const recentEvents = await ctx.db
+      .query("auditEvents")
+      .withIndex("by_createdAt")
+      .order("desc")
+      .take(100);
 
     const statusCounts: Record<string, number> = {};
     const modeCounts: Record<string, number> = {};
@@ -20,6 +25,7 @@ export const backendHealth = query({
 
     return {
       recentWindow: recent.length,
+      recentEventWindow: recentEvents.length,
       statusCounts,
       modeCounts,
       updatedAt: Date.now(),
@@ -49,6 +55,7 @@ export const listByStatus = query({
 export const purgeTestData = mutation({
   args: {
     table: v.union(
+      v.literal("auditEvents"),
       v.literal("feedback"),
       v.literal("requests"),
       v.literal("sessions"),

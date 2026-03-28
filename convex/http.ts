@@ -112,4 +112,16 @@ http.route({
   }),
 });
 
+http.route({
+  path: "/health",
+  method: "GET",
+  handler: httpAction(async (ctx) => {
+    const health = await ctx.runQuery(api.admin.backendHealth, {});
+    return new Response(JSON.stringify(health), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  }),
+});
+
 export default http;

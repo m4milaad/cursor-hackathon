@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation } from "./_generated/server";
+import { internal } from "./_generated/api";
 
 export const createTestData = mutation({
   args: {},
@@ -49,6 +50,11 @@ export const seedBackend = mutation({
 
       const toDeleteTestRecords = await ctx.db.query("test_records").take(200);
       for (const row of toDeleteTestRecords) {
+        await ctx.db.delete(row._id);
+      }
+
+      const toDeleteEvents = await ctx.db.query("auditEvents").take(200);
+      for (const row of toDeleteEvents) {
         await ctx.db.delete(row._id);
       }
     }
@@ -118,6 +124,12 @@ export const seedBackend = mutation({
       label: "backend-seed",
       status: "ok",
       createdAt: now + 5,
+    });
+
+    await ctx.runMutation(internal.audit.writeEvent, {
+      actor: "seed",
+      eventType: "backend.seeded",
+      metadata: JSON.stringify({ reset: Boolean(args.reset) }),
     });
 
     return {

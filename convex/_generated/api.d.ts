@@ -10,12 +10,12 @@
 
 import type * as admin from "../admin.js";
 import type * as ai from "../ai.js";
+import type * as audit from "../audit.js";
 import type * as feedback from "../feedback.js";
 import type * as http from "../http.js";
 import type * as requests from "../requests.js";
 import type * as resources from "../resources.js";
 import type * as seed from "../seed.js";
-import type * as workflows from "../workflows.js";
 
 import type {
   ApiFromModules,
@@ -26,12 +26,12 @@ import type {
 declare const fullApi: ApiFromModules<{
   admin: typeof admin;
   ai: typeof ai;
+  audit: typeof audit;
   feedback: typeof feedback;
   http: typeof http;
   requests: typeof requests;
   resources: typeof resources;
   seed: typeof seed;
-  workflows: typeof workflows;
 }>;
 
 /**

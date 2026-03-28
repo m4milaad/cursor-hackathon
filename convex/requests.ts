@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
 
 const MAX_LIST_LIMIT = 50;
 
@@ -49,6 +50,16 @@ export const createRequest = mutation({
       updatedAt: now,
     });
 
+    await ctx.runMutation(internal.audit.writeEvent, {
+      actor: "system",
+      eventType: "request.created",
+      requestId,
+      metadata: JSON.stringify({
+        mode: args.mode,
+        locale: args.locale,
+      }),
+    });
+
     return requestId;
   },
 });
@@ -66,6 +77,14 @@ export const completeRequest = mutation({
       status: "completed",
       updatedAt: Date.now(),
     });
+    await ctx.runMutation(internal.audit.writeEvent, {
+      actor: "system",
+      eventType: "request.completed",
+      requestId: args.requestId,
+      metadata: JSON.stringify({
+        provider: args.provider ?? "unknown",
+      }),
+    });
     return { ok: true };
   },
 });
@@ -80,6 +99,12 @@ export const failRequest = mutation({
       status: "error",
       error: args.error,
       updatedAt: Date.now(),
+    });
+    await ctx.runMutation(internal.audit.writeEvent, {
+      actor: "system",
+      eventType: "request.failed",
+      requestId: args.requestId,
+      metadata: args.error.slice(0, 500),
     });
     return { ok: true };
   },
