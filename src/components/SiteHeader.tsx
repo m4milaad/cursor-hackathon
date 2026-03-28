@@ -43,8 +43,11 @@ export function SiteHeader() {
         <NavLink href="/raah" label="Raah" />
       </div>
 
-      <div className="flex items-center space-x-4">
-        <span className="material-symbols-outlined text-[#00271d] dark:text-[#fbf9f4] cursor-pointer text-2xl hover:text-[#885207] transition-colors">
+      <div className="flex items-center space-x-4" key="header-actions">
+        <span 
+          className="material-symbols-outlined text-[#00271d] dark:text-[#fbf9f4] cursor-pointer text-2xl hover:text-[#885207] transition-colors"
+          suppressHydrationWarning
+        >
           account_circle
         </span>
       </div>
