@@ -86,7 +86,7 @@ export default function TaleemHubPage() {
             <img
               alt="Taleem illustration"
               className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCC6X08VKCuZvJlFsbKKEDXFoxRw0wJylMybFVS7evqgGCOmQIJOVg6dfHviiUJINi24ThueGX_n6N3e-hijDuDFndN0qWXCBQM-4AzHAdj7_eEYxwpaGUb9b1WislmEZaOcELh0qnnd8ZFZGtmfNhGSTloY91n2HEXGI-eiRpVsRgp1JVqwAcxg_6i4UbXcFuDHazckiePOnYw7ut5RTPxD_b1Ifkc26_iejCdqut944fV7itDFfa8bjHeMHqIkcxkvFtoiFAMy8Y"
+              src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=1600&auto=format&fit=crop"
             />
             <div className="absolute bottom-0 left-0 bg-[var(--color-primary)] px-6 py-4 text-[var(--color-on-primary)]">
               <p className="font-headline italic text-lg tracking-tight">Paths, not forms.</p>
@@ -106,9 +106,7 @@ export default function TaleemHubPage() {
               Your learning map
             </h2>
           </div>
-          <p className="text-sm text-[var(--color-on-surface-variant)] max-w-sm">
-            Hover to reveal color. Each path opens a different kind of guidance.
-          </p>
+          <div></div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {categories.map((c) => (
