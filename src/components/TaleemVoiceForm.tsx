@@ -1,6 +1,7 @@
 'use client'
 
 import { VoiceOutput } from '@/components/VoiceOutput'
+import { useVoiceRecorder } from '@/hooks/useVoiceRecorder'
 import { useI18n } from '@/lib/i18n/context'
 import { speakForLocale } from '@/lib/tts'
 import { useState } from 'react'
@@ -25,6 +26,13 @@ export function TaleemVoiceForm({
   const [text, setText] = useState('')
   const [out, setOut] = useState('')
   const [busy, setBusy] = useState(false)
+  const voice = useVoiceRecorder({
+    onTranscript: (spokenText) => {
+      setText((previous) =>
+        previous.trim() ? `${previous.trim()} ${spokenText}` : spokenText,
+      )
+    },
+  })
 
   async function run() {
     const trimmed = text.trim()
@@ -54,16 +62,38 @@ export function TaleemVoiceForm({
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <button
           type="button"
+          className="raasta-btn-secondary text-sm"
+          disabled={busy || voice.transcribing}
+          onClick={() => {
+            voice.clearError()
+            if (voice.recording) {
+              voice.stop()
+            } else {
+              void voice.start()
+            }
+          }}
+        >
+          {voice.recording
+            ? 'Stop Mic'
+            : voice.transcribing
+              ? 'Transcribing...'
+              : 'Use Mic'}
+        </button>
+        <button
+          type="button"
           className="raasta-btn-primary"
-          disabled={busy || !text.trim()}
+          disabled={busy || voice.recording || voice.transcribing || !text.trim()}
           onClick={() => void run()}
         >
           {busy ? busyText : submitLabel}
         </button>
         <span className="text-xs uppercase tracking-[0.16em] text-[var(--raasta-muted)]">
-          Voice-ready response
+          Voice input + voice-ready response
         </span>
       </div>
+      {voice.error ? (
+        <p className="mt-3 text-xs text-[var(--color-error)]">{voice.error}</p>
+      ) : null}
       <VoiceOutput text={out} />
     </div>
   )

@@ -21,9 +21,14 @@ export async function analyzeCropImage(photo: File): Promise<CropAnalysis> {
     }
     
     const data = (await res.json()) as { 
+      ok?: boolean
       summary?: string
       mandiHint?: string
-      demo?: boolean 
+      demo?: boolean
+      error?: string
+    }
+    if (data.ok === false) {
+      throw new Error(data.error ?? 'Vision analysis failed')
     }
     
     return {

@@ -2,6 +2,7 @@
 
 import { PageIntro } from '@/components/PageIntro'
 import { VoiceOutput } from '@/components/VoiceOutput'
+import { useVoiceRecorder } from '@/hooks/useVoiceRecorder'
 import { useI18n } from '@/lib/i18n/context'
 import { taleemLlm } from '@/lib/taleemApi'
 import { speakForLocale } from '@/lib/tts'
@@ -19,6 +20,9 @@ export default function ExamPage() {
   const [ans, setAns] = useState('')
   const [out, setOut] = useState('')
   const [busy, setBusy] = useState(false)
+  const voice = useVoiceRecorder({
+    onTranscript: (spokenText) => setAns(spokenText),
+  })
 
   const demoQ = t('exam.demoQuestion')
 
@@ -103,10 +107,31 @@ export default function ExamPage() {
             value={ans}
             onChange={(e) => setAns(e.target.value)}
           />
+          <div className="mt-3">
+            <button
+              type="button"
+              className="raasta-btn-secondary text-sm"
+              disabled={busy || voice.transcribing}
+              onClick={() => {
+                voice.clearError()
+                if (voice.recording) voice.stop()
+                else void voice.start()
+              }}
+            >
+              {voice.recording
+                ? 'Stop Mic'
+                : voice.transcribing
+                  ? 'Transcribing...'
+                  : 'Use Mic'}
+            </button>
+          </div>
+          {voice.error ? (
+            <p className="mt-2 text-xs text-[var(--color-error)]">{voice.error}</p>
+          ) : null}
           <button
             type="button"
             className="raasta-btn-primary mt-4"
-            disabled={busy || !ans.trim()}
+            disabled={busy || voice.recording || voice.transcribing || !ans.trim()}
             onClick={() => void run()}
           >
             {busy ? t('exam.busy') : t('exam.btn')}

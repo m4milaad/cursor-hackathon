@@ -2,6 +2,7 @@
 
 import { PageIntro } from '@/components/PageIntro'
 import { VoiceOutput } from '@/components/VoiceOutput'
+import { useVoiceRecorder } from '@/hooks/useVoiceRecorder'
 import { useI18n } from '@/lib/i18n/context'
 import { taleemLlm } from '@/lib/taleemApi'
 import { speakForLocale } from '@/lib/tts'
@@ -20,6 +21,14 @@ export default function CvPage() {
   const [s3, setS3] = useState('')
   const [out, setOut] = useState('')
   const [busy, setBusy] = useState(false)
+  const [activeVoiceField, setActiveVoiceField] = useState<1 | 2 | 3>(1)
+  const voice = useVoiceRecorder({
+    onTranscript: (spokenText) => {
+      if (activeVoiceField === 1) setS1(spokenText)
+      if (activeVoiceField === 2) setS2(spokenText)
+      if (activeVoiceField === 3) setS3(spokenText)
+    },
+  })
 
   async function run() {
     if (!s1.trim() && !s2.trim() && !s3.trim()) return
@@ -101,6 +110,21 @@ export default function CvPage() {
                 value={s1}
                 onChange={(e) => setS1(e.target.value)}
               />
+              <button
+                type="button"
+                className="mt-2 raasta-btn-secondary text-xs"
+                disabled={busy || voice.transcribing}
+                onClick={() => {
+                  setActiveVoiceField(1)
+                  voice.clearError()
+                  if (voice.recording) voice.stop()
+                  else void voice.start()
+                }}
+              >
+                {voice.recording && activeVoiceField === 1
+                  ? 'Stop Mic'
+                  : 'Mic for line 1'}
+              </button>
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-[var(--raasta-muted)]">
@@ -111,6 +135,21 @@ export default function CvPage() {
                 value={s2}
                 onChange={(e) => setS2(e.target.value)}
               />
+              <button
+                type="button"
+                className="mt-2 raasta-btn-secondary text-xs"
+                disabled={busy || voice.transcribing}
+                onClick={() => {
+                  setActiveVoiceField(2)
+                  voice.clearError()
+                  if (voice.recording) voice.stop()
+                  else void voice.start()
+                }}
+              >
+                {voice.recording && activeVoiceField === 2
+                  ? 'Stop Mic'
+                  : 'Mic for line 2'}
+              </button>
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-[var(--raasta-muted)]">
@@ -121,13 +160,39 @@ export default function CvPage() {
                 value={s3}
                 onChange={(e) => setS3(e.target.value)}
               />
+              <button
+                type="button"
+                className="mt-2 raasta-btn-secondary text-xs"
+                disabled={busy || voice.transcribing}
+                onClick={() => {
+                  setActiveVoiceField(3)
+                  voice.clearError()
+                  if (voice.recording) voice.stop()
+                  else void voice.start()
+                }}
+              >
+                {voice.recording && activeVoiceField === 3
+                  ? 'Stop Mic'
+                  : 'Mic for line 3'}
+              </button>
             </div>
           </div>
+          {voice.transcribing ? (
+            <p className="mt-3 text-xs text-[var(--raasta-muted)]">Transcribing...</p>
+          ) : null}
+          {voice.error ? (
+            <p className="mt-2 text-xs text-[var(--color-error)]">{voice.error}</p>
+          ) : null}
           <div className="mt-6 flex flex-wrap gap-3">
             <button
               type="button"
               className="raasta-btn-primary"
-              disabled={busy || (!s1.trim() && !s2.trim() && !s3.trim())}
+              disabled={
+                busy ||
+                voice.recording ||
+                voice.transcribing ||
+                (!s1.trim() && !s2.trim() && !s3.trim())
+              }
               onClick={() => void run()}
             >
               {busy ? t('cv.busy') : t('cv.btn')}

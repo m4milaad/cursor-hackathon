@@ -6,10 +6,14 @@ async function postLlm(payload: Record<string, string>): Promise<string> {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   })
-  if (!res.ok) {
-    throw new Error('LLM request failed')
+  const data = (await res.json()) as {
+    ok?: boolean
+    text?: string
+    error?: string
   }
-  const data = (await res.json()) as { text?: string }
+  if (!res.ok || data.ok === false) {
+    throw new Error(data.error ?? 'LLM request failed')
+  }
   return data.text ?? ''
 }
 

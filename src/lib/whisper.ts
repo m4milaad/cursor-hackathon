@@ -5,12 +5,13 @@ export async function transcribeAudio(blob: Blob): Promise<TranscribeResult> {
   form.append('file', blob, 'clip.webm')
   const res = await fetch('/api/transcribe', { method: 'POST', body: form })
   const data = (await res.json()) as {
+    ok?: boolean
     text?: string
     demo?: boolean
     error?: string
   }
-  if (!res.ok) {
-    return { text: '', demo: false }
+  if (!res.ok || data.ok === false) {
+    return { text: '', demo: true }
   }
   return {
     text: data.text?.trim() ?? '',

@@ -1,9 +1,15 @@
 import { NextResponse } from 'next/server'
 import { generateText } from 'ai'
+import {
+  completeLifecycleRequest,
+  createLifecycleRequest,
+  failLifecycleRequest,
+} from '@/lib/server/convexLifecycle'
 
 const MODEL = 'openai/gpt-4o-mini'
 
 export async function POST(req: Request) {
+  let requestId: string | null = null
   let form: FormData
   try {
     form = await req.formData()
@@ -15,10 +21,19 @@ export async function POST(req: Request) {
   const type = form.get('type') as string | null // 'document' or 'marksheet'
   
   if (!(file instanceof File) || file.size === 0) {
-    return NextResponse.json({ error: 'Missing image file' }, { status: 400 })
+    return NextResponse.json(
+      { ok: false, error: 'Missing image file', demo: false },
+      { status: 400 },
+    )
   }
 
   try {
+    requestId = await createLifecycleRequest({
+      mode: type === 'marksheet' ? 'ocr-marksheet' : 'ocr-document',
+      locale: 'en',
+      input: file.name,
+    })
+
     // Convert file to base64
     const bytes = await file.arrayBuffer()
     const base64 = Buffer.from(bytes).toString('base64')
@@ -43,12 +58,24 @@ export async function POST(req: Request) {
       maxOutputTokens: 2000,
     })
 
+    const text = result.text?.trim() ?? ''
+    if (requestId) {
+      await completeLifecycleRequest(requestId, text, 'vercel-ai')
+    }
     return NextResponse.json({
+      ok: true,
       text: result.text?.trim() ?? '',
-      success: true,
+      demo: false,
+      requestId,
     })
   } catch (error) {
     console.error('OCR error', error)
+    if (requestId) {
+      await failLifecycleRequest(
+        requestId,
+        error instanceof Error ? error.message : 'OCR request failed',
+      )
+    }
     
     // Return demo fallback
     const demoText = type === 'marksheet'
@@ -56,9 +83,10 @@ export async function POST(req: Request) {
       : '[Demo OCR] Government notice: Land records must be submitted by the 15th of this month. Failure to comply may affect your claim. Contact the tehsil office for assistance.'
     
     return NextResponse.json({
+      ok: true,
       text: demoText,
-      success: false,
       demo: true,
+      requestId,
     })
   }
 }

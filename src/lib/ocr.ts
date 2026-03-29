@@ -16,7 +16,15 @@ export async function extractTextFromImage(image: File): Promise<string> {
       throw new Error('OCR request failed')
     }
     
-    const data = (await res.json()) as { text?: string; demo?: boolean }
+    const data = (await res.json()) as {
+      ok?: boolean
+      text?: string
+      demo?: boolean
+      error?: string
+    }
+    if (data.ok === false) {
+      throw new Error(data.error ?? 'OCR request failed')
+    }
     return data.text ?? ''
   } catch (error) {
     console.error('OCR error:', error)
@@ -41,7 +49,15 @@ export async function extractMarksheetText(image: File): Promise<string> {
       throw new Error('OCR request failed')
     }
     
-    const data = (await res.json()) as { text?: string; demo?: boolean }
+    const data = (await res.json()) as {
+      ok?: boolean
+      text?: string
+      demo?: boolean
+      error?: string
+    }
+    if (data.ok === false) {
+      throw new Error(data.error ?? 'OCR request failed')
+    }
     return data.text ?? ''
   } catch (error) {
     console.error('Marksheet OCR error:', error)

@@ -124,4 +124,68 @@ http.route({
   }),
 });
 
+http.route({
+  path: "/request/complete",
+  method: "POST",
+  handler: httpAction(async (ctx, req) => {
+    const body = (await req.json()) as {
+      requestId?: string;
+      response?: string;
+      provider?: string;
+    };
+
+    if (!body.requestId || !body.response) {
+      return new Response(
+        JSON.stringify({ error: "requestId and response are required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    }
+
+    await ctx.runMutation(api.requests.completeRequest, {
+      requestId: body.requestId as any,
+      response: body.response,
+      provider: body.provider,
+    });
+
+    return new Response(JSON.stringify({ ok: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  }),
+});
+
+http.route({
+  path: "/request/fail",
+  method: "POST",
+  handler: httpAction(async (ctx, req) => {
+    const body = (await req.json()) as {
+      requestId?: string;
+      error?: string;
+    };
+
+    if (!body.requestId || !body.error) {
+      return new Response(
+        JSON.stringify({ error: "requestId and error are required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    }
+
+    await ctx.runMutation(api.requests.failRequest, {
+      requestId: body.requestId as any,
+      error: body.error,
+    });
+
+    return new Response(JSON.stringify({ ok: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  }),
+});
+
 export default http;
