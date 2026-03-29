@@ -1,6 +1,7 @@
 'use client'
 
 import { MicButton } from '@/components/MicButton'
+import { NewsCorner } from '@/components/NewsCorner'
 import { useI18n } from '@/lib/i18n/context'
 import { answerVoiceQuestion } from '@/lib/llm'
 import { speechRecognitionLang } from '@/lib/localeForLlm'
@@ -324,6 +325,10 @@ export default function RaahPage() {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="px-8 md:px-24 pb-24">
+        <NewsCorner field="raah" title="Raah Live Updates" />
       </section>
 
       <section id="talk-to-raah" className="px-8 md:px-24 pb-24">

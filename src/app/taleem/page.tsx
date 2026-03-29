@@ -1,6 +1,7 @@
 'use client'
 
 import { useI18n } from '@/lib/i18n/context'
+import { NewsCorner } from '@/components/NewsCorner'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 
@@ -216,6 +217,11 @@ export default function TaleemHubPage() {
             </button>
           ))}
         </div>
+      </section>
+
+      {/* News Corner */}
+      <section className="px-8 md:px-24 pb-20">
+        <NewsCorner field="taleem" title="Taleem Live Updates" />
       </section>
 
       {/* Interactive AI Section */}

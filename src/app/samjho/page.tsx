@@ -4,6 +4,7 @@ import { extractTextFromImage } from '@/lib/ocr'
 import { explainDocumentSimpleUrdu } from '@/lib/llm'
 import { useI18n } from '@/lib/i18n/context'
 import { speakForLocale, stopSpeaking } from '@/lib/tts'
+import { NewsCorner } from '@/components/NewsCorner'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 export default function SamjhoPage() {
@@ -314,6 +315,10 @@ export default function SamjhoPage() {
                   </div>
                 </>
               )}
+            </div>
+
+            <div className="mt-12 pt-8 border-t border-[var(--color-outline-variant)]">
+              <NewsCorner field="samjho" title="Samjho Live Updates" />
             </div>
           </div>
         </div>

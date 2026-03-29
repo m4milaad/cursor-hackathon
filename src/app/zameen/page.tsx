@@ -4,6 +4,7 @@ import { analyzeCropImage } from '@/lib/vision'
 import { explainCropAdvice } from '@/lib/llm'
 import { useI18n } from '@/lib/i18n/context'
 import { speakForLocale, stopSpeaking } from '@/lib/tts'
+import { NewsCorner } from '@/components/NewsCorner'
 import { useCallback, useMemo, useRef, useState } from 'react'
 
 export default function ZameenPage() {
@@ -302,6 +303,9 @@ export default function ZameenPage() {
                 Traditional soil-resting methods from the Jhelum valley show a 15% higher resilience against modern frost patterns. AI suggests integrating &apos;Karewa&apos; terrace strategies this season.
               </p>
             </div>
+
+            {/* News Corner */}
+            <NewsCorner field="zameen" title="Zameen Live Updates" />
           </div>
         </div>
       </section>
