@@ -6,8 +6,6 @@
 
 *Voice-first • Multilingual • Built for Kashmir • Accessible to All*
 
-[Live Demo](#) • [Demo Video](#) • [Documentation](GREEN_SPEAK_BUTTON.md)
-
 </div>
 
 ---
@@ -43,120 +41,61 @@ User taps button → Speaks query → AI detects intent → Auto-routes to modul
 
 Works in Urdu, Hindi, Kashmiri, or English.
 
-**Technical Details:** See [GREEN_SPEAK_BUTTON.md](GREEN_SPEAK_BUTTON.md) for complete documentation.
-
-**AI Documentation:** See [AI_FEATURES_SUMMARY.md](AI_FEATURES_SUMMARY.md) for all AI features.
 
 ---
 
 ## 🧠 The Four Domains
 
 ### 🌍 1. SAMJHO (Understanding)
-tand documents, text, and real-world things
+Understand documents, text, and real-world information
 
 **Features:**
-- 📸 Upload/capture photos of documents, signboards, certificates
-- 🔍 OCR extracts text from images
-- 🌐 Language detection (Urdu/Kashmiri/English)
-- 📝 Translation and simple explanation
-- 🔊 Voice output in user's language
+- 📸 Upload or capture photos of documents, signboards, certificates  
+- 🔍 OCR extracts text from images  
+- 🌐 Detects language (Urdu / Kashmiri / English)  
+- 📝 Translates and explains in simple language  
+- 🔊 Voice output in user's language  
 
-r Hackathon Kashmir 2024*
 
-[Live Demo](#) • [Documentation](GREEN_SPEAK_BUTTON.md) • [Video](#)
+### 🌱 2. ZAMEEN (Crop Intelligence)
+Analyze crops and get real-time farming insights
 
-</div>
-or AI-powered development tools
-- **OpenAI** for GPT-4o-mini and Whisper API
-- **Convex** for real-time backend infrastructure
-- **v0** for UI component generation
-- **Hackathon organizers** for the opportunity
-- **Kashmir community** for inspiration
+**Features:**
+- 📸 Upload crop images (apple, rice, wheat, saffron)  
+- 🤖 AI detects diseases using vision models  
+- 💊 Provides treatment suggestions with timing guidance  
+- 📊 Shows live mandi prices (Sopore, Pampore, Srinagar)  
+- 📈 Price trends and best time-to-sell insights  
 
----
 
-## 📞 Contact
+### 🎓 3. TALEEM (Youth Services)
+Support youth with skills, jobs, and well-being
 
-- **GitHub**: [Your GitHub URL]
-- **Demo**: [Your Demo URL]
-- **Video**: [Your Video URL]
-- **Email**: [Your Email]
+**Features:**
+- 🧑‍💼 Hunarmand: business guidance & entrepreneurship support  
+- 🧠 Sukoon: mental health support & emotional guidance  
+- 💼 Kaam Dhundo: job matching & opportunities  
+- 🎤 Voice-based CV generation  
+- 📚 Exam prep feedback & performance insights  
+- 🎓 Scholarship discovery & recommendations  
 
----
 
-<div align="center">
+### 🎙️ 4. RAAH (Voice Assistant)
+Your AI guide for everything — hands-free
 
-**RAASTA AI** - Because everyone deserves technology that understands them.
+**Features:**
+- 🎤 Voice-first interaction for all queries  
+- ❓ Ask about schemes, farming, jobs, education, documents  
+- ⚡ Instant responses via browser speech recognition  
+- 🧠 High-accuracy understanding using Whisper API  
+- 🔗 Smart suggestions to switch between Samjho, Zameen, Taleem  
 
-*Built for the Curso Edge    | ✅ Full     | ✅ Full          | ✅ Full | ✅ Full |
-| Safari  | ✅ Full     | ✅ Full          | ✅ Full | ✅ Full |
-| Firefox | ⚠️ Limited  | ✅ Full          | ✅ Full | ✅ Full |
-
----
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our contributing guidelines.
 
 ---
 
-## 📄 License
 
-This project is licensed under the MIT License.
-
----
-
-## 👥 Team
-
-Built with passion for making technology accessible to everyone, regardless of language, literacy, or location.
-
----
-
-## 🙏 Acknowledgments
-
-- **Cursor** froduction mode)
-OPENAI_API_KEY=sk-...
-
-# Google Cloud Vision (optional)
-GOOGLE_CLOUD_VISION_API_KEY=...
-
-# Roboflow (optional)
-ROBOFLOW_API_KEY=...
-
-# ElevenLabs (optional)
-ELEVENLABS_API_KEY=...
-
-# Convex (optional)
-CONVEX_DEPLOYMENT=...
-```
-
-**Note:** App works in demo mode without any API keys!
-
----
-
-## 📱 Browser Compatibility
-
-| Browser | Voice Input | Intent Detection | Routing | TTS |
-|---------|-------------|------------------|---------|-----|
-| Chrome  | ✅ Full     | ✅ Full          | ✅ Full | ✅ Full |
-|
-| Category | Technology |
-|----------|-----------|
-| **Framework** | Next.js 15 (App Router) |
-| **Styling** | Tailwind CSS v4 |
-| **Language** | TypeScript |
-| **AI/ML** | OpenAI (GPT-4o-mini, Whisper) |
-| **Vision** | Google Cloud Vision, Roboflow |
-| **Voice** | Browser SpeechRecognition, ElevenLabs TTS |
-| **Backend** | Convex (real-time database) |
-| **Deployment** | Vercel |
-| **Development** | Cursor AI |
-
----
 
 ## 🔧 Environment Variables
-
-Create `.env.local` file:
 
 ```env
 # OpenAI (optional - for pr API for multilingual transcription
@@ -179,51 +118,6 @@ Create `.env.local` file:
 
 ---
 
-## 🛠️ Tech Stack
-** - Submission checklist
-
----
-
-## 🎬 Demo
-
-### Live Demo
-Visit the deployed app: [Your Deployment URL]
-
-### Demo Video
-Watch the 2-minute demo: [Your Video URL]
-
-### Try It Yourself
-```bash
-npm run dev
-# Open http://localhost:3000
-# Click green button and speak!
-```
-
----
-
-## 🏆 Hackathon Tracks
-
-### Cursor Track ⭐
-- 80% of code built with Cursor Composer
-- AI-assisted debugging and refactoring
-- Context-aware code generation
-
-### OpenAI Track ⭐
-- GPT-4o-mini for intent detection and content generation
-- Whispehensive testing checklist.
-
----
-
-## 📚 Documentation
-
-- **[GREEN_SPEAK_BUTTON.md](GREEN_SPEAK_BUTTON.md)** - Technical documentation for AI routing
-- **[PRESENTATION_SCRIPT.md](PRESENTATION_SCRIPT.md)** - Slide-by-slide demo script
-- **[HACKATHON_SUBMISSION.md](HACKATHON_SUBMISSION.md)** - Complete project description
-- **[TEST_GREEN_BUTTON.md](TEST_GREEN_BUTTON.md)** - Testing and QA checklist
-- **[QUICK_START.md](QUICK_START.md)** - 3-minute setup guide
-- **[HACKATHON_CHECKLIST.md](HACKATHON_CHECKLIST.md)mployment cycles
-- **Everyone**: Understand schemes, get support, navigate bureaucracy
-
 ### Scalability
 - Architecture supports multiple languages
 - Can expand to other regions
@@ -232,30 +126,7 @@ npm run dev
 
 ---
 
-## 🧪 Testing
 
-### Run Tests
-```bash
-npm run test
-```
-
-### Test Green Speak Button
-1. Visit `/demo` page
-2. Click green microphone button
-3. Speak example queries
-4. Verify routing to correct modules
-
-See [TEST_GREEN_BUTTON.md](TEST_GREEN_BUTTON.md) for comprendly (44x44px targets)
-- ✅ Works on 3G networks
-- ✅ Low-end device support
-
-### Accessible
-- ✅ ARIA labels for screen readers
-- ✅ Keyboard navigation
-- ✅ High contrast mode
-- ✅ Voice-first for low literacy
-
----
 
 ## 📊 Impact & Scale
 
@@ -286,10 +157,6 @@ See [TEST_GREEN_BUTTON.md](TEST_GREEN_BUTTON.md) for comprendly (44x44px targets
 ### Mobile-Optimized
 - ✅ Responsive design (320px - 1920px)
 - ✅ Touch-frie                   # Static assets
-├── GREEN_SPEAK_BUTTON.md               # Technical docs
-├── PRESENTATION_SCRIPT.md              # Demo script
-├── HACKATHON_SUBMISSION.md             # Project description
-└── README.md                           # This file
 ```
 
 ---
@@ -343,24 +210,6 @@ npm install
 # Run development server
 npm run dev
 ```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### Optional: Production Mode
-
-For better accuracy with OpenAI:
-
-1. Create `.env.local`:
-```env
-OPENAI_API_KEY=sk-your-key-here
-```
-
-2. Restart server:
-```bash
-npm run dev
-```
-
----
 
 ## 📁 Project Structure
 
@@ -465,40 +314,3 @@ raasta-ai/
 
 ---
 
-### 🧭 4. RAAH (Life Guidance)
-**Purpose:** Provide emotional support and life guidance
-
-**Features:**
-- 🎤 Voice input (Whisper API + browser recognition)
-- 🤖 AI counselor for confusion, stress, career decisions
-- 📋 Scheme information (PM Kisan, Mudra loans, J&K programs)
-- 🆘 Crisis support with helpline numbersatching (PM Mudra, Mission YUVA)
-- **Sukoon** (Mental Health): Empathetic support, grounding techniques, crisis helplines
-- **Kaam Dhundo** (Job Matching): Skill mapping, local opportunities, freelance guidance
-
-**Quick Access Features:**
-- 💼 **Naukri**: Government job orientation (JKSSB)
-- 📄 **CV**: Voice-to-resume generation
-n from photos
-- 🍎 Support for Kashmir crops (apple, saffron, rice, wheat)
-- 💰 Real-time mandi prices (Sopore, Srinagar, Anantnag)
-- 💊 Treatment recommendations in local languages
-- 📊 Market intelligence and selling advice
-
-**Use Case:** "My apple tree leaves look sick" → Disease identified + treatment + best time to sell
-
----
-
-### 🎓 3. TALEEM (Growth & Career)
-**Purpose:** Empower youth with education and career opportunities
-
-**Three Pillars:**
-- **Hunarmand** (Business Coaching): Market assessment, scheme m**Use Case:** "What does this government notice say?" → Clear explanation in Roman Urdu
-
----
-
-### 🌾 2. ZAMEEN (Agriculture Intelligence)
-**Purpose:** Help farmers make better decisions
-
-**Features:**
-- 📷 Crop disease detectio
