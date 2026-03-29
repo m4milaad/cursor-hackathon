@@ -4,7 +4,7 @@ import { extractTextFromImage } from '@/lib/ocr'
 import { explainDocumentSimpleUrdu } from '@/lib/llm'
 import { useI18n } from '@/lib/i18n/context'
 import { speakForLocale, stopSpeaking } from '@/lib/tts'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export default function SamjhoPage() {
   const { locale } = useI18n()
@@ -14,7 +14,13 @@ export default function SamjhoPage() {
   const [ocrText, setOcrText] = useState<string | null>(null)
   const [explanation, setExplanation] = useState<string | null>(null)
   const [confidence, setConfidence] = useState<number>(0)
+  const [processId, setProcessId] = useState<string>('')
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Generate process ID once on mount to avoid hydration mismatch
+  useEffect(() => {
+    setProcessId(`${Math.floor(Math.random() * 9000) + 1000}-KM`)
+  }, [])
 
   const archiveFeatures = [
     'Smart document history with auto-tagging (land, legal, agriculture, etc.)',
@@ -197,7 +203,7 @@ export default function SamjhoPage() {
               </span>
               <h2 className="font-headline text-4xl text-[var(--color-primary)] mb-4">Structural Interpretation</h2>
               <div className="flex items-center space-x-4 font-label text-[10px] uppercase tracking-widest text-[var(--color-on-surface-variant)] opacity-60">
-                <span>Process ID: {Math.floor(Math.random() * 9000) + 1000}-KM</span>
+                <span>Process ID: {processId || 'Loading...'}</span>
                 <span>-</span>
                 <span>Confidence: {confidence > 0 ? `${confidence}%` : 'Pending'}</span>
               </div>

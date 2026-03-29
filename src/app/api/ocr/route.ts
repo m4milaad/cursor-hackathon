@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { openai } from '@ai-sdk/openai'
 import { generateText } from 'ai'
 
 export async function POST(req: Request) {
@@ -74,7 +73,7 @@ Support multiple languages including Urdu, Hindi, Kashmiri, and English.
 If text is in Urdu/Hindi/Kashmiri, transliterate it to Roman script.`
 
     const result = await generateText({
-      model: openai('gpt-4o-mini'),
+      model: 'openai/gpt-4o-mini',
       messages: [
         {
           role: 'user',

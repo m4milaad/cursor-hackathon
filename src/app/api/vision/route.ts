@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { openai } from '@ai-sdk/openai'
 import { generateText } from 'ai'
 
 export async function POST(req: Request) {
@@ -80,7 +79,7 @@ Be specific, practical, and use simple language that farmers can understand and 
 Focus on actionable advice rather than academic explanations.`
 
     const result = await generateText({
-      model: openai('gpt-4o-mini'),
+      model: 'openai/gpt-4o-mini',
       messages: [
         {
           role: 'user',
