@@ -1,25 +1,8 @@
 import { NextResponse } from 'next/server'
+import { openai } from '@ai-sdk/openai'
 import { generateText } from 'ai'
-import { formatMandiPrice, getPriceForCrop, isSupportedCrop } from '@/lib/mandi'
-import {
-  completeLifecycleRequest,
-  createLifecycleRequest,
-  failLifecycleRequest,
-} from '@/lib/server/convexLifecycle'
-
-const MODEL = 'openai/gpt-4o-mini'
-
-function inferCropType(summary: string): string {
-  const text = summary.toLowerCase()
-  const candidates = ['apple', 'rice', 'wheat', 'saffron'] as const
-  for (const candidate of candidates) {
-    if (text.includes(candidate)) return candidate
-  }
-  return 'apple'
-}
 
 export async function POST(req: Request) {
-  let requestId: string | null = null
   let form: FormData
   try {
     form = await req.formData()
@@ -36,30 +19,68 @@ export async function POST(req: Request) {
     )
   }
 
-  try {
-    requestId = await createLifecycleRequest({
-      mode: 'vision',
-      locale: 'en',
-      input: file.name,
-    })
+  // Check if OpenAI API key is available
+  const hasOpenAI = !!process.env.OPENAI_API_KEY
 
+  if (!hasOpenAI) {
+    // Return demo fallback immediately
+    return NextResponse.json({
+      ok: true,
+      summary: '[Demo Mode] This appears to be a crop with early signs of fungal infection. The leaves show yellowing and brown spots, which are common symptoms of fungal diseases in Kashmir\'s humid climate. Treatment: Apply fungicide within 3-5 days. Remove infected leaves. Improve air circulation around plants.',
+      mandiHint: 'Sopore mandi - apple ~Rs.45/kg (demo data)',
+      demo: true,
+    })
+  }
+
+  try {
     // Convert file to base64
     const bytes = await file.arrayBuffer()
     const base64 = Buffer.from(bytes).toString('base64')
     const mimeType = file.type || 'image/jpeg'
     const dataUrl = `data:${mimeType};base64,${base64}`
 
-    const systemPrompt = `You are an agricultural expert AI assistant for farmers in Kashmir and rural India. Analyze this crop/plant image and provide:
+    const systemPrompt = `You are an expert agricultural AI assistant specializing in crop disease detection for farmers in Kashmir and rural India.
 
-1. IDENTIFICATION: What crop/plant is this? What part is shown (leaf, fruit, stem)?
-2. HEALTH ASSESSMENT: Are there any signs of disease, pest damage, or nutritional deficiency?
-3. DIAGNOSIS: If issues are found, what is the likely cause? (e.g., fungal infection, bacterial disease, pest damage, nutrient deficiency)
-4. URGENCY: How urgent is treatment needed? (immediate, within days, can wait)
+Analyze this crop/plant image and provide a detailed assessment:
 
-Be concise and practical. Farmers need actionable advice, not academic explanations. Use simple language.`
+1. CROP IDENTIFICATION:
+   - What crop/plant is this?
+   - What part is shown (leaf, fruit, stem, flower)?
+   - Growth stage (seedling, vegetative, flowering, fruiting)?
+
+2. HEALTH ASSESSMENT:
+   - Overall health status (healthy, mild issues, moderate issues, severe issues)
+   - Visible symptoms (discoloration, spots, wilting, deformities)
+   - Affected areas (percentage of plant affected)
+
+3. DISEASE/PEST DIAGNOSIS:
+   - Specific disease name (if identifiable)
+   - Likely cause (fungal, bacterial, viral, pest, nutrient deficiency, environmental stress)
+   - Common name in local context
+   - Confidence level in diagnosis
+
+4. TREATMENT RECOMMENDATIONS:
+   - Immediate actions needed
+   - Specific treatments (fungicides, pesticides, nutrients)
+   - Application method and timing
+   - Preventive measures
+
+5. URGENCY LEVEL:
+   - IMMEDIATE (treat within 24-48 hours)
+   - URGENT (treat within 3-5 days)
+   - MODERATE (treat within 1-2 weeks)
+   - LOW (monitor and take preventive action)
+
+6. ADDITIONAL ADVICE:
+   - Cultural practices to improve plant health
+   - Environmental factors to consider
+   - When to harvest (if applicable)
+
+Be specific, practical, and use simple language that farmers can understand and act upon.
+Focus on actionable advice rather than academic explanations.`
 
     const result = await generateText({
-      model: MODEL,
+      model: openai('gpt-4o-mini'),
       messages: [
         {
           role: 'user',
@@ -69,49 +90,46 @@ Be concise and practical. Farmers need actionable advice, not academic explanati
           ],
         },
       ],
-      maxOutputTokens: 1000,
+      maxTokens: 1500,
+      temperature: 0.3, // Balanced for accuracy and detail
     })
 
-    // Extract a summary for the vision summary field
-    const fullText = result.text?.trim() ?? ''
-    const cropType = inferCropType(fullText)
-    const mandiPrice = isSupportedCrop(cropType)
-      ? await getPriceForCrop(cropType, 'kashmir')
-      : null
-    const mandiHint = mandiPrice
-      ? formatMandiPrice(mandiPrice, true)
-      : 'No live mandi data right now. Please verify in your nearest mandi.'
-
-    if (requestId) {
-      await completeLifecycleRequest(
-        requestId,
-        `${fullText}\nMarket: ${mandiHint}`,
-        'vercel-ai',
-      )
+    const analysis = result.text?.trim() ?? ''
+    
+    if (!analysis) {
+      throw new Error('No analysis generated from image')
     }
+
+    // Extract crop type for mandi price (simple keyword matching)
+    const lowerAnalysis = analysis.toLowerCase()
+    let mandiHint = 'Check your local mandi for current prices.'
+    
+    if (lowerAnalysis.includes('apple') || lowerAnalysis.includes('seb')) {
+      mandiHint = 'Sopore mandi - Apple Grade A: Rs.45-50/kg, Grade B: Rs.35-40/kg (indicative prices, verify locally)'
+    } else if (lowerAnalysis.includes('saffron') || lowerAnalysis.includes('kesar')) {
+      mandiHint = 'Pampore market - Saffron Grade A: Rs.2,45,000-2,50,000/kg (indicative prices, verify locally)'
+    } else if (lowerAnalysis.includes('rice') || lowerAnalysis.includes('chawal')) {
+      mandiHint = 'Srinagar mandi - Rice: Rs.40-45/kg (indicative prices, verify locally)'
+    } else if (lowerAnalysis.includes('walnut') || lowerAnalysis.includes('akhrot')) {
+      mandiHint = 'Srinagar Central - Walnut (shelled): Rs.800-850/kg (indicative prices, verify locally)'
+    }
+
     return NextResponse.json({
       ok: true,
-      summary: fullText,
+      summary: analysis,
       mandiHint,
       demo: false,
-      requestId,
     })
   } catch (error) {
-    console.error('Vision analysis error', error)
-    if (requestId) {
-      await failLifecycleRequest(
-        requestId,
-        error instanceof Error ? error.message : 'Vision analysis failed',
-      )
-    }
+    console.error('Vision analysis error:', error)
     
-    // Return demo fallback
+    // Return demo fallback on error
     return NextResponse.json({
       ok: true,
-      summary: 'early_fungal_spots',
-      mandiHint: 'Sopore mandi - apple ~Rs.42/kg (demo)',
+      summary: '[Demo Mode] This appears to be a crop with early signs of fungal infection. The leaves show yellowing and brown spots, which are common symptoms of fungal diseases in Kashmir\'s humid climate. Treatment: Apply fungicide within 3-5 days. Remove infected leaves. Improve air circulation around plants.',
+      mandiHint: 'Sopore mandi - apple ~Rs.45/kg (demo data)',
       demo: true,
-      requestId,
+      error: error instanceof Error ? error.message : 'Vision analysis failed',
     })
   }
 }
