@@ -1328,3 +1328,1376 @@ TTS_PROVIDER=browser
 - Visual indicators show demo mode
 - Seamless switch to production mode when keys added
 
+
+
+---
+
+## Central AI Routing System Design
+
+### Overview
+
+The Central AI Routing System introduces an intelligent entry point to RAASTA through a prominent Green Speak Button on the home screen. Users can speak or type any natural language query, and the system automatically detects their intent and routes them to the appropriate module (Samjho, Zameen, Taleem, or Raah) with context preservation.
+
+This feature eliminates the need for users to understand the module structure - they simply express their need, and RAASTA intelligently directs them to the right place. The system includes a Context Memory component that learns user preferences over time, enabling increasingly personalized routing decisions.
+
+### Design Goals
+
+1. **Frictionless Access**: Single entry point for all RAASTA features
+2. **Intelligent Routing**: 85% accuracy in intent detection across multilingual input
+3. **Context Preservation**: User queries and context passed seamlessly to target modules
+4. **Offline Capability**: Keyword-based fallback for demo mode without API keys
+5. **Personalization**: Memory system that learns user preferences and goals
+
+### Architecture
+
+#### System Architecture Diagram
+
+```mermaid
+graph TB
+    subgraph "Home Screen"
+        GSB[Green Speak Button]
+        TextInput[Text Input Alternative]
+    end
+    
+    subgraph "Input Processing"
+        VoiceRec[Browser SpeechRecognition]
+        WhisperAPI[Whisper Transcription]
+        TextSanitize[Text Sanitization]
+    end
+    
+    subgraph "Intent Detection Engine"
+        IntentAPI[/api/intent-detection]
+        LLMClassifier[LLM Intent Classifier]
+        KeywordFallback[Keyword Matcher]
+        ContextRetrieval[Context Memory Retrieval]
+    end
+    
+    subgraph "Routing System"
+        Router[Smart Router]
+        ContextPasser[Context Passer]
+        NavFeedback[Navigation Feedback UI]
+    end
+    
+    subgraph "Target Modules"
+        Samjho[Samjho Module]
+        Zameen[Zameen Module]
+        Taleem[Taleem Module]
+        Raah[Raah Module]
+    end
+    
+    subgraph "Context Memory"
+        LocalStorage[localStorage]
+        ContextManager[Context Manager]
+    end
+    
+    GSB --> VoiceRec
+    GSB --> WhisperAPI
+    TextInput --> TextSanitize
+    
+    VoiceRec --> IntentAPI
+    WhisperAPI --> IntentAPI
+    TextSanitize --> IntentAPI
+    
+    IntentAPI --> ContextRetrieval
+    ContextRetrieval --> LocalStorage
+    IntentAPI --> LLMClassifier
+    IntentAPI --> KeywordFallback
+    
+    LLMClassifier --> Router
+    KeywordFallback --> Router
+    
+    Router --> ContextPasser
+    Router --> NavFeedback
+    
+    ContextPasser --> Samjho
+    ContextPasser --> Zameen
+    ContextPasser --> Taleem
+    ContextPasser --> Raah
+    
+    Samjho --> ContextManager
+    Zameen --> ContextManager
+    Taleem --> ContextManager
+    Raah --> ContextManager
+    
+    ContextManager --> LocalStorage
+    
+    style GSB fill:#9f9,stroke:#333
+    style IntentAPI fill:#bbf,stroke:#333
+    style Router fill:#fbf,stroke:#333
+```
+
+
+#### Data Flow Architecture
+
+**Voice Input Flow:**
+```
+User taps Green Speak Button
+  → Browser SpeechRecognition starts (if available)
+  → OR Whisper recording starts (fallback)
+  → Transcribed text obtained
+  → Text sent to /api/intent-detection
+  → Context Memory retrieved from localStorage
+  → LLM analyzes intent with context
+  → Intent classification returned (intent, confidence, targetModule)
+  → Router navigates to target module with query params
+  → Target module receives context and processes query
+  → Result displayed and spoken via TTS
+  → Context Memory updated with new interaction
+```
+
+**Text Input Flow:**
+```
+User types in text input field
+  → Text sanitized
+  → Text sent to /api/intent-detection
+  → Context Memory retrieved
+  → Intent classified
+  → Router navigates with context
+  → Target module processes
+  → Context Memory updated
+```
+
+**Demo Mode Flow:**
+```
+User input received
+  → /api/intent-detection called
+  → No OPENAI_API_KEY detected
+  → Keyword matcher activated
+  → Keywords matched against patterns
+  → Intent determined from keyword match
+  → Router navigates to target module
+  → Demo response generated
+```
+
+#### Integration Points with Existing Modules
+
+**Samjho Integration:**
+- Receives `query` parameter with document-related question
+- Pre-populates explanation context
+- Suggests document upload if needed
+- Updates Context Memory with document types
+
+**Zameen Integration:**
+- Receives `query` parameter with crop-related question
+- Pre-populates crop type if mentioned
+- Immediately shows relevant mandi prices
+- Updates Context Memory with crop types
+
+**Taleem Integration:**
+- Receives `query` and `pillar` parameters
+- Pre-selects appropriate pillar (hunarmand/sukoon/kaam)
+- Pre-populates form with user query
+- Updates Context Memory with career goals and skills
+
+**Raah Integration:**
+- Receives `query` parameter
+- Pre-populates question field
+- Immediately processes query
+- Updates Context Memory with user intents
+
+
+### Components and Interfaces
+
+#### 1. GreenSpeakButton Component
+
+**Purpose**: Universal voice/text entry point for intelligent routing
+
+**Props**:
+```typescript
+interface GreenSpeakButtonProps {
+  className?: string
+}
+```
+
+**State**:
+```typescript
+{
+  isListening: boolean        // Browser speech recognition active
+  isRecording: boolean        // Whisper recording active
+  transcribedText: string     // Current transcription
+  showTextInput: boolean      // Text input fallback visible
+  error: string | null        // Error message
+}
+```
+
+**Key Features**:
+- Large green circular button (80x80px minimum)
+- Pulsing animation to draw attention
+- Microphone icon with "Bol ke batao" label
+- Dual voice input: Browser SpeechRecognition + Whisper fallback
+- Text input alternative for accessibility
+- Loading state during intent detection
+- Error handling with Roman Urdu messages
+
+**Interactions**:
+- Tap → Start browser speech recognition
+- Long press → Start Whisper recording
+- Text input → Direct intent detection
+- Auto-submit on transcription complete
+
+#### 2. IntentDetectionService
+
+**Purpose**: Analyze user input and classify intent
+
+**Interface**:
+```typescript
+interface IntentDetectionService {
+  detectIntent(text: string, context?: UserContext): Promise<IntentResult>
+  detectIntentKeywords(text: string): IntentResult
+}
+
+interface IntentResult {
+  intent: 'samjho' | 'zameen' | 'taleem' | 'raah' | 'unclear'
+  confidence: number          // 0-100
+  targetModule: string        // Module name
+  explanation: string         // Why this module was chosen
+  subIntent?: string          // For Taleem: hunarmand/sukoon/kaam
+}
+
+interface UserContext {
+  goals: string[]             // Career goals, aspirations
+  skills: string[]            // Mentioned skills
+  cropTypes: string[]         // Previously mentioned crops
+  recentIntents: string[]     // Last 10 intents
+  timestamp: Date
+}
+```
+
+**Implementation**:
+- Production Mode: GPT-4o-mini with specialized prompt
+- Demo Mode: Keyword matching algorithm
+- Context-aware classification using stored user data
+- Confidence scoring for routing decisions
+
+
+#### 3. SmartRouter Component
+
+**Purpose**: Navigate to target module with context preservation
+
+**Interface**:
+```typescript
+interface SmartRouter {
+  routeToModule(result: IntentResult, query: string, context?: UserContext): Promise<void>
+  showRoutingFeedback(result: IntentResult): void
+  cancelRouting(): void
+}
+```
+
+**Key Features**:
+- Automatic navigation based on intent
+- Query parameter passing to target module
+- 3-second confirmation window with cancel option
+- Visual feedback: "Aapko [Module] le ja rahe hain..."
+- Navigation history preservation
+- Optimistic UI updates
+
+**Routing Strategy**:
+```typescript
+// High confidence (>70%): Auto-route immediately
+if (confidence > 70) {
+  showFeedback(result)
+  await delay(1000)  // Brief feedback display
+  navigate(targetModule, { query, context })
+}
+
+// Medium confidence (50-70%): Ask confirmation
+if (confidence >= 50 && confidence <= 70) {
+  const confirmed = await askConfirmation(result)
+  if (confirmed) navigate(targetModule, { query, context })
+  else showManualSelection()
+}
+
+// Low confidence (<50%): Manual selection
+if (confidence < 50) {
+  showManualSelection(query)
+}
+```
+
+#### 4. ContextMemoryManager
+
+**Purpose**: Store and retrieve user context for personalized routing
+
+**Interface**:
+```typescript
+interface ContextMemoryManager {
+  getContext(): UserContext | null
+  updateContext(update: Partial<UserContext>): void
+  addGoal(goal: string): void
+  addSkill(skill: string): void
+  addCropType(crop: string): void
+  addIntent(intent: string): void
+  clearContext(): void
+  getContextAge(): number  // Days since last update
+}
+
+interface StoredContext {
+  goals: string[]           // Max 10
+  skills: string[]          // Max 20
+  cropTypes: string[]       // Max 5
+  recentIntents: string[]   // Max 10, FIFO queue
+  lastUpdated: string       // ISO timestamp
+  version: number           // Schema version
+}
+```
+
+**Storage Strategy**:
+- localStorage key: `raasta_user_context`
+- JSON serialization
+- 30-day expiration
+- Quota exceeded handling
+- Privacy-first: no PII storage
+
+
+#### 5. RoutingFeedbackUI Component
+
+**Purpose**: Display routing decision and allow cancellation
+
+**Props**:
+```typescript
+interface RoutingFeedbackUIProps {
+  result: IntentResult
+  query: string
+  onCancel: () => void
+  onConfirm: () => void
+}
+```
+
+**Visual Design**:
+- Modal overlay with semi-transparent background
+- Module icon and name
+- Explanation text in Roman Urdu
+- Confidence indicator (visual bar)
+- "Go Back" button (3-second window)
+- Auto-dismiss after 3 seconds
+
+**Example Display**:
+```
+┌─────────────────────────────────────┐
+│  🌱 Zameen                          │
+│                                     │
+│  Aapko Zameen le ja rahe hain...   │
+│  Kyunki aapne fasal ke baare mein  │
+│  pucha hai.                         │
+│                                     │
+│  Confidence: ████████░░ 85%         │
+│                                     │
+│  [Go Back]                          │
+└─────────────────────────────────────┘
+```
+
+#### 6. ContextSuggestionsWidget Component
+
+**Purpose**: Display personalized quick actions based on stored context
+
+**Props**:
+```typescript
+interface ContextSuggestionsWidgetProps {
+  context: UserContext
+  maxSuggestions?: number  // Default: 2
+}
+```
+
+**Suggestion Logic**:
+```typescript
+function generateSuggestions(context: UserContext): Suggestion[] {
+  const suggestions: Suggestion[] = []
+  
+  // Career goal suggestion
+  if (context.goals.length > 0) {
+    suggestions.push({
+      label: 'Continue job search',
+      href: '/taleem/kaam',
+      icon: '💼',
+      priority: 10
+    })
+  }
+  
+  // Crop type suggestion
+  if (context.cropTypes.length > 0) {
+    const crop = context.cropTypes[0]
+    suggestions.push({
+      label: `Check ${crop} prices`,
+      href: '/zameen',
+      icon: '🌱',
+      priority: 8
+    })
+  }
+  
+  // Recent Sukoon usage
+  const recentSukoon = context.recentIntents.filter(i => i.includes('sukoon')).length
+  if (recentSukoon > 0) {
+    suggestions.push({
+      label: 'Check in again',
+      href: '/taleem/sukoon',
+      icon: '🧘',
+      priority: 7
+    })
+  }
+  
+  return suggestions.sort((a, b) => b.priority - a.priority).slice(0, 2)
+}
+```
+
+
+### API Design
+
+#### /api/intent-detection Endpoint
+
+**Request Schema**:
+```typescript
+interface IntentDetectionRequest {
+  text: string                // User query (required)
+  context?: UserContext       // Optional stored context
+  locale?: string             // User locale for response
+}
+```
+
+**Response Schema**:
+```typescript
+interface IntentDetectionResponse {
+  intent: 'samjho' | 'zameen' | 'taleem' | 'raah' | 'unclear'
+  confidence: number          // 0-100
+  targetModule: string        // Display name
+  explanation: string         // Roman Urdu explanation
+  subIntent?: string          // For Taleem routing
+  usedLLM: boolean           // true if LLM used, false if keyword fallback
+}
+```
+
+**Error Response**:
+```typescript
+interface IntentDetectionError {
+  error: string
+  userMessage: string         // Roman Urdu error message
+  fallbackIntent: 'raah'      // Default fallback
+}
+```
+
+**Rate Limiting**:
+- 50 requests per minute per IP address
+- 429 status code when exceeded
+- Retry-After header with seconds to wait
+
+**Caching Strategy**:
+- Cache identical queries for 1 hour
+- Cache key: hash(text + context.goals + context.skills)
+- In-memory cache with LRU eviction
+- Max 1000 cached entries
+
+
+### Intent Detection Algorithm
+
+#### LLM-Based Classification (Production Mode)
+
+**System Prompt Design**:
+```
+You are the RAASTA Intent Classifier. Your job is to analyze user queries and determine which module they should be routed to.
+
+RAASTA has four modules:
+1. Samjho - Document understanding (government notices, forms, legal papers)
+2. Zameen - Crop disease detection and mandi prices (farming, agriculture)
+3. Taleem - Youth services (jobs, skills, mental health, entrepreneurship)
+4. Raah - General voice assistant (schemes, questions, guidance)
+
+Analyze the user query and return JSON:
+{
+  "intent": "samjho" | "zameen" | "taleem" | "raah",
+  "confidence": 0-100,
+  "explanation": "Brief reason in Roman Urdu",
+  "subIntent": "hunarmand" | "sukoon" | "kaam" (only for taleem)
+}
+
+Examples:
+- "Mujhe naukri chahiye" → {"intent": "taleem", "confidence": 95, "subIntent": "kaam"}
+- "Mere seb ke patte kharab hain" → {"intent": "zameen", "confidence": 90}
+- "Ye notice kya kehta hai" → {"intent": "samjho", "confidence": 85}
+- "PM Kisan scheme ke baare mein batao" → {"intent": "raah", "confidence": 80}
+
+Consider user context if provided:
+- Previous crop mentions → higher confidence for zameen
+- Career goals → higher confidence for taleem
+- Recent intents → inform ambiguous cases
+```
+
+**Classification Logic**:
+```typescript
+async function classifyIntent(text: string, context?: UserContext): Promise<IntentResult> {
+  // Build context-aware prompt
+  const systemPrompt = buildSystemPrompt()
+  const userPrompt = buildUserPrompt(text, context)
+  
+  // Call LLM
+  const response = await openai.chat.completions.create({
+    model: 'gpt-4o-mini',
+    temperature: 0.3,  // Low temperature for consistent classification
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt }
+    ],
+    response_format: { type: 'json_object' }
+  })
+  
+  // Parse and validate response
+  const result = JSON.parse(response.choices[0].message.content)
+  
+  // Apply context boosting
+  if (context) {
+    result.confidence = applyContextBoost(result, context)
+  }
+  
+  return result
+}
+```
+
+
+#### Keyword-Based Fallback (Demo Mode)
+
+**Keyword Patterns**:
+```typescript
+const INTENT_KEYWORDS = {
+  zameen: [
+    'fasal', 'crop', 'patti', 'leaf', 'zameen', 'kheti', 'farming',
+    'seb', 'apple', 'chawal', 'rice', 'gehun', 'wheat', 'kesar', 'saffron',
+    'beemari', 'disease', 'mandi', 'price', 'bhav', 'rate'
+  ],
+  taleem: [
+    'job', 'kaam', 'naukri', 'work', 'employment', 'career',
+    'CV', 'resume', 'skill', 'hunar', 'training', 'course',
+    'business', 'startup', 'entrepreneur', 'dukaan', 'shop',
+    'stress', 'tension', 'pareshaan', 'sukoon', 'mental', 'health',
+    'exam', 'test', 'scholarship', 'padhai', 'study'
+  ],
+  samjho: [
+    'kagaz', 'document', 'notice', 'form', 'letter', 'khat',
+    'sarkari', 'government', 'legal', 'qanoon', 'deadline',
+    'samjho', 'explain', 'samjhao', 'understand', 'translate'
+  ],
+  raah: [
+    'help', 'madad', 'scheme', 'yojana', 'question', 'sawal',
+    'batao', 'tell', 'kaise', 'how', 'kya', 'what'
+  ]
+}
+
+function detectIntentKeywords(text: string): IntentResult {
+  const normalized = text.toLowerCase()
+  const scores = {
+    zameen: 0,
+    taleem: 0,
+    samjho: 0,
+    raah: 0
+  }
+  
+  // Count keyword matches
+  for (const [intent, keywords] of Object.entries(INTENT_KEYWORDS)) {
+    for (const keyword of keywords) {
+      if (normalized.includes(keyword)) {
+        scores[intent as keyof typeof scores]++
+      }
+    }
+  }
+  
+  // Find highest score
+  const entries = Object.entries(scores)
+  const [topIntent, topScore] = entries.reduce((a, b) => a[1] > b[1] ? a : b)
+  
+  // Calculate confidence based on score
+  const totalMatches = Object.values(scores).reduce((a, b) => a + b, 0)
+  const confidence = totalMatches > 0 
+    ? Math.min(95, (topScore / totalMatches) * 100)
+    : 0
+  
+  // Detect Taleem sub-intent
+  let subIntent: string | undefined
+  if (topIntent === 'taleem') {
+    if (normalized.match(/business|startup|entrepreneur|dukaan/)) {
+      subIntent = 'hunarmand'
+    } else if (normalized.match(/stress|tension|pareshaan|sukoon|mental/)) {
+      subIntent = 'sukoon'
+    } else if (normalized.match(/job|kaam|naukri|work|employment|career/)) {
+      subIntent = 'kaam'
+    }
+  }
+  
+  return {
+    intent: topIntent as IntentResult['intent'],
+    confidence,
+    targetModule: getModuleName(topIntent),
+    explanation: getExplanation(topIntent, confidence),
+    subIntent
+  }
+}
+```
+
+
+#### Context Boosting Algorithm
+
+**Purpose**: Improve classification accuracy using stored user context
+
+```typescript
+function applyContextBoost(result: IntentResult, context: UserContext): number {
+  let boostedConfidence = result.confidence
+  
+  // Boost zameen if user has crop history
+  if (result.intent === 'zameen' && context.cropTypes.length > 0) {
+    boostedConfidence = Math.min(100, boostedConfidence + 10)
+  }
+  
+  // Boost taleem if user has career goals
+  if (result.intent === 'taleem' && context.goals.length > 0) {
+    boostedConfidence = Math.min(100, boostedConfidence + 10)
+  }
+  
+  // Boost based on recent intent patterns
+  const recentSameIntent = context.recentIntents.filter(
+    i => i === result.intent
+  ).length
+  if (recentSameIntent >= 3) {
+    boostedConfidence = Math.min(100, boostedConfidence + 5)
+  }
+  
+  return boostedConfidence
+}
+```
+
+#### Ambiguity Handling
+
+**Clarifying Questions**:
+```typescript
+const CLARIFYING_QUESTIONS = {
+  'zameen+taleem': 'Kya aap apni fasal ke baare mein puchna chahte hain ya kaam dhundna chahte hain?',
+  'samjho+raah': 'Kya aapke paas koi kagaz hai ya aap sawal puchna chahte hain?',
+  'taleem+raah': 'Kya aap naukri dhundna chahte hain ya scheme ke baare mein janna chahte hain?'
+}
+
+function handleAmbiguousIntent(
+  primaryIntent: string,
+  secondaryIntent: string,
+  confidence: number
+): AmbiguityResolution {
+  if (confidence < 50) {
+    return {
+      type: 'clarify',
+      question: CLARIFYING_QUESTIONS[`${primaryIntent}+${secondaryIntent}`] 
+        || 'Aap kya karna chahte hain?',
+      options: [
+        { label: getModuleName(primaryIntent), value: primaryIntent },
+        { label: getModuleName(secondaryIntent), value: secondaryIntent }
+      ]
+    }
+  }
+  
+  return {
+    type: 'route',
+    intent: primaryIntent,
+    note: `Aap ${getModuleName(secondaryIntent)} bhi dekh sakte hain`
+  }
+}
+```
+
+
+### Routing Logic and URL Structure
+
+#### URL Parameter Design
+
+**Samjho Module**:
+```
+/samjho?query=ye+notice+kya+kehta+hai
+```
+
+**Zameen Module**:
+```
+/zameen?query=mere+seb+ke+patte+kharab+hain&crop=apple
+```
+
+**Taleem Module**:
+```
+/taleem/kaam?query=mujhe+naukri+chahiye
+/taleem/hunarmand?query=business+kholna+hai
+/taleem/sukoon?query=bahut+tension+hai
+```
+
+**Raah Module**:
+```
+/raah?query=PM+Kisan+scheme+ke+baare+mein+batao
+```
+
+#### Query Parameter Handling
+
+**Module-Side Implementation**:
+```typescript
+// In each module page component
+'use client'
+
+import { useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
+
+export default function ModulePage() {
+  const searchParams = useSearchParams()
+  const query = searchParams.get('query')
+  const crop = searchParams.get('crop')  // Zameen-specific
+  
+  useEffect(() => {
+    if (query) {
+      // Pre-populate input field
+      setInputText(decodeURIComponent(query))
+      
+      // Auto-process if appropriate
+      if (shouldAutoProcess(query)) {
+        processQuery(query)
+      }
+    }
+  }, [query])
+  
+  // Rest of component logic
+}
+```
+
+
+### Context Memory Design
+
+#### Data Structure
+
+```typescript
+interface UserContext {
+  version: number             // Schema version (current: 1)
+  goals: string[]             // Career goals, aspirations (max 10)
+  skills: string[]            // Mentioned skills (max 20)
+  cropTypes: string[]         // Crops user grows (max 5)
+  recentIntents: IntentLog[]  // Last 10 intents with timestamps
+  lastUpdated: string         // ISO timestamp
+  expiresAt: string           // ISO timestamp (30 days from lastUpdated)
+}
+
+interface IntentLog {
+  intent: string              // Module name
+  query: string               // User query (truncated to 100 chars)
+  timestamp: string           // ISO timestamp
+  confidence: number          // Classification confidence
+}
+```
+
+#### Storage Mechanism
+
+**localStorage Implementation**:
+```typescript
+const CONTEXT_KEY = 'raasta_user_context'
+const CONTEXT_VERSION = 1
+const MAX_CONTEXT_AGE_DAYS = 30
+
+class ContextMemoryManager {
+  getContext(): UserContext | null {
+    try {
+      const stored = localStorage.getItem(CONTEXT_KEY)
+      if (!stored) return null
+      
+      const context = JSON.parse(stored) as UserContext
+      
+      // Check expiration
+      if (new Date(context.expiresAt) < new Date()) {
+        this.clearContext()
+        return null
+      }
+      
+      // Check version compatibility
+      if (context.version !== CONTEXT_VERSION) {
+        this.clearContext()
+        return null
+      }
+      
+      return context
+    } catch (error) {
+      console.error('[Context] Failed to retrieve:', error)
+      return null
+    }
+  }
+  
+  updateContext(update: Partial<UserContext>): void {
+    const current = this.getContext() || this.createEmptyContext()
+    const updated = { ...current, ...update }
+    updated.lastUpdated = new Date().toISOString()
+    updated.expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    
+    try {
+      localStorage.setItem(CONTEXT_KEY, JSON.stringify(updated))
+    } catch (error) {
+      // Handle quota exceeded
+      if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+        console.warn('[Context] Storage quota exceeded, clearing old data')
+        this.clearContext()
+      }
+    }
+  }
+  
+  addGoal(goal: string): void {
+    const context = this.getContext() || this.createEmptyContext()
+    if (!context.goals.includes(goal)) {
+      context.goals = [...context.goals, goal].slice(-10)  // Keep last 10
+      this.updateContext(context)
+    }
+  }
+  
+  addIntent(intent: string, query: string, confidence: number): void {
+    const context = this.getContext() || this.createEmptyContext()
+    const log: IntentLog = {
+      intent,
+      query: query.slice(0, 100),  // Truncate for privacy
+      timestamp: new Date().toISOString(),
+      confidence
+    }
+    context.recentIntents = [...context.recentIntents, log].slice(-10)  // FIFO
+    this.updateContext(context)
+  }
+  
+  clearContext(): void {
+    localStorage.removeItem(CONTEXT_KEY)
+  }
+  
+  private createEmptyContext(): UserContext {
+    return {
+      version: CONTEXT_VERSION,
+      goals: [],
+      skills: [],
+      cropTypes: [],
+      recentIntents: [],
+      lastUpdated: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    }
+  }
+}
+```
+
+
+#### Context Extraction from Queries
+
+**Natural Language Processing**:
+```typescript
+function extractContextFromQuery(query: string, intent: string): Partial<UserContext> {
+  const update: Partial<UserContext> = {}
+  
+  // Extract career goals
+  const careerPatterns = [
+    /(?:want to|chahta|chahti|banna|become)\s+(?:a\s+)?(\w+)/gi,
+    /(?:job|naukri|kaam)\s+(?:as|ke liye)\s+(\w+)/gi
+  ]
+  for (const pattern of careerPatterns) {
+    const matches = [...query.matchAll(pattern)]
+    if (matches.length > 0) {
+      update.goals = matches.map(m => m[1])
+    }
+  }
+  
+  // Extract skills
+  const skillPatterns = [
+    /(?:I can|main|mujhe aata hai)\s+(\w+)/gi,
+    /(?:skill|hunar|experience)\s+(?:in|mein)\s+(\w+)/gi
+  ]
+  for (const pattern of skillPatterns) {
+    const matches = [...query.matchAll(pattern)]
+    if (matches.length > 0) {
+      update.skills = matches.map(m => m[1])
+    }
+  }
+  
+  // Extract crop types
+  const cropKeywords = {
+    'seb': 'apple',
+    'apple': 'apple',
+    'chawal': 'rice',
+    'rice': 'rice',
+    'gehun': 'wheat',
+    'wheat': 'wheat',
+    'kesar': 'saffron',
+    'saffron': 'saffron'
+  }
+  for (const [keyword, crop] of Object.entries(cropKeywords)) {
+    if (normalized.includes(keyword)) {
+      update.cropTypes = [crop]
+      break
+    }
+  }
+  
+  return update
+}
+```
+
+
+### UI Components Specification
+
+#### GreenSpeakButton Visual Design
+
+**Styling**:
+```css
+.green-speak-button {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #2d7a5f 0%, #3a9b73 50%, #4db88a 100%);
+  box-shadow: 
+    0 4px 12px rgba(45, 122, 95, 0.3),
+    0 8px 24px rgba(45, 122, 95, 0.2),
+    inset 0 -2px 8px rgba(0, 0, 0, 0.15);
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  animation: pulse-green 2s ease-in-out infinite;
+}
+
+@keyframes pulse-green {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 
+      0 4px 12px rgba(45, 122, 95, 0.3),
+      0 8px 24px rgba(45, 122, 95, 0.2);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 
+      0 6px 16px rgba(45, 122, 95, 0.4),
+      0 12px 32px rgba(45, 122, 95, 0.3);
+  }
+}
+
+.green-speak-button:hover {
+  transform: scale(1.08);
+  background: linear-gradient(145deg, #3a9b73 0%, #4db88a 50%, #5fcf9f 100%);
+}
+
+.green-speak-button:active {
+  transform: scale(0.95);
+}
+```
+
+**Layout Position**:
+- Positioned prominently on home screen
+- Above mode cards or in dedicated section
+- Centered horizontally
+- Breathing ring animations around button
+- Label below: "Bol ke batao" in Roman Urdu
+
+
+#### Loading States During Intent Detection
+
+**Visual Feedback Sequence**:
+```typescript
+// State 1: Recording (0-5s)
+<div className="recording-indicator">
+  <div className="pulse-ring" />
+  <span>Sun rahe hain...</span>
+</div>
+
+// State 2: Transcribing (5-10s)
+<div className="transcribing-indicator">
+  <div className="spinner" />
+  <span>Samajh rahe hain...</span>
+</div>
+
+// State 3: Detecting Intent (10-12s)
+<div className="detecting-indicator">
+  <div className="thinking-dots" />
+  <span>Sahi jagah dhund rahe hain...</span>
+</div>
+
+// State 4: Routing (12-13s)
+<div className="routing-indicator">
+  <div className="module-icon" />
+  <span>Aapko {moduleName} le ja rahe hain...</span>
+</div>
+```
+
+**Loading Message Localization**:
+```typescript
+const LOADING_MESSAGES = {
+  recording: {
+    'ur': 'Sun rahe hain...',
+    'hi': 'सुन रहे हैं...',
+    'en': 'Listening...'
+  },
+  transcribing: {
+    'ur': 'Samajh rahe hain...',
+    'hi': 'समझ रहे हैं...',
+    'en': 'Understanding...'
+  },
+  detecting: {
+    'ur': 'Sahi jagah dhund rahe hain...',
+    'hi': 'सही जगह ढूंढ रहे हैं...',
+    'en': 'Finding the right place...'
+  },
+  routing: {
+    'ur': 'Aapko {module} le ja rahe hain...',
+    'hi': 'आपको {module} ले जा रहे हैं...',
+    'en': 'Taking you to {module}...'
+  }
+}
+```
+
+
+### Performance Optimization
+
+#### Caching Strategy
+
+**Intent Pattern Cache**:
+```typescript
+interface CachedIntent {
+  query: string
+  result: IntentResult
+  timestamp: Date
+  hits: number
+}
+
+class IntentCache {
+  private cache = new Map<string, CachedIntent>()
+  private maxSize = 1000
+  
+  get(query: string, context?: UserContext): IntentResult | null {
+    const key = this.generateKey(query, context)
+    const cached = this.cache.get(key)
+    
+    if (!cached) return null
+    
+    // Check if cache is still valid (1 hour)
+    const age = Date.now() - cached.timestamp.getTime()
+    if (age > 60 * 60 * 1000) {
+      this.cache.delete(key)
+      return null
+    }
+    
+    // Update hit count
+    cached.hits++
+    return cached.result
+  }
+  
+  set(query: string, result: IntentResult, context?: UserContext): void {
+    const key = this.generateKey(query, context)
+    
+    // LRU eviction if cache full
+    if (this.cache.size >= this.maxSize) {
+      const lruKey = this.findLRU()
+      this.cache.delete(lruKey)
+    }
+    
+    this.cache.set(key, {
+      query,
+      result,
+      timestamp: new Date(),
+      hits: 1
+    })
+  }
+  
+  private generateKey(query: string, context?: UserContext): string {
+    const normalized = query.toLowerCase().trim()
+    const contextHash = context 
+      ? `${context.goals.join(',')}_${context.skills.join(',')}`
+      : ''
+    return `${normalized}_${contextHash}`
+  }
+  
+  private findLRU(): string {
+    let lruKey = ''
+    let lruTime = Date.now()
+    
+    for (const [key, value] of this.cache.entries()) {
+      if (value.timestamp.getTime() < lruTime) {
+        lruTime = value.timestamp.getTime()
+        lruKey = key
+      }
+    }
+    
+    return lruKey
+  }
+}
+```
+
+
+#### Component Preloading
+
+**Optimistic Loading Strategy**:
+```typescript
+async function routeWithPreload(result: IntentResult, query: string) {
+  // Start preloading target module component
+  const preloadPromise = preloadModule(result.targetModule)
+  
+  // Show routing feedback (1 second)
+  showRoutingFeedback(result)
+  await delay(1000)
+  
+  // Wait for preload to complete
+  await preloadPromise
+  
+  // Navigate with context
+  navigate(result.targetModule, { query })
+}
+
+function preloadModule(module: string): Promise<void> {
+  switch (module) {
+    case 'samjho':
+      return import('@/app/samjho/page')
+    case 'zameen':
+      return import('@/app/zameen/page')
+    case 'taleem':
+      return import('@/app/taleem/page')
+    case 'raah':
+      return import('@/app/raah/page')
+    default:
+      return Promise.resolve()
+  }
+}
+```
+
+#### Parallel Processing
+
+**Concurrent Operations**:
+```typescript
+async function processVoiceInput(audioBlob: Blob, context: UserContext) {
+  // Execute transcription and context retrieval in parallel
+  const [transcription, storedContext] = await Promise.all([
+    transcribeAudio(audioBlob),
+    contextManager.getContext()
+  ])
+  
+  // Merge contexts
+  const mergedContext = { ...storedContext, ...context }
+  
+  // Detect intent with merged context
+  const intent = await detectIntent(transcription.text, mergedContext)
+  
+  // Route with preloading
+  await routeWithPreload(intent, transcription.text)
+}
+```
+
+
+### Demo Mode Implementation
+
+#### Keyword Matching Rules
+
+**Intent Detection Matrix**:
+```typescript
+const DEMO_INTENT_RULES = [
+  // Zameen patterns
+  {
+    keywords: ['fasal', 'crop', 'patti', 'leaf', 'seb', 'apple', 'beemari', 'disease'],
+    intent: 'zameen',
+    confidence: 90,
+    explanation: 'Aapne fasal ke baare mein pucha hai'
+  },
+  {
+    keywords: ['mandi', 'price', 'bhav', 'rate', 'bechna', 'sell'],
+    intent: 'zameen',
+    confidence: 85,
+    explanation: 'Aapko mandi ki jankari chahiye'
+  },
+  
+  // Taleem patterns
+  {
+    keywords: ['job', 'naukri', 'kaam', 'work', 'employment'],
+    intent: 'taleem',
+    subIntent: 'kaam',
+    confidence: 95,
+    explanation: 'Aapko naukri chahiye'
+  },
+  {
+    keywords: ['business', 'startup', 'dukaan', 'shop', 'entrepreneur'],
+    intent: 'taleem',
+    subIntent: 'hunarmand',
+    confidence: 90,
+    explanation: 'Aap business kholna chahte hain'
+  },
+  {
+    keywords: ['stress', 'tension', 'pareshaan', 'sukoon', 'mental', 'sad'],
+    intent: 'taleem',
+    subIntent: 'sukoon',
+    confidence: 88,
+    explanation: 'Aapko sukoon chahiye'
+  },
+  {
+    keywords: ['CV', 'resume', 'skill', 'hunar', 'training'],
+    intent: 'taleem',
+    subIntent: 'kaam',
+    confidence: 85,
+    explanation: 'Aapko skill development chahiye'
+  },
+  
+  // Samjho patterns
+  {
+    keywords: ['kagaz', 'document', 'notice', 'form', 'letter'],
+    intent: 'samjho',
+    confidence: 92,
+    explanation: 'Aapko kagaz samajhna hai'
+  },
+  {
+    keywords: ['sarkari', 'government', 'legal', 'deadline'],
+    intent: 'samjho',
+    confidence: 87,
+    explanation: 'Aapko sarkari kagaz samajhna hai'
+  },
+  
+  // Raah patterns (default fallback)
+  {
+    keywords: ['scheme', 'yojana', 'help', 'madad', 'batao', 'kaise'],
+    intent: 'raah',
+    confidence: 80,
+    explanation: 'Aapko jankari chahiye'
+  }
+]
+
+function matchKeywordPattern(query: string): IntentResult {
+  const normalized = query.toLowerCase()
+  let bestMatch = DEMO_INTENT_RULES[DEMO_INTENT_RULES.length - 1]  // Default to raah
+  let bestScore = 0
+  
+  for (const rule of DEMO_INTENT_RULES) {
+    const matchCount = rule.keywords.filter(kw => normalized.includes(kw)).length
+    if (matchCount > bestScore) {
+      bestScore = matchCount
+      bestMatch = rule
+    }
+  }
+  
+  return {
+    intent: bestMatch.intent,
+    confidence: bestScore > 0 ? bestMatch.confidence : 50,
+    targetModule: getModuleName(bestMatch.intent),
+    explanation: bestMatch.explanation,
+    subIntent: bestMatch.subIntent
+  }
+}
+```
+
+
+#### Demo Query Examples
+
+**Pre-configured Demo Buttons**:
+```typescript
+const DEMO_QUERIES = [
+  {
+    label: 'Job Search Demo',
+    query: 'Mujhe naukri chahiye',
+    expectedIntent: 'taleem',
+    expectedSubIntent: 'kaam'
+  },
+  {
+    label: 'Crop Disease Demo',
+    query: 'Mere seb ke patte kharab hain',
+    expectedIntent: 'zameen'
+  },
+  {
+    label: 'Document Help Demo',
+    query: 'Ye notice kya kehta hai',
+    expectedIntent: 'samjho'
+  },
+  {
+    label: 'Scheme Info Demo',
+    query: 'PM Kisan scheme ke baare mein batao',
+    expectedIntent: 'raah'
+  }
+]
+```
+
+**Demo Response Behavior**:
+- Simulated processing delay: 500-1000ms
+- Consistent routing for same query
+- Visual indicator showing demo mode active
+- Realistic confidence scores (80-95%)
+
+
+### Data Models
+
+#### Intent Detection Models
+
+```typescript
+// Request to intent detection API
+interface IntentDetectionRequest {
+  text: string                // User query (required)
+  context?: UserContext       // Optional stored context
+  locale?: string             // User locale (ur, hi, en)
+}
+
+// Response from intent detection API
+interface IntentDetectionResponse {
+  intent: 'samjho' | 'zameen' | 'taleem' | 'raah' | 'unclear'
+  confidence: number          // 0-100
+  targetModule: string        // Display name in Roman Urdu
+  explanation: string         // Why this module (Roman Urdu)
+  subIntent?: string          // For Taleem: hunarmand/sukoon/kaam
+  usedLLM: boolean           // true if LLM, false if keyword fallback
+  suggestedRoute: string      // URL path to navigate
+  queryParams: Record<string, string>  // Query params to pass
+}
+
+// User context stored in localStorage
+interface UserContext {
+  version: number             // Schema version
+  goals: string[]             // Career goals (max 10)
+  skills: string[]            // Skills (max 20)
+  cropTypes: string[]         // Crops (max 5)
+  recentIntents: IntentLog[]  // Last 10 intents
+  lastUpdated: string         // ISO timestamp
+  expiresAt: string           // ISO timestamp
+}
+
+// Intent log entry
+interface IntentLog {
+  intent: string              // Module name
+  query: string               // Truncated query (100 chars)
+  timestamp: string           // ISO timestamp
+  confidence: number          // Classification confidence
+  wasCorrect?: boolean        // User feedback (optional)
+}
+
+// Routing decision
+interface RoutingDecision {
+  result: IntentDetectionResponse
+  query: string
+  context?: UserContext
+  timestamp: Date
+  cancelled: boolean
+}
+```
+
+
+#### Context Suggestion Models
+
+```typescript
+// Suggestion displayed on home screen
+interface ContextSuggestion {
+  label: string               // Display text (Roman Urdu)
+  href: string                // Target URL
+  icon: string                // Emoji icon
+  priority: number            // Sorting priority (higher = more important)
+  queryParams?: Record<string, string>  // Optional params
+}
+
+// Suggestion generation config
+interface SuggestionConfig {
+  maxSuggestions: number      // Default: 2
+  minPriority: number         // Minimum priority to display
+  recencyWeight: number       // Weight for recent activity (0-1)
+  frequencyWeight: number     // Weight for frequent patterns (0-1)
+}
+```
+
+#### Routing Analytics Models
+
+```typescript
+// Analytics event for routing
+interface RoutingAnalytics {
+  eventType: 'intent_detected' | 'routing_completed' | 'routing_cancelled' | 'routing_error'
+  intent: string
+  confidence: number
+  query: string               // Hashed for privacy
+  usedLLM: boolean
+  processingTime: number      // Milliseconds
+  timestamp: string
+  userCancelled?: boolean
+  errorCode?: string
+}
+
+// Aggregated metrics
+interface RoutingMetrics {
+  totalRoutings: number
+  successRate: number         // Percentage not cancelled
+  averageConfidence: number
+  averageProcessingTime: number
+  intentDistribution: Record<string, number>
+  llmUsageRate: number        // Percentage using LLM vs keywords
+}
+```
+

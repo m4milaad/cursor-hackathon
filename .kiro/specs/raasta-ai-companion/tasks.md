@@ -249,11 +249,11 @@ The implementation follows an incremental approach where each task builds on pre
     - Test parallel execution timing
     - _Requirements: 16.1, 16.2, 16.4_
 
-- [~] 11. Checkpoint - Ensure performance targets are met
+- [ ] 11. Checkpoint - Ensure performance targets are met
   - Ensure all tests pass, ask the user if questions arise.
 
 
-- [~] 12. Enhance demo mode with intelligent fallbacks
+- [ ] 12. Enhance demo mode with intelligent fallbacks
   - [ ] 12.1 Implement contextual demo responses in src/lib/demoLocalized.ts
     - Add keyword detection for PM Kisan, yojana, seb, fasal, kagaz, notice
     - Create contextually relevant demo responses for each keyword category
@@ -278,7 +278,7 @@ The implementation follows an incremental approach where each task builds on pre
     - Test demo mode indicator display
     - _Requirements: 6.2, 6.3, 6.4_
 
-- [~] 13. Implement Taleem module features
+- [ ] 13. Implement Taleem module features
   - [ ] 13.1 Implement Hunarmand business coaching in src/app/taleem/hunarmand/page.tsx
     - Create voice form for business idea submission
     - Implement market assessment LLM prompt
@@ -310,7 +310,7 @@ The implementation follows an incremental approach where each task builds on pre
     - _Requirements: 12.1, 13.1, 14.1_
 
 
-- [~] 14. Implement Taleem quick access features
+- [ ] 14. Implement Taleem quick access features
   - [ ] 14.1 Implement Naukri job orientation in src/app/taleem/naukri/page.tsx
     - Create qualification input form
     - Implement government job category suggestions (JKSSB)
@@ -343,7 +343,7 @@ The implementation follows an incremental approach where each task builds on pre
     - Test scholarship matching logic
     - _Requirements: 15.2, 15.4, 15.5_
 
-- [~] 15. Implement resource cleanup and lifecycle management
+- [ ] 15. Implement resource cleanup and lifecycle management
   - [ ] 15.1 Add cleanup logic to Raah page in src/app/raah/page.tsx
     - Implement useEffect cleanup for audio recording on navigation
     - Stop TTS playback on component unmount
@@ -370,7 +370,7 @@ The implementation follows an incremental approach where each task builds on pre
     - _Requirements: 96.1, 96.2, 96.4_
 
 
-- [~] 16. Implement input validation and sanitization
+- [ ] 16. Implement input validation and sanitization
   - [ ] 16.1 Create validation utilities in src/lib/validation.ts
     - Implement image file type and size validation
     - Implement audio file format validation
@@ -394,7 +394,7 @@ The implementation follows an incremental approach where each task builds on pre
     - Test text sanitization
     - _Requirements: 29.1, 29.2, 29.3_
 
-- [~] 17. Implement automatic TTS activation across all modules
+- [ ] 17. Implement automatic TTS activation across all modules
   - [ ] 17.1 Add automatic TTS to Samjho module
     - Call speakForLocale automatically after explanation generation
     - Implement TTS interruption for new requests
@@ -424,11 +424,11 @@ The implementation follows an incremental approach where each task builds on pre
     - Test TTS interruption behavior
     - _Requirements: 33.1, 33.2, 33.3, 33.4, 33.5_
 
-- [~] 18. Checkpoint - Ensure all modules are integrated
+- [ ] 18. Checkpoint - Ensure all modules are integrated
   - Ensure all tests pass, ask the user if questions arise.
 
 
-- [~] 19. Implement security and privacy measures
+- [ ] 19. Implement security and privacy measures
   - [ ] 19.1 Add HTTPS enforcement in next.config.ts
     - Configure security headers
     - Enforce HTTPS in production
@@ -461,7 +461,7 @@ The implementation follows an incremental approach where each task builds on pre
     - Test PII filtering in logs
     - _Requirements: 20.2, 20.5_
 
-- [~] 20. Implement API rate limiting and cost management
+- [ ] 20. Implement API rate limiting and cost management
   - [ ] 20.1 Create rate limiting middleware in src/lib/rateLimit.ts
     - Implement IP-based rate limiting (100 requests/hour)
     - Add rate limit exceeded message in Roman Urdu
@@ -481,7 +481,7 @@ The implementation follows an incremental approach where each task builds on pre
     - _Requirements: 25.1, 25.2, 25.5_
 
 
-- [~] 21. Implement monitoring and logging system
+- [ ] 21. Implement monitoring and logging system
   - [ ] 21.1 Create logging utilities in src/lib/logger.ts
     - Implement structured logging with timestamps
     - Add service name and mode tracking (demo/production)
@@ -502,7 +502,7 @@ The implementation follows an incremental approach where each task builds on pre
     - Test error context capture
     - _Requirements: 27.1, 27.5_
 
-- [~] 22. Enhance mobile responsiveness and accessibility
+- [ ] 22. Enhance mobile responsiveness and accessibility
   - [ ] 22.1 Implement responsive design improvements
     - Test and fix layouts for 320px to 1920px widths
     - Ensure minimum 44x44px touch targets for all interactive elements
@@ -521,7 +521,7 @@ The implementation follows an incremental approach where each task builds on pre
     - Test touch target sizes
     - _Requirements: 17.3, 17.4, 17.5_
 
-- [~] 23. Implement browser compatibility and graceful degradation
+- [ ] 23. Implement browser compatibility and graceful degradation
   - [ ] 23.1 Add feature detection in src/lib/browserCompat.ts
     - Detect MediaRecorder API availability
     - Detect SpeechRecognition API availability
@@ -543,7 +543,7 @@ The implementation follows an incremental approach where each task builds on pre
     - _Requirements: 19.2, 28.1, 28.2_
 
 
-- [~] 24. Polish UI and enhance visual design
+- [ ] 24. Polish UI and enhance visual design
   - [ ] 24.1 Refine Chinar branding elements
     - Enhance ChinarLeafMark component styling
     - Ensure consistent color scheme using CSS custom properties
@@ -563,7 +563,7 @@ The implementation follows an incremental approach where each task builds on pre
     - Test responsive behavior
     - _Requirements: 22.1, 22.2, 22.3_
 
-- [~] 25. Implement navigation and user flow enhancements
+- [ ] 25. Implement navigation and user flow enhancements
   - [ ] 25.1 Enhance home screen navigation
     - Ensure four mode cards are prominently displayed
     - Verify microphone button navigates to Raah
@@ -582,7 +582,7 @@ The implementation follows an incremental approach where each task builds on pre
     - Test state persistence
     - _Requirements: 23.3, 23.4, 31.4_
 
-- [~] 26. Implement content localization and cultural context
+- [ ] 26. Implement content localization and cultural context
   - [ ] 26.1 Enhance localization in src/lib/i18n/catalog.ts
     - Ensure Roman Urdu is primary UI language
     - Add Kashmiri Latin script phrases where appropriate
@@ -603,7 +603,7 @@ The implementation follows an incremental approach where each task builds on pre
     - _Requirements: 24.1, 24.3, 24.4_
 
 
-- [~] 27. Prepare hackathon demo capabilities
+- [ ] 27. Prepare hackathon demo capabilities
   - [ ] 27.1 Implement demo buttons and pre-filled examples
     - Add demo button to Raah with "PM Kisan yojana" auto-populate
     - Create demo copy for all Taleem sub-features
@@ -624,10 +624,10 @@ The implementation follows an incremental approach where each task builds on pre
     - Test offline mode completeness
     - _Requirements: 21.1, 21.4, 21.5_
 
-- [~] 28. Checkpoint - Ensure demo mode is presentation-ready
+- [ ] 28. Checkpoint - Ensure demo mode is presentation-ready
   - Ensure all tests pass, ask the user if questions arise.
 
-- [~] 29. Prepare production deployment
+- [ ] 29. Prepare production deployment
   - [ ] 29.1 Create comprehensive .env.example file
     - Document all required API keys
     - Add configuration options with descriptions
@@ -654,7 +654,7 @@ The implementation follows an incremental approach where each task builds on pre
     - _Requirements: 18.1, 18.2_
 
 
-- [~] 30. Implement dual voice input strategy for Raah
+- [ ] 30. Implement dual voice input strategy for Raah
   - [ ] 30.1 Enhance browser speech recognition in src/app/raah/page.tsx
     - Ensure browser SpeechRecognition button provides instant voice input
     - Disable Whisper recording when browser recognition is active
@@ -673,7 +673,7 @@ The implementation follows an incremental approach where each task builds on pre
     - Test recording duration limits
     - _Requirements: 32.3, 32.4, 32.5_
 
-- [~] 31. Implement scheme information accuracy and safety protocols
+- [ ] 31. Implement scheme information accuracy and safety protocols
   - [ ] 31.1 Add scheme information with disclaimers
     - Include PM Kisan, PM Mudra, Mission YUVA, J&K startup programs
     - Add eligibility criteria in simple language
@@ -696,7 +696,7 @@ The implementation follows an incremental approach where each task builds on pre
     - Test helpline display logic
     - _Requirements: 13.5, 39.1_
 
-- [~] 32. Final integration and end-to-end testing
+- [ ] 32. Final integration and end-to-end testing
   - [ ] 32.1 Test complete Samjho workflow
     - Upload document → OCR → LLM explanation → TTS output
     - Verify error handling and retry logic
@@ -728,7 +728,7 @@ The implementation follows an incremental approach where each task builds on pre
     - Test end-to-end Taleem flows
     - _Requirements: 16.5, 30.4_
 
-- [~] 33. Final checkpoint - Production readiness verification
+- [ ] 33. Final checkpoint - Production readiness verification
   - Ensure all tests pass, ask the user if questions arise.
 
 

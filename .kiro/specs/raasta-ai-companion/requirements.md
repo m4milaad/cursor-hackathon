@@ -1106,7 +1106,338 @@ The current implementation includes a functional prototype with four modes (Samj
 #### Acceptance Criteria
 
 1. THE Kaam_Module SHALL explain differences between Fiverr and Upwork
-2. THE Kaam_Module SHALL recommend starting with Fiverr for beginners
+2. THE Kaam_Module SHALL provide step-by-step account creation guidance
+3. THE Kaam_Module SHALL suggest starting with low-priced services to build reputation
+4. THE Kaam_Module SHALL provide tips for writing compelling service descriptions
+5. THE Kaam_Module SHALL recommend daily profile optimization practices
+
+---
+
+## Central AI Routing System Requirements
+
+### Requirement 89: Green Speak Button Universal Entry Point
+
+**User Story:** As a user, I want to speak anything from the home screen, so that I can quickly access the right feature without navigating menus.
+
+#### Acceptance Criteria
+
+1. THE RAASTA_System SHALL display a prominent green microphone button on the home screen
+2. WHEN the green speak button is tapped, THE RAASTA_System SHALL activate voice recording
+3. THE RAASTA_System SHALL accept any natural language input including "Find me a job", "My crop is dying", "I feel lost"
+4. THE RAASTA_System SHALL provide visual feedback during voice recording
+5. THE RAASTA_System SHALL support both voice input and text input alternatives
+
+### Requirement 90: Intent Detection Engine
+
+**User Story:** As a user, I want the system to understand what I need, so that I'm automatically directed to the right module.
+
+#### Acceptance Criteria
+
+1. WHEN user input is received, THE Intent_Detection_Engine SHALL analyze the text to determine user intent
+2. THE Intent_Detection_Engine SHALL detect agriculture/crop intent and route to Zameen_Module
+3. THE Intent_Detection_Engine SHALL detect career/job/employment intent and route to Taleem_Module
+4. THE Intent_Detection_Engine SHALL detect emotional/life guidance intent and route to Raah_Module
+5. THE Intent_Detection_Engine SHALL detect document/understanding intent and route to Samjho_Module
+
+### Requirement 91: Intent Classification Accuracy
+
+**User Story:** As a user, I want accurate intent detection, so that I'm routed to the correct module.
+
+#### Acceptance Criteria
+
+1. THE Intent_Detection_Engine SHALL achieve at least 85% accuracy on intent classification
+2. WHEN intent is ambiguous, THE RAASTA_System SHALL ask clarifying questions
+3. THE Intent_Detection_Engine SHALL support multilingual intent detection (Urdu, Hindi, Kashmiri, English)
+4. THE Intent_Detection_Engine SHALL handle mixed-language input
+5. WHEN intent cannot be determined, THE RAASTA_System SHALL default to Raah_Module for general assistance
+
+### Requirement 92: Smart Routing System
+
+**User Story:** As a user, I want seamless navigation to the right module, so that I don't have to manually search for features.
+
+#### Acceptance Criteria
+
+1. WHEN intent is detected, THE Routing_System SHALL automatically navigate to the appropriate module
+2. THE Routing_System SHALL pass the user's original query context to the target module
+3. THE Routing_System SHALL provide immediate visual feedback showing which module is being opened
+4. THE Routing_System SHALL complete routing within 2 seconds of intent detection
+5. THE Routing_System SHALL maintain navigation history for back button functionality
+
+### Requirement 93: Context Passing Between Modules
+
+**User Story:** As a user, I want my question to be carried forward, so that I don't have to repeat myself.
+
+#### Acceptance Criteria
+
+1. WHEN routing to Zameen_Module, THE Routing_System SHALL pass crop-related query context
+2. WHEN routing to Taleem_Module, THE Routing_System SHALL pass job/skill-related query context
+3. WHEN routing to Samjho_Module, THE Routing_System SHALL pass document-related query context
+4. WHEN routing to Raah_Module, THE Routing_System SHALL pass the complete user query
+5. THE target module SHALL pre-populate input fields or immediately process the passed context
+
+### Requirement 94: Intent Detection Performance
+
+**User Story:** As a user, I want fast intent detection, so that I'm not waiting for routing decisions.
+
+#### Acceptance Criteria
+
+1. THE Intent_Detection_Engine SHALL complete intent analysis within 2 seconds
+2. THE RAASTA_System SHALL display loading indicator during intent detection
+3. THE RAASTA_System SHALL use GPT-4o-mini or equivalent model for intent classification
+4. WHERE OPENAI_API_KEY is not configured, THE Intent_Detection_Engine SHALL use keyword-based fallback
+5. THE RAASTA_System SHALL cache common intent patterns to improve performance
+
+### Requirement 95: Context Memory System
+
+**User Story:** As a returning user, I want the system to remember my goals, so that future routing is more personalized.
+
+#### Acceptance Criteria
+
+1. THE Context_Memory_System SHALL store user's stated goals and skills in browser localStorage
+2. WHEN user mentions "I want to become a designer", THE Context_Memory_System SHALL store career goal
+3. WHEN user later says "Find me jobs", THE Routing_System SHALL use stored context to suggest design jobs
+4. THE Context_Memory_System SHALL store up to 10 most recent user intents
+5. THE Context_Memory_System SHALL allow users to clear stored context
+
+### Requirement 96: Memory-Enhanced Routing
+
+**User Story:** As a user with stored context, I want smarter routing decisions, so that the system learns my preferences.
+
+#### Acceptance Criteria
+
+1. WHEN user context indicates previous crop queries, THE Routing_System SHALL prioritize Zameen_Module for ambiguous agricultural terms
+2. WHEN user context indicates job search history, THE Routing_System SHALL prioritize Taleem_Module for career-related queries
+3. THE Intent_Detection_Engine SHALL include stored context in LLM prompt for improved accuracy
+4. THE RAASTA_System SHALL display personalized suggestions based on stored context
+5. THE Context_Memory_System SHALL expire stored context after 30 days of inactivity
+
+### Requirement 97: Keyword-Based Fallback for Demo Mode
+
+**User Story:** As a presenter in demo mode, I want reliable routing without API keys, so that I can demonstrate the routing feature offline.
+
+#### Acceptance Criteria
+
+1. WHERE OPENAI_API_KEY is not configured, THE Intent_Detection_Engine SHALL use keyword matching
+2. THE Intent_Detection_Engine SHALL detect keywords: "fasal", "crop", "patti", "zameen" → route to Zameen
+3. THE Intent_Detection_Engine SHALL detect keywords: "job", "kaam", "naukri", "CV" → route to Taleem
+4. THE Intent_Detection_Engine SHALL detect keywords: "kagaz", "notice", "document", "samjho" → route to Samjho
+5. THE Intent_Detection_Engine SHALL detect keywords: "help", "scheme", "yojana" → route to Raah
+
+### Requirement 98: Routing Feedback and Confirmation
+
+**User Story:** As a user, I want to know where I'm being routed and why, so that I can correct if the system misunderstood.
+
+#### Acceptance Criteria
+
+1. WHEN routing decision is made, THE RAASTA_System SHALL display message: "Aapko [Module] le ja rahe hain..."
+2. THE RAASTA_System SHALL show brief explanation of why that module was chosen
+3. THE RAASTA_System SHALL provide "Go Back" option for 3 seconds before completing navigation
+4. WHEN user cancels routing, THE RAASTA_System SHALL return to home screen with original query preserved
+5. THE RAASTA_System SHALL log routing decisions for accuracy monitoring
+
+### Requirement 99: Voice Input via Browser SpeechRecognition
+
+**User Story:** As a user, I want instant voice input on the home screen, so that I can speak my query quickly.
+
+#### Acceptance Criteria
+
+1. THE Green_Speak_Button SHALL use browser SpeechRecognition API when available
+2. THE RAASTA_System SHALL set language to 'hi-IN' for Hindi/Urdu recognition
+3. WHEN browser speech recognition is unavailable, THE RAASTA_System SHALL fall back to Whisper recording
+4. THE RAASTA_System SHALL display real-time transcription during voice input
+5. THE RAASTA_System SHALL allow manual stop of voice recording
+
+### Requirement 100: Voice Input via Whisper API
+
+**User Story:** As a user on a browser without speech recognition, I want server-side transcription, so that voice input still works.
+
+#### Acceptance Criteria
+
+1. WHERE browser SpeechRecognition is unavailable, THE Green_Speak_Button SHALL use Whisper recording
+2. THE RAASTA_System SHALL record audio in WebM format for Whisper transcription
+3. THE RAASTA_System SHALL limit recording duration to 30 seconds for routing queries
+4. THE RAASTA_System SHALL display recording duration timer
+5. THE RAASTA_System SHALL automatically submit recording after 30 seconds
+
+### Requirement 101: Intent Detection API Endpoint
+
+**User Story:** As a developer, I want a dedicated API endpoint for intent detection, so that routing logic is centralized.
+
+#### Acceptance Criteria
+
+1. THE RAASTA_System SHALL provide /api/intent-detection endpoint
+2. THE endpoint SHALL accept POST requests with { text: string } payload
+3. THE endpoint SHALL return { intent: string, confidence: number, targetModule: string, explanation: string }
+4. THE endpoint SHALL use GPT-4o-mini with specialized intent classification prompt
+5. THE endpoint SHALL implement rate limiting of 50 requests per minute per IP
+
+### Requirement 102: Intent Classification Prompt Engineering
+
+**User Story:** As a system administrator, I want accurate intent classification, so that users are routed correctly.
+
+#### Acceptance Criteria
+
+1. THE Intent_Detection_Engine SHALL use system prompt identifying as "RAASTA Intent Classifier"
+2. THE system prompt SHALL include descriptions of all four modules and their purposes
+3. THE system prompt SHALL include example queries for each intent category
+4. THE system prompt SHALL instruct LLM to return structured JSON with intent and confidence
+5. THE system prompt SHALL handle edge cases like greetings, thanks, and unclear queries
+
+### Requirement 103: Multi-Intent Handling
+
+**User Story:** As a user with multiple needs, I want the system to handle complex queries, so that I can express multiple intents.
+
+#### Acceptance Criteria
+
+1. WHEN user query contains multiple intents, THE Intent_Detection_Engine SHALL identify the primary intent
+2. THE RAASTA_System SHALL route to the module matching the primary intent
+3. THE RAASTA_System SHALL display message acknowledging secondary intents
+4. THE RAASTA_System SHALL suggest visiting other modules for secondary needs
+5. WHEN intents are equally weighted, THE RAASTA_System SHALL ask user to choose
+
+### Requirement 104: Routing Analytics and Monitoring
+
+**User Story:** As a system administrator, I want routing analytics, so that I can improve intent detection accuracy.
+
+#### Acceptance Criteria
+
+1. THE RAASTA_System SHALL log all routing decisions with timestamp and confidence score
+2. THE RAASTA_System SHALL track routing cancellations as potential misclassifications
+3. THE RAASTA_System SHALL log keyword-based fallback usage in demo mode
+4. THE RAASTA_System SHALL not log user personal information in routing analytics
+5. THE RAASTA_System SHALL provide routing accuracy metrics in console logs
+
+### Requirement 105: Session Context Persistence
+
+**User Story:** As a user, I want my session context to persist, so that I can continue where I left off.
+
+#### Acceptance Criteria
+
+1. THE Context_Memory_System SHALL store session data in browser localStorage
+2. THE Context_Memory_System SHALL persist user goals, skills, and recent queries
+3. WHEN user returns to home screen, THE RAASTA_System SHALL load stored context
+4. THE Context_Memory_System SHALL implement data structure: { goals: string[], skills: string[], queries: Query[], timestamp: Date }
+5. THE RAASTA_System SHALL handle localStorage quota exceeded errors gracefully
+
+### Requirement 106: Context Memory UI
+
+**User Story:** As a user, I want to see what the system remembers about me, so that I can verify and manage my stored context.
+
+#### Acceptance Criteria
+
+1. THE RAASTA_System SHALL provide "View My Context" link on home screen
+2. WHEN clicked, THE RAASTA_System SHALL display stored goals, skills, and recent queries
+3. THE RAASTA_System SHALL provide "Clear Context" button to delete all stored data
+4. THE RAASTA_System SHALL display context age (e.g., "Stored 3 days ago")
+5. THE RAASTA_System SHALL use Roman Urdu labels for context display
+
+### Requirement 107: Green Speak Button Design
+
+**User Story:** As a user, I want the green speak button to be visually prominent, so that I immediately understand it's the main entry point.
+
+#### Acceptance Criteria
+
+1. THE Green_Speak_Button SHALL use green color scheme distinct from Chinar amber/gold
+2. THE Green_Speak_Button SHALL be larger than mode cards (minimum 80x80px)
+3. THE Green_Speak_Button SHALL display microphone icon and "Bol ke batao" label
+4. THE Green_Speak_Button SHALL use pulsing animation to draw attention
+5. THE Green_Speak_Button SHALL be positioned prominently above or below mode cards
+
+### Requirement 108: Routing Error Handling
+
+**User Story:** As a user, I want clear feedback when routing fails, so that I can try alternative methods.
+
+#### Acceptance Criteria
+
+1. WHEN intent detection fails, THE RAASTA_System SHALL display error message in Roman Urdu
+2. THE RAASTA_System SHALL offer manual module selection as fallback
+3. WHEN API timeout occurs, THE RAASTA_System SHALL retry once before showing error
+4. THE RAASTA_System SHALL preserve user's original query for manual routing
+5. THE RAASTA_System SHALL suggest using text input if voice transcription failed
+
+### Requirement 109: Intent Confidence Thresholds
+
+**User Story:** As a user, I want accurate routing, so that I'm not sent to the wrong module.
+
+#### Acceptance Criteria
+
+1. THE Intent_Detection_Engine SHALL only auto-route when confidence is above 70%
+2. WHEN confidence is between 50-70%, THE RAASTA_System SHALL ask for confirmation
+3. WHEN confidence is below 50%, THE RAASTA_System SHALL present module options for manual selection
+4. THE RAASTA_System SHALL display confidence level in routing feedback message
+5. THE RAASTA_System SHALL allow users to override routing decision
+
+### Requirement 110: Integration with Existing Modules
+
+**User Story:** As a user, I want seamless integration, so that routing feels like a natural part of RAASTA.
+
+#### Acceptance Criteria
+
+1. WHEN routed to Zameen_Module, THE module SHALL accept query parameter and immediately process crop question
+2. WHEN routed to Taleem_Module, THE module SHALL pre-select appropriate pillar based on query context
+3. WHEN routed to Samjho_Module, THE module SHALL display query and suggest document upload
+4. WHEN routed to Raah_Module, THE module SHALL pre-populate question field with user query
+5. THE RAASTA_System SHALL maintain consistent navigation patterns across all routing scenarios
+
+### Requirement 111: Demo Mode Routing Examples
+
+**User Story:** As a presenter, I want pre-configured demo queries, so that I can showcase routing functionality reliably.
+
+#### Acceptance Criteria
+
+1. THE RAASTA_System SHALL provide demo button with query: "Mujhe naukri chahiye" → routes to Taleem
+2. THE RAASTA_System SHALL provide demo button with query: "Mere seb ke patte kharab hain" → routes to Zameen
+3. THE RAASTA_System SHALL provide demo button with query: "Ye notice kya kehta hai" → routes to Samjho
+4. THE RAASTA_System SHALL provide demo button with query: "PM Kisan scheme ke baare mein batao" → routes to Raah
+5. THE RAASTA_System SHALL complete demo routing within 1 second using keyword fallback
+
+### Requirement 112: Routing System Localization
+
+**User Story:** As a multilingual user, I want routing to work in my language, so that I can speak naturally.
+
+#### Acceptance Criteria
+
+1. THE Intent_Detection_Engine SHALL detect intent from Roman Urdu input
+2. THE Intent_Detection_Engine SHALL detect intent from Devanagari Hindi input
+3. THE Intent_Detection_Engine SHALL detect intent from Kashmiri Latin script input
+4. THE Intent_Detection_Engine SHALL detect intent from English input
+5. THE Intent_Detection_Engine SHALL handle code-mixed input (e.g., "Mujhe job chahiye")
+
+### Requirement 113: Context-Aware Suggestions
+
+**User Story:** As a user with stored context, I want personalized suggestions, so that I can quickly access relevant features.
+
+#### Acceptance Criteria
+
+1. WHEN user has stored career goal, THE home screen SHALL display quick action: "Continue job search"
+2. WHEN user has stored crop type, THE home screen SHALL display quick action: "Check [crop] prices"
+3. WHEN user has recent Sukoon usage, THE home screen SHALL display quick action: "Check in again"
+4. THE RAASTA_System SHALL limit suggestions to 2 most relevant based on context
+5. THE RAASTA_System SHALL update suggestions based on recent activity
+
+### Requirement 114: Routing System Performance Optimization
+
+**User Story:** As a user on slow network, I want fast routing, so that I'm not waiting for navigation.
+
+#### Acceptance Criteria
+
+1. THE Intent_Detection_Engine SHALL cache common query patterns for instant routing
+2. THE RAASTA_System SHALL preload target module components during intent detection
+3. THE RAASTA_System SHALL use optimistic UI updates to show routing immediately
+4. THE RAASTA_System SHALL complete full routing workflow within 3 seconds on 3G network
+5. THE RAASTA_System SHALL display progress indicator for operations exceeding 1 second
+
+### Requirement 115: Accessibility for Routing Feature
+
+**User Story:** As a user with accessibility needs, I want the routing feature to be accessible, so that everyone can use it.
+
+#### Acceptance Criteria
+
+1. THE Green_Speak_Button SHALL have ARIA label "Speak to find the right feature"
+2. THE RAASTA_System SHALL provide keyboard shortcut (Space) to activate green speak button
+3. THE RAASTA_System SHALL announce routing decisions to screen readers
+4. THE RAASTA_System SHALL provide visible focus indicators on green speak button
+5. THE RAASTA_System SHALL support high contrast mode for routing feedback messagesL recommend starting with Fiverr for beginners
 3. THE Kaam_Module SHALL provide profile creation steps in order
 4. THE Kaam_Module SHALL suggest pricing strategy for first gigs
 5. THE Kaam_Module SHALL explain importance of reviews and ratings
