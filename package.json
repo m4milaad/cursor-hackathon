@@ -12,6 +12,7 @@
     "convex:deploy": "convex deploy"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^3.0.48",
     "@ai-sdk/react": "^3.0.0",
     "@tailwindcss/postcss": "^4.2.2",
     "ai": "^6.0.141",
