@@ -180,11 +180,17 @@ async function fetchFromAgmarknet(cropType: string, region: string): Promise<Man
   }
   
   try {
+    const normalizedRegion = region.trim().toLowerCase()
+    const stateFilter =
+      normalizedRegion === 'kashmir' || normalizedRegion === 'jammu and kashmir'
+        ? 'Jammu and Kashmir'
+        : region
+
     // Build API request with filters for Kashmir region
     const params = new URLSearchParams({
       'api-key': apiKey,
       'format': 'json',
-      'filters[state]': 'Jammu and Kashmir',
+      'filters[state]': stateFilter,
       'filters[commodity]': commodity,
       'limit': '100',
     })
