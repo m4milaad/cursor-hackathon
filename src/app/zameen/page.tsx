@@ -4,7 +4,7 @@ import { analyzeCropImage } from '@/lib/vision'
 import { explainCropAdvice } from '@/lib/llm'
 import { useI18n } from '@/lib/i18n/context'
 import { speakForLocale, stopSpeaking } from '@/lib/tts'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 
 export default function ZameenPage() {
   const { locale } = useI18n()
@@ -14,6 +14,60 @@ export default function ZameenPage() {
   const [result, setResult] = useState<string | null>(null)
   const [mandiInfo, setMandiInfo] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [openTrends, setOpenTrends] = useState(false)
+  const [trendKey, setTrendKey] = useState<'saffron' | 'walnuts' | 'apples'>('saffron')
+
+  const trends = useMemo(
+    () => ({
+      saffron: {
+        label: 'Saffron (Grade A)',
+        unit: 'Rs. / kg',
+        market: 'Pampore Hub',
+        series: [185000, 192000, 198500, 205000, 212000, 221000, 234000, 245000],
+      },
+      walnuts: {
+        label: 'Walnuts (Shelled)',
+        unit: 'Rs. / kg',
+        market: 'Srinagar Central',
+        series: [720, 760, 790, 820, 840, 830, 860, 850],
+      },
+      apples: {
+        label: 'Apples (Kullu)',
+        unit: 'Rs. / box',
+        market: 'Sopore Mandi',
+        series: [820, 890, 930, 980, 1040, 1120, 1180, 1200],
+      },
+    }),
+    [],
+  )
+
+  const trendSummary = useMemo(() => {
+    const series = trends[trendKey].series
+    const first = series[0]
+    const last = series[series.length - 1]
+    const change = ((last - first) / first) * 100
+    return {
+      first,
+      last,
+      change,
+      high: Math.max(...series),
+      low: Math.min(...series),
+    }
+  }, [trendKey, trends])
+
+  const buildSparkPath = useCallback((series: number[], width: number, height: number) => {
+    const min = Math.min(...series)
+    const max = Math.max(...series)
+    const range = Math.max(1, max - min)
+    const step = width / (series.length - 1)
+    return series
+      .map((value, idx) => {
+        const x = idx * step
+        const y = height - ((value - min) / range) * height
+        return `${idx === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`
+      })
+      .join(' ')
+  }, [])
 
   const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -227,7 +281,11 @@ export default function ZameenPage() {
                 </div>
               </div>
 
-              <button className="w-full mt-12 bg-[var(--color-secondary)] text-[var(--color-on-secondary)] py-4 font-label text-[10px] uppercase tracking-[0.2em] hover:bg-opacity-90 transition-all">
+              <button
+                type="button"
+                onClick={() => setOpenTrends(true)}
+                className="w-full mt-12 bg-[var(--color-secondary)] text-[var(--color-on-secondary)] py-4 font-label text-[10px] uppercase tracking-[0.2em] hover:bg-opacity-90 transition-all cursor-pointer relative z-10 pointer-events-auto"
+              >
                 View Historical Trends
               </button>
             </div>
@@ -247,6 +305,121 @@ export default function ZameenPage() {
           </div>
         </div>
       </section>
+
+      {openTrends ? (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-[rgba(0,0,0,0.55)] px-4 sm:px-6"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="w-full max-w-4xl bg-[var(--color-surface-container-lowest)] border border-[var(--color-outline-variant)] shadow-2xl max-h-[85vh] overflow-y-auto">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 p-6 md:p-10 border-b border-[var(--color-outline-variant)]">
+              <div>
+                <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary)] mb-3">
+                  Market Archive
+                </p>
+                <h3 className="font-headline text-2xl sm:text-3xl md:text-4xl text-[var(--color-primary)]">
+                  Historical Trends
+                </h3>
+                <p className="mt-3 text-sm text-[var(--color-on-surface-variant)] max-w-2xl">
+                  Track seasonal price movement across key commodities with month-by-month momentum.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setOpenTrends(false)}
+                className="raasta-btn-secondary text-sm self-start"
+              >
+                Close
+              </button>
+            </div>
+
+            <div className="p-6 md:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
+              <div className="lg:col-span-4 flex flex-col gap-4">
+                {(['saffron', 'walnuts', 'apples'] as const).map((key) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setTrendKey(key)}
+                    className={`text-left p-4 border transition-all ${
+                      trendKey === key
+                        ? 'border-[var(--color-secondary)] bg-[var(--color-surface-container-low)]'
+                        : 'border-[var(--color-outline-variant)] bg-[var(--color-surface-container-lowest)]'
+                    }`}
+                  >
+                    <p className="font-headline text-lg">{trends[key].label}</p>
+                    <p className="text-xs uppercase tracking-widest text-[var(--color-on-surface-variant)] mt-1">
+                      {trends[key].market}
+                    </p>
+                  </button>
+                ))}
+              </div>
+
+              <div className="lg:col-span-8">
+                <div className="bg-[var(--color-surface-container-low)] p-6 border border-[var(--color-outline-variant)]">
+                  <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
+                    <div>
+                      <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary)] mb-2">
+                        {trends[trendKey].market}
+                      </p>
+                      <h4 className="font-headline text-2xl">{trends[trendKey].label}</h4>
+                    </div>
+                    <div className="text-left sm:text-right">
+                      <p className="text-sm text-[var(--color-on-surface-variant)]">Latest</p>
+                      <p className="text-2xl font-bold text-[var(--color-primary)]">
+                        {trendSummary.last.toLocaleString('en-IN')} {trends[trendKey].unit}
+                      </p>
+                      <p className={`text-xs uppercase tracking-widest ${trendSummary.change >= 0 ? 'text-[var(--color-secondary)]' : 'text-[var(--color-error)]'}`}>
+                        {trendSummary.change >= 0 ? '+' : ''}
+                        {trendSummary.change.toFixed(1)}% since start
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="bg-white border border-[var(--color-outline-variant)] p-4">
+                    <svg viewBox="0 0 600 220" className="w-full h-48">
+                      <path
+                        d={buildSparkPath(trends[trendKey].series, 600, 200)}
+                        fill="none"
+                        stroke="var(--color-secondary)"
+                        strokeWidth="4"
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                      />
+                      <line x1="0" y1="200" x2="600" y2="200" stroke="var(--color-outline-variant)" strokeWidth="1" />
+                    </svg>
+                    <div className="flex justify-between text-[10px] uppercase tracking-widest text-[var(--color-on-surface-variant)] mt-2">
+                      <span>8 months ago</span>
+                      <span>Today</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 text-sm text-[var(--color-on-surface-variant)]">
+                    <div className="bg-[var(--color-surface-container-lowest)] p-4 border border-[var(--color-outline-variant)]">
+                      <p className="text-xs uppercase tracking-widest">Low</p>
+                      <p className="font-headline text-xl text-[var(--color-primary)]">
+                        {trendSummary.low.toLocaleString('en-IN')}
+                      </p>
+                    </div>
+                    <div className="bg-[var(--color-surface-container-lowest)] p-4 border border-[var(--color-outline-variant)]">
+                      <p className="text-xs uppercase tracking-widest">High</p>
+                      <p className="font-headline text-xl text-[var(--color-primary)]">
+                        {trendSummary.high.toLocaleString('en-IN')}
+                      </p>
+                    </div>
+                    <div className="bg-[var(--color-surface-container-lowest)] p-4 border border-[var(--color-outline-variant)]">
+                      <p className="text-xs uppercase tracking-widest">Range</p>
+                      <p className="font-headline text-xl text-[var(--color-primary)]">
+                        {(trendSummary.high - trendSummary.low).toLocaleString('en-IN')}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {/* Aesthetic Divider Image */}
       <section className="px-8 md:px-24 mb-24">

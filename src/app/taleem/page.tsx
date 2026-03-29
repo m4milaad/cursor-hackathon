@@ -2,6 +2,7 @@
 
 import { useI18n } from '@/lib/i18n/context'
 import Link from 'next/link'
+import { useMemo, useState } from 'react'
 
 const categories = [
   {
@@ -31,6 +32,7 @@ const featureStrip = [
     items: ['Skill match %', 'Apply directly'],
     href: '/taleem/naukri',
     icon: 'work',
+    why: 'Find work that actually fits your skills.',
   },
   {
     title: 'Voice CV',
@@ -38,6 +40,7 @@ const featureStrip = [
     items: ['AI converts to CV + profile', 'Shareable link'],
     href: '/taleem/cv',
     icon: 'graphic_eq',
+    why: 'No typing. Just speak and get hired.',
   },
   {
     title: 'Exam Prep',
@@ -45,11 +48,34 @@ const featureStrip = [
     items: ['AI quizzes', 'Smart revision'],
     href: '/taleem/exam',
     icon: 'local_library',
+    why: 'Study smarter, not harder.',
   },
 ] as const
 
 export default function TaleemHubPage() {
   const { t } = useI18n()
+  const [openFeature, setOpenFeature] = useState<'Jobs' | 'Voice CV' | 'Exam Prep' | null>(null)
+  const [jobLocation, setJobLocation] = useState('Srinagar')
+  const [voiceMode, setVoiceMode] = useState<'idle' | 'recording' | 'processing'>('idle')
+  const [examTopic, setExamTopic] = useState('JKSSB - General Awareness')
+
+  const jobMatches = useMemo(
+    () => [
+      { title: 'Agri Field Coordinator', org: 'Pampore Co-Op', match: 86, location: 'Pampore' },
+      { title: 'Data Entry Assistant', org: 'Srinagar Hub', match: 74, location: 'Srinagar' },
+      { title: 'Supply Chain Intern', org: 'Kashmir Traders', match: 69, location: 'Baramulla' },
+    ],
+    [],
+  )
+
+  const quizItems = useMemo(
+    () => [
+      { q: 'What is the capital of Jammu & Kashmir (summer)?', a: 'Srinagar' },
+      { q: 'Which river is known as the lifeline of Kashmir?', a: 'Jhelum' },
+      { q: 'What does RTI stand for?', a: 'Right to Information' },
+    ],
+    [],
+  )
 
   return (
     <main className="leaf-pattern flex-grow pt-24 min-h-screen text-[var(--color-on-surface)]">
@@ -159,10 +185,11 @@ export default function TaleemHubPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {featureStrip.map((f) => (
-            <Link
+            <button
               key={f.title}
-              href={f.href}
-              className="group bg-[var(--color-primary-container)] text-[var(--color-on-primary)] p-8 border-l-4 border-[var(--color-secondary)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_30px_80px_rgba(0,0,0,0.12)]"
+              type="button"
+              onClick={() => setOpenFeature(f.title)}
+              className="group bg-[var(--color-primary-container)] text-[var(--color-on-primary)] p-8 border-l-4 border-[var(--color-secondary)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_30px_80px_rgba(0,0,0,0.12)] text-left"
             >
               <div className="flex items-center justify-between mb-8">
                 <div>
@@ -183,7 +210,10 @@ export default function TaleemHubPage() {
                   </div>
                 ))}
               </div>
-            </Link>
+              <p className="mt-6 text-xs uppercase tracking-widest text-[var(--color-secondary-fixed-dim)]">
+                {f.why}
+              </p>
+            </button>
           ))}
         </div>
       </section>
@@ -251,6 +281,207 @@ export default function TaleemHubPage() {
           </div>
         </div>
       </section>
+
+      {openFeature ? (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-[rgba(0,0,0,0.55)] px-4 sm:px-6"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="w-full max-w-5xl bg-[var(--color-surface-container-lowest)] border border-[var(--color-outline-variant)] shadow-2xl max-h-[85vh] overflow-y-auto">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 p-6 md:p-10 border-b border-[var(--color-outline-variant)]">
+              <div>
+                <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary)] mb-3">
+                  Taleem Tools
+                </p>
+                <h3 className="font-headline text-2xl sm:text-3xl md:text-4xl text-[var(--color-primary)]">
+                  {openFeature}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setOpenFeature(null)}
+                className="raasta-btn-secondary text-sm self-start"
+              >
+                Close
+              </button>
+            </div>
+
+            {openFeature === 'Jobs' && (
+              <div className="p-6 md:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div className="lg:col-span-5">
+                  <p className="text-sm text-[var(--color-on-surface-variant)] mb-6">
+                    Smart matches update as your profile grows. Apply in a single tap using your saved profile.
+                  </p>
+                  <label className="text-xs uppercase tracking-widest text-[var(--color-secondary)]">
+                    Location
+                  </label>
+                  <input
+                    value={jobLocation}
+                    onChange={(e) => setJobLocation(e.target.value)}
+                    className="raasta-input w-full mt-2"
+                    placeholder="Enter your district"
+                  />
+                  <div className="mt-6 space-y-4 text-sm">
+                    <div className="bg-[var(--color-surface-container-low)] p-4 border border-[var(--color-outline-variant)]">
+                      <p className="font-label text-[10px] uppercase tracking-widest text-[var(--color-on-surface-variant)] mb-2">
+                        AI Suggestions
+                      </p>
+                      <p>Agri assistant, Warehouse planner, Community educator</p>
+                    </div>
+                    <div className="bg-[var(--color-surface-container-low)] p-4 border border-[var(--color-outline-variant)]">
+                      <p className="font-label text-[10px] uppercase tracking-widest text-[var(--color-on-surface-variant)] mb-2">
+                        One-Click Apply
+                      </p>
+                      <p>Uses your saved CV + Voice intro to fill the form instantly.</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="lg:col-span-7">
+                  <div className="space-y-4">
+                    {jobMatches.map((job) => (
+                      <div
+                        key={job.title}
+                        className="border border-[var(--color-outline-variant)] bg-[var(--color-surface-container-low)] p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+                      >
+                        <div>
+                          <p className="font-headline text-lg">{job.title}</p>
+                          <p className="text-xs uppercase tracking-widest text-[var(--color-on-surface-variant)] mt-1">
+                            {job.org} • {job.location}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <span className="text-sm text-[var(--color-secondary)] font-bold">
+                            {job.match}% match
+                          </span>
+                          <button className="raasta-btn-primary">Apply</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {openFeature === 'Voice CV' && (
+              <div className="p-6 md:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div className="lg:col-span-5">
+                  <p className="text-sm text-[var(--color-on-surface-variant)] mb-6">
+                    Record once, we format it into a clean CV and shareable profile link.
+                  </p>
+                  <div className="bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)] p-5">
+                    <p className="text-xs uppercase tracking-widest text-[var(--color-on-surface-variant)] mb-2">
+                      Language
+                    </p>
+                    <div className="flex gap-2">
+                      {['Urdu', 'Kashmiri', 'English'].map((lang) => (
+                        <span
+                          key={lang}
+                          className="border border-[var(--color-outline-variant)] px-3 py-1 text-xs uppercase tracking-widest"
+                        >
+                          {lang}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="lg:col-span-7">
+                  <div className="bg-[var(--color-primary-container)] text-[var(--color-on-primary)] p-6 border border-[var(--color-outline-variant)]">
+                    <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary-fixed)] mb-4">
+                      Voice Intro
+                    </p>
+                    <div className="flex items-center gap-4">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setVoiceMode((prev) =>
+                            prev === 'recording' ? 'processing' : 'recording',
+                          )
+                        }
+                        className="w-14 h-14 rounded-full bg-[var(--color-secondary)] text-[var(--color-on-secondary)] flex items-center justify-center"
+                      >
+                        <span className="material-symbols-outlined">
+                          {voiceMode === 'recording' ? 'stop' : 'mic'}
+                        </span>
+                      </button>
+                      <div>
+                        <p className="font-headline text-lg">
+                          {voiceMode === 'recording'
+                            ? 'Recording...'
+                            : voiceMode === 'processing'
+                            ? 'Processing voice to CV'
+                            : 'Tap to record'}
+                        </p>
+                        <p className="text-xs uppercase tracking-widest text-[var(--color-secondary-fixed-dim)]">
+                          Multilingual supported
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setVoiceMode('processing')}
+                      className="mt-6 w-full bg-[var(--color-secondary)] text-[var(--color-on-secondary)] py-3 font-label text-[10px] uppercase tracking-[0.2em] hover:bg-opacity-90 transition-colors"
+                    >
+                      Generate CV & Profile
+                    </button>
+                    <div className="mt-6 bg-[var(--color-surface-container-lowest)] text-[var(--color-on-surface)] p-4 text-sm border border-[var(--color-outline-variant)]">
+                      Shareable profile link will appear here after generation.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {openFeature === 'Exam Prep' && (
+              <div className="p-6 md:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div className="lg:col-span-4">
+                  <p className="text-sm text-[var(--color-on-surface-variant)] mb-6">
+                    Choose a topic and start a focused practice session with smart revision.
+                  </p>
+                  <label className="text-xs uppercase tracking-widest text-[var(--color-secondary)]">
+                    Topic
+                  </label>
+                  <select
+                    value={examTopic}
+                    onChange={(e) => setExamTopic(e.target.value)}
+                    className="raasta-input w-full mt-2"
+                  >
+                    <option>JKSSB - General Awareness</option>
+                    <option>Police Recruitment - Aptitude</option>
+                    <option>Class 12 - Biology</option>
+                  </select>
+                  <div className="mt-6 bg-[var(--color-surface-container-low)] p-4 border border-[var(--color-outline-variant)] text-sm">
+                    Smart revision will prioritize weak areas after your first quiz.
+                  </div>
+                </div>
+                <div className="lg:col-span-8">
+                  <div className="bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)] p-6">
+                    <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary)] mb-4">
+                      AI Quiz
+                    </p>
+                    <div className="space-y-4">
+                      {quizItems.map((item) => (
+                        <div
+                          key={item.q}
+                          className="border border-[var(--color-outline-variant)] bg-[var(--color-surface-container-lowest)] p-4 text-sm"
+                        >
+                          <p className="font-headline text-base text-[var(--color-primary)]">{item.q}</p>
+                          <p className="text-xs text-[var(--color-on-surface-variant)] mt-2">
+                            Answer: {item.a}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                    <button className="mt-6 w-full bg-[var(--color-secondary)] text-[var(--color-on-secondary)] py-3 font-label text-[10px] uppercase tracking-[0.2em] hover:bg-opacity-90 transition-colors">
+                      Start Practice
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : null}
 
       {/* Footer Continuity */}
       <section className="px-8 md:px-24 pb-24">
