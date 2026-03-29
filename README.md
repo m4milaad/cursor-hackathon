@@ -41,7 +41,6 @@ User taps button → Speaks query → AI detects intent → Auto-routes to modul
 
 Works in Urdu, Hindi, Kashmiri, or English.
 
-
 ---
 
 ## 🧠 The Four Domains
@@ -56,6 +55,9 @@ Understand documents, text, and real-world information
 - 📝 Translates and explains in simple language  
 - 🔊 Voice output in user's language  
 
+**Use Case:** "What does this government notice say?" → Photo → OCR → Simple explanation in Urdu
+
+---
 
 ### 🌱 2. ZAMEEN (Crop Intelligence)
 Analyze crops and get real-time farming insights
@@ -67,18 +69,27 @@ Analyze crops and get real-time farming insights
 - 📊 Shows live mandi prices (Sopore, Pampore, Srinagar)  
 - 📈 Price trends and best time-to-sell insights  
 
+**Use Case:** "My apple leaves have spots" → Photo → Disease detected → Treatment + market price
+
+---
 
 ### 🎓 3. TALEEM (Youth Services)
 Support youth with skills, jobs, and well-being
 
-**Features:**
-- 🧑‍💼 Hunarmand: business guidance & entrepreneurship support  
-- 🧠 Sukoon: mental health support & emotional guidance  
-- 💼 Kaam Dhundo: job matching & opportunities  
+**Three Pillars:**
+- 🧑‍💼 **Hunarmand**: Business guidance & entrepreneurship support  
+- 🧠 **Sukoon**: Mental health support & emotional guidance  
+- 💼 **Kaam Dhundo**: Job matching & skill mapping  
+
+**Quick Access Features:**
 - 🎤 Voice-based CV generation  
 - 📚 Exam prep feedback & performance insights  
 - 🎓 Scholarship discovery & recommendations  
+- 💼 Job orientation (JKSSB, government jobs)
 
+**Use Case:** "I need a job" → CV created + jobs suggested + application guidance
+
+---
 
 ### 🎙️ 4. RAAH (Voice Assistant)
 Your AI guide for everything — hands-free
@@ -89,55 +100,94 @@ Your AI guide for everything — hands-free
 - ⚡ Instant responses via browser speech recognition  
 - 🧠 High-accuracy understanding using Whisper API  
 - 🔗 Smart suggestions to switch between Samjho, Zameen, Taleem  
+- 💬 Structured guidance with action steps
 
-
----
-
-
-
-## 🔧 Environment Variables
-
-```env
-# OpenAI (optional - for pr API for multilingual transcription
-- Custom prompts with Kashmir context
-
-### Convex Track ⭐
-- Real-time database for user context
-- Server functions for API orchestration
-- File storage and session management
-
-### v0 Track ⭐
-- Voice-first UI components
-- Mobile-optimized layouts
-- Accessible design patterns
-
-### Open Track ⭐
-- **Theme**: Build for the Next Billion
-- **Impact**: Addresses language barriers, literacy issues, context mismatch
-- **Scale**: 10M in Kashmir, 1B globally
+**Use Case:** "I'm confused about my future" → Structured guidance + action steps + resources
 
 ---
 
-### Scalability
-- Architecture supports multiple languages
-- Can expand to other regions
-- Modular design for new features
-- Cloud-ready for millions of users
+## 🤖 AI & Sponsor Tools Integration
+
+### **Cursor (Title Sponsor)** ⭐
+- **Development**: 80% of codebase built with Cursor Composer
+- **AI-Assisted**: Debugging, refactoring, API integration
+- **Productivity**: 10+ hours saved with context-aware suggestions
+- **Rapid Prototyping**: Component generation and optimization
+
+### **OpenAI (AI Track)** ⭐
+- **GPT-4o-mini**: Intent detection, document explanation, crop advice, life guidance, CV generation
+- **Whisper API**: Multilingual voice transcription (Urdu, Hindi, Kashmiri)
+- **Custom Prompts**: Kashmir-specific context (local crops, schemes, locations)
+- **Performance**: 85%+ intent detection accuracy
+
+### **Convex (Backend Track)** ⭐
+- **Real-time Database**: User context and conversation history
+- **Server Functions**: API orchestration and caching
+- **File Storage**: Uploaded images (documents, crops)
+- **Session Management**: Maintaining state across modules
+
+### **v0 (Frontend Track)** ⭐
+- **UI Generation**: Voice-first component designs
+- **Responsive Layouts**: Mobile-optimized for low-end devices
+- **Accessibility**: ARIA labels and keyboard navigation
+
+### Additional AI Technologies
+- **Google Cloud Vision API**: Production OCR for documents
+- **Roboflow**: Crop disease detection models
+- **ElevenLabs/Google TTS**: Natural voice synthesis
+- **Browser SpeechRecognition**: Instant voice input
 
 ---
 
+## 🏗️ Technical Architecture
 
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    USER INPUT                                │
+│              Voice / Photo / Text                            │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│              INTENT DETECTION ENGINE                         │
+│         (OpenAI GPT-4o-mini / Keyword Matching)             │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│                  SMART ROUTER                                │
+│         Context-aware navigation to modules                  │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│                MODULE PROCESSING                             │
+│  Samjho: OCR → Translation → Explanation                    │
+│  Zameen: Vision AI → Disease → Market Data                  │
+│  Taleem: Skill Mapping → Job Matching → CV                  │
+│  Raah: Emotion Analysis → Guidance → Resources              │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│              RESPONSE GENERATION                             │
+│            Voice + Text in User's Language                   │
+└─────────────────────────────────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│              CONTEXT MEMORY                                  │
+│         (Convex Database - User History)                     │
+└─────────────────────────────────────────────────────────────┘
+```
 
-## 📊 Impact & Scale
+---
 
-### Target Users
-- **10M+** in Kashmir
-- **1B+** globally in similar contexts
-- **500M+** Urdu/Kashmiri speakers worldwide
+## 🎯 Key Features
 
-### Real-World Impact
-- **Farmers**: Detect diseases early, optimize sales → 20% more income
-- **Youth**: Create CVs, find jobs, access scholarships → Break unen
+### Voice-First Design
+- ✅ One-tap voice input
+- ✅ Multilingual support (Urdu, Hindi, Kashmiri, English)
+- ✅ Automatic TTS output
+- ✅ Works for users with low literacy
+
+### Intelligent Routing
+- ✅ AI-powered intent detection
 - ✅ Context-aware navigation
 - ✅ 85%+ accuracy (production mode)
 - ✅ Keyword fallback (demo mode)
@@ -156,75 +206,9 @@ Your AI guide for everything — hands-free
 
 ### Mobile-Optimized
 - ✅ Responsive design (320px - 1920px)
-- ✅ Touch-frie                   # Static assets
-```
-
----
-
-## 🎯 Key Features
-
-### Voice-First Design
-- ✅ One-tap voice input
-- ✅ Multilingual support (Urdu, Hindi, Kashmiri, English)
-- ✅ Automatic TTS output
-- ✅ Works for users with low literacy
-
-### Intelligent Routing
-- ✅ AI-powered intent detectio         # Voice input
-│   │   ├── VoiceOutput.tsx             # TTS output
-│   │   └── ImageUploader.tsx           # Photo capture
-│   └── lib/
-│       ├── ocr.ts                      # OCR service
-│       ├── vision.ts                   # Crop detection
-│       ├── llm.ts                      # LLM client
-│       ├── whisper.ts                  # Transcription
-│       ├── tts.ts                      # Text-to-speech
-│       └── demoCopy.ts                 # Demo mode data
-├── public/
-│   └── assets/      .tsx             # CV generation
-│   │   │   ├── exam/page.tsx           # Exam prep
-│   │   │   └── scholarship/page.tsx    # Scholarship matching
-│   │   ├── raah/page.tsx               # Life guidance
-│   │   └── api/
-│   │       ├── intent-detection/       # AI routing endpoint
-│   │       ├── llm/                    # LLM processing
-│   │       └── transcribe/             # Whisper transcription
-│   ├── components/
-│   │   ├── GreenSpeakButton.tsx        # Universal AI entry
-│   │   ├── MicButton.tsx       ├── demo/page.tsx               # Demo page with examples
-│   │   ├── samjho/page.tsx             # Document understanding
-│   │   ├── zameen/page.tsx             # Agriculture intelligence
-│   │   ├── taleem/
-│   │   │   ├── page.tsx                # Taleem hub
-│   │   │   ├── hunarmand/page.tsx      # Business coaching
-│   │   │   ├── sukoon/page.tsx         # Mental health
-│   │   │   ├── kaam/page.tsx           # Job matching
-│   │   │   ├── naukri/page.tsx         # Job orientation
-│   │   │   ├── cv/page
-git clone [your-repo-url]
-cd raasta-ai
-
-# Install dependencies
-npm install
-
-# Run development server
-npm run dev
-```
-
-## 📁 Project Structure
-
-```text
-raasta-ai/
-├── src/
-│   ├── app/
-│   │   ├── page.tsx                    # Home with Green Speak Button
-│   │  ─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│              CONTEXT MEMORY                                  │
-│         (Convex Database - User History)                     │
-└─────────────────────────────────────────────────────────────┘
-```
+- ✅ Touch-friendly interface
+- ✅ Works on 2G/3G networks
+- ✅ Low-end device support
 
 ---
 
@@ -238,79 +222,113 @@ raasta-ai/
 ### Installation
 
 ```bash
-# Clone repository→ Explanation                    │
-│  Zameen: Vision AI → Disease → Market Data                  │
-│  Taleem: Skill Mapping → Job Matching → CV                  │
-│  Raah: Emotion Analysis → Guidance → Resources              │
-└─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│              RESPONSE GENERATION                             │
-│            Voice + Text in User's Language                   │
-└────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│                  SMART ROUTER                                │
-│         Context-aware navigation to modules                  │
-└─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│                MODULE PROCESSING                             │
-│  Samjho: OCR → Translation re
+# Clone repository
+git clone [https://github.com/m4milaad/cursor-hackathon.git]
+cd raasta-ai
 
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    USER INPUT                                │
-│              Voice / Photo / Text                            │
-└─────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────┐
-│              INTENT DETECTION ENGINE                         │
-│         (OpenAI GPT-4o-mini / Keyword Matching)             │
-└───────────────────────── Maintaining state across modules
 
-### **v0 (Frontend Track)** ⭐
-- **UI Generation**: Voice-first component designs
-- **Responsive Layouts**: Mobile-optimized for low-end devices
-- **Accessibility**: ARIA labels and keyboard navigation
+### Environment Variables
 
-### Additional AI Technologies
-- **Google Cloud Vision API**: Production OCR for documents
-- **Roboflow**: Crop disease detection models
-- **ElevenLabs/Google TTS**: Natural voice synthesis
-- **Browser SpeechRecognition**: Instant voice input
+```env
+# OpenAI (optional - for production mode)
+OPENAI_API_KEY=your_openai_api_key
+
+# Optional: Override default model
+OPENAI_MODEL=gpt-4o-mini
+```
+
+**Note:** App works in demo mode without API keys for presentations.
 
 ---
 
-## 🏗️ Technical Architectuy
+## 📁 Project Structure
 
-### **Cursor (Title Sponsor)** ⭐
-- **Development**: 80% of codebase built with Cursor Composer
-- **AI-Assisted**: Debugging, refactoring, API integration
-- **Productivity**: 10+ hours saved with context-aware suggestions
-- **Rapid Prototyping**: Component generation and optimization
-
-### **Convex (Backend Track)** ⭐
-- **Real-time Database**: User context and conversation history
-- **Server Functions**: API orchestration and caching
-- **File Storage**: Uploaded images (documents, crops)
-- **Session Management**:
-- 💬 Structured guidance with action steps
-
-**Use Case:** "I'm confused about my future" → Structured guidance + action steps + resources
+```text
+raasta-ai/
+├── src/
+│   ├── app/
+│   │   ├── page.tsx                    # Home with Green Speak Button
+│   │   ├── demo/page.tsx               # Demo page with examples
+│   │   ├── samjho/page.tsx             # Document understanding
+│   │   ├── zameen/page.tsx             # Agriculture intelligence
+│   │   ├── taleem/
+│   │   │   ├── page.tsx                # Taleem hub
+│   │   │   ├── hunarmand/page.tsx      # Business coaching
+│   │   │   ├── sukoon/page.tsx         # Mental health
+│   │   │   ├── kaam/page.tsx           # Job matching
+│   │   │   ├── naukri/page.tsx         # Job orientation
+│   │   │   ├── cv/page.tsx             # CV generation
+│   │   │   ├── exam/page.tsx           # Exam prep
+│   │   │   └── scholarship/page.tsx    # Scholarship matching
+│   │   ├── raah/page.tsx               # Life guidance
+│   │   └── api/
+│   │       ├── intent-detection/       # AI routing endpoint
+│   │       ├── llm/                    # LLM processing
+│   │       ├── ocr/                    # OCR service
+│   │       ├── vision/                 # Crop detection
+│   │       └── transcribe/             # Whisper transcription
+│   ├── components/
+│   │   ├── GreenSpeakButton.tsx        # Universal AI entry
+│   │   ├── MicButton.tsx               # Voice input
+│   │   ├── VoiceOutput.tsx             # TTS output
+│   │   └── ImageUploader.tsx           # Photo capture
+│   └── lib/
+│       ├── ocr.ts                      # OCR service
+│       ├── vision.ts                   # Crop detection
+│       ├── llm.ts                      # LLM client
+│       ├── whisper.ts                  # Transcription
+│       ├── tts.ts                      # Text-to-speech
+│       └── demoCopy.ts                 # Demo mode data
+├── public/
+│   └── assets/                         # Static assets
+└── convex/                             # Convex backend
+```
 
 ---
 
-## 🤖 AI & Sponsor Tools Integration
+## 📊 Impact & Scale
 
-### **OpenAI (AI Track)** ⭐
-- **GPT-4o-mini**: Intent detection, document explanation, crop advice, life guidance, CV generation
-- **Whisper API**: Multilingual voice transcription (Urdu, Hindi, Kashmiri)
-- **Custom Prompts**: Kashmir-specific context (local crops, schemes, locations)
-- **Performance**: 85%+ intent detection accurac- 📚 **Exam**: Practice questions with feedback
-- 🎓 **Scholarship**: Marksheet OCR + eligibility matching
+### Target Users
+- **10M+** in Kashmir
+- **1B+** globally in similar contexts
+- **500M+** Urdu/Kashmiri speakers worldwide
 
-**Use Case:** "I need a job" → CV created + jobs suggested + application guidance
+### Real-World Impact
+- **Farmers**: Detect diseases early, optimize sales → 20% more income
+- **Youth**: Create CVs, find jobs, access scholarships → Break unemployment cycle
+- **Citizens**: Understand documents, access schemes → Empowerment through information
+
+### Scalability
+- Architecture supports multiple languages
+- Can expand to other regions
+- Modular design for new features
+- Cloud-ready for millions of users
 
 ---
+
+## 🏆 Hackathon Tracks
+
+### Open Track ⭐
+- **Theme**: Build for the Next Billion
+- **Impact**: Addresses language barriers, literacy issues, context mismatch
+- **Scale**: 10M in Kashmir, 1B globally
+
+### Convex Track ⭐
+- Real-time database for user context
+- Server functions for API orchestration
+- File storage and session management
+
+### v0 Track ⭐
+- Voice-first UI components
+- Mobile-optimized layouts
+- Accessible design patterns
+
+---
+
 
