@@ -49,6 +49,18 @@ function drawImageCover(ctx: CanvasRenderingContext2D, image: HTMLImageElement, 
   ctx.drawImage(image, ox, oy, dw, dh)
 }
 
+function drawImageContain(ctx: CanvasRenderingContext2D, image: HTMLImageElement, cw: number, ch: number) {
+  if (!image || !image.naturalWidth) return
+  const iw = image.naturalWidth
+  const ih = image.naturalHeight
+  const scale = Math.min(cw / iw, ch / ih)
+  const dw = iw * scale
+  const dh = ih * scale
+  const ox = (cw - dw) / 2
+  const oy = (ch - dh) / 2
+  ctx.drawImage(image, ox, oy, dw, dh)
+}
+
 export function HeroScrollAnimation({ scrollContainerRef }: { scrollContainerRef: React.RefObject<HTMLDivElement | null> }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const imagesRef = useRef<HTMLImageElement[]>(new Array(CONFIG.totalFrames).fill(null))
@@ -125,6 +137,7 @@ export function HeroScrollAnimation({ scrollContainerRef }: { scrollContainerRef
     const drawFrame = () => {
       const cw = window.innerWidth
       const ch = window.innerHeight
+      const useContain = cw < 640
       const idx = scrollToFrameIndex()
       const i0 = Math.floor(idx)
       const i1 = Math.min(i0 + 1, CONFIG.totalFrames - 1)
@@ -151,14 +164,16 @@ export function HeroScrollAnimation({ scrollContainerRef }: { scrollContainerRef
 
       const blend = CONFIG.interpolationAlpha * frac
 
+      const draw = useContain ? drawImageContain : drawImageCover
+
       if (blend > 0.001 && img1 && img1.naturalWidth && i1 !== i0) {
         ctx.globalAlpha = 1
-        drawImageCover(ctx, img0, cw, ch)
+        draw(ctx, img0, cw, ch)
         ctx.globalAlpha = blend
-        drawImageCover(ctx, img1, cw, ch)
+        draw(ctx, img1, cw, ch)
         ctx.globalAlpha = 1
       } else {
-        drawImageCover(ctx, img0, cw, ch)
+        draw(ctx, img0, cw, ch)
       }
     }
 
@@ -196,7 +211,7 @@ export function HeroScrollAnimation({ scrollContainerRef }: { scrollContainerRef
         alt=""
         aria-hidden="true"
         fetchPriority="high"
-        className={`absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-500 ${canvasReady ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+        className={`absolute inset-0 w-full h-full object-contain sm:object-cover z-0 transition-opacity duration-500 ${canvasReady ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
       />
       {/* Canvas paints over the static image once frames are loaded */}
       <canvas

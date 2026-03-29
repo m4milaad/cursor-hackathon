@@ -101,7 +101,7 @@ export function HomeHero() {
   }
 
   return (
-    <section ref={containerRef} className="relative w-full h-[250vh]">
+    <section ref={containerRef} className="relative w-full h-[220vh] md:h-[250vh]">
       {/* Sticky container that locks during scroll */}
       <div className="sticky top-0 left-0 w-full h-screen overflow-hidden flex flex-col items-center justify-center text-center">
         
@@ -109,12 +109,12 @@ export function HomeHero() {
         <HeroScrollAnimation scrollContainerRef={containerRef} />
         
         {/* The Hero content floating on top */}
-        <div className="relative z-20 flex flex-col items-center pt-24">
+        <div className="relative z-20 flex flex-col items-center pt-20 sm:pt-24 px-4 sm:px-8">
           <span className="font-label text-[10px] uppercase tracking-[0.3em] text-[var(--color-secondary)] mb-4 drop-shadow-[0_1px_3px_rgba(255,255,255,0.6)]">
             The Digital Archivist
           </span>
           <h2
-            className="font-headline text-6xl md:text-8xl font-bold tracking-tighter mb-2"
+            className="font-headline text-5xl sm:text-6xl md:text-8xl font-bold tracking-tighter mb-2"
             style={{
               color: 'var(--color-primary-container)',
               textShadow: '0 2px 12px rgba(255,255,255,0.5), 0 0 40px rgba(255,255,255,0.3)',
@@ -123,7 +123,7 @@ export function HomeHero() {
             RAASTA
           </h2>
           <p
-            className="font-headline italic text-xl md:text-2xl mb-12"
+            className="font-headline italic text-base sm:text-xl md:text-2xl mb-10 sm:mb-12 max-w-xl"
             style={{
               color: 'var(--color-on-surface)',
               textShadow: '0 1px 8px rgba(255,255,255,0.5)',
@@ -134,7 +134,7 @@ export function HomeHero() {
 
           {/* Status Display */}
           {(transcript || error || result) && (
-            <div className="mb-6 bg-white border-2 border-green-500 rounded-2xl shadow-2xl p-6 max-w-sm animate-fade-in">
+            <div className="mb-6 bg-white border-2 border-green-500 rounded-2xl shadow-2xl p-5 sm:p-6 w-full max-w-sm animate-fade-in">
               {error && (
                 <div className="text-red-600 text-sm font-medium">{error}</div>
               )}
@@ -164,12 +164,12 @@ export function HomeHero() {
           )}
 
           {/* Primary Hero Mic Button with Green Speak functionality */}
-          <div className="relative group cursor-pointer mt-8">
+          <div className="relative group cursor-pointer mt-6 sm:mt-8">
             <button
               onClick={isListening ? stopListening : startListening}
               disabled={isProcessing}
               className={`
-                w-28 h-28 md:w-32 md:h-32 flex items-center justify-center relative z-10 rounded-full shadow-2xl transition-all duration-300
+                w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 flex items-center justify-center relative z-10 rounded-full shadow-2xl transition-all duration-300
                 ${isListening 
                   ? 'bg-red-500 animate-pulse' 
                   : isProcessing
@@ -182,16 +182,16 @@ export function HomeHero() {
               aria-label={isListening ? 'Stop listening' : 'Start voice input'}
             >
               {isProcessing ? (
-                <span className="material-symbols-outlined text-4xl animate-spin">
+                <span className="material-symbols-outlined text-3xl sm:text-4xl animate-spin">
                   sync
                 </span>
               ) : isListening ? (
-                <span className="material-symbols-outlined text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+                <span className="material-symbols-outlined text-3xl sm:text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
                   stop
                 </span>
               ) : (
                 <span
-                  className="material-symbols-outlined text-4xl"
+                  className="material-symbols-outlined text-3xl sm:text-4xl"
                   style={{ fontVariationSettings: "'FILL' 1" }}
                 >
                   mic
@@ -206,7 +206,7 @@ export function HomeHero() {
             <div className="absolute -inset-4 border border-[var(--color-secondary)] opacity-20 pointer-events-none rounded-full"></div>
           </div>
           <p
-            className="font-label text-[10px] uppercase tracking-widest mt-8 opacity-90"
+            className="font-label text-[10px] uppercase tracking-widest mt-6 sm:mt-8 opacity-90 max-w-xs"
             style={{
               color: 'var(--color-on-surface)',
               textShadow: '0 1px 6px rgba(255,255,255,0.5)',
