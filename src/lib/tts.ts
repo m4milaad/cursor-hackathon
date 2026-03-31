@@ -10,7 +10,27 @@ export function stopSpeaking(): void {
 const TTS_LANG: Record<UiLocale, string> = {
   en: 'en-IN',
   hi: 'hi-IN',
+  ur: 'ur-IN',
+  bn: 'bn-IN',
+  ta: 'ta-IN',
+  te: 'te-IN',
+  mr: 'mr-IN',
+  gu: 'gu-IN',
+  kn: 'kn-IN',
+  ml: 'ml-IN',
+  pa: 'pa-IN',
+  or: 'or-IN',
+  as: 'as-IN',
+  sd: 'sd-IN',
   ks: 'hi-IN',
+  ne: 'ne-IN',
+  kok: 'kok-IN',
+  mai: 'mai-IN',
+  doi: 'doi-IN',
+  sat: 'sat-IN',
+  mni: 'mni-IN',
+  brx: 'brx-IN',
+  sa: 'sa-IN',
 }
 
 export function speechLangForUi(locale: UiLocale): string {

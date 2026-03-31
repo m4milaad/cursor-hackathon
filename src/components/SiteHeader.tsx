@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import { LanguageToggle } from '@/components/LanguageToggle'
 
 export function SiteHeader() {
   const path = usePathname() ?? ''
@@ -60,6 +61,9 @@ export function SiteHeader() {
       </div>
 
       <div className="relative flex items-center space-x-4" key="header-actions" ref={panelRef}>
+        <div className="hidden md:flex items-center">
+          <LanguageToggle />
+        </div>
         <button
           type="button"
           onClick={() => setPanelOpen((v) => !v)}
@@ -151,11 +155,13 @@ export function SiteHeader() {
 
             <div className="p-5 border-b border-[var(--color-outline-variant)]">
               <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[#885207] mb-3">Settings</p>
-              <div className="grid grid-cols-2 gap-3 text-xs text-[#414845]">
-                <span>Language</span>
-                <span>Privacy</span>
-                <span>Notifications</span>
-                <span>Theme</span>
+              <div className="grid grid-cols-1 gap-3 text-xs text-[#414845]">
+                <LanguageToggle />
+                <div className="grid grid-cols-2 gap-3">
+                  <span>Privacy</span>
+                  <span>Notifications</span>
+                  <span>Theme</span>
+                </div>
               </div>
             </div>
           </div>

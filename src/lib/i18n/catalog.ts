@@ -374,7 +374,7 @@ function merge(
   return { ...base, ...over }
 }
 
-export const catalogs: Record<UiLocale, Record<string, string>> = {
+export const catalogs: Partial<Record<UiLocale, Record<string, string>>> = {
   en,
   hi: merge(en, hiOverrides),
   ks: merge(en, ksOverrides),
@@ -382,7 +382,7 @@ export const catalogs: Record<UiLocale, Record<string, string>> = {
 
 export function translate(locale: UiLocale, key: string): string {
   const table = catalogs[locale] ?? catalogs.en
-  return table[key] ?? catalogs.en[key] ?? key
+  return (table?.[key] ?? catalogs.en?.[key]) ?? key
 }
 
 /** Replace `{name}` placeholders in a string. */
