@@ -2,6 +2,7 @@
 
 import { MicButton } from '@/components/MicButton'
 import { NewsCorner } from '@/components/NewsCorner'
+import { InlineGuideAssistant } from '@/components/GuideAssistant'
 import { useI18n } from '@/lib/i18n/context'
 import { answerVoiceQuestion } from '@/lib/llm'
 import { speechRecognitionLang } from '@/lib/localeForLlm'
@@ -396,6 +397,14 @@ export default function RaahPage() {
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
                 />
+                
+                {/* Inline Guide Assistant - shows smart suggestions */}
+                {question.trim().length > 10 && !answer && !busy && (
+                  <div className="mt-3">
+                    <InlineGuideAssistant userInput={question} />
+                  </div>
+                )}
+                
                 <button
                   type="button"
                   className={`mt-4 bg-[var(--color-surface-tint)] text-[var(--color-on-primary)] font-label text-[10px] uppercase tracking-[0.2em] w-full py-4 hover:opacity-90 transition-opacity ${

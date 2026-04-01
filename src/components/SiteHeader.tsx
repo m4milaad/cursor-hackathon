@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { LanguageToggle } from '@/components/LanguageToggle'
+import { GlobalGuidePanel } from '@/components/GlobalGuidePanel'
 
 export function SiteHeader() {
   const path = usePathname() ?? ''
@@ -64,6 +65,10 @@ export function SiteHeader() {
         <div className="hidden md:flex items-center">
           <LanguageToggle />
         </div>
+        
+        {/* Global Guide Assistant */}
+        <GlobalGuidePanel />
+        
         <button
           type="button"
           onClick={() => setPanelOpen((v) => !v)}

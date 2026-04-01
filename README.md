@@ -24,6 +24,15 @@ The **Green Speak Button** is our revolutionary central AI routing system. **One
 
 ### ✅ Status: FULLY WORKING
 
+### 🧭 NEW: Global Guide Assistant
+
+A floating AI assistant icon in the navbar provides instant help from anywhere in the app:
+- **Always accessible** - Click the assistant icon in the top-right navbar
+- **Smart routing** - Analyzes your question and guides you to the right module
+- **Step-by-step guidance** - Clear instructions in your language (Urdu, Hindi, Kashmiri, English)
+- **Quick actions** - Pre-configured shortcuts for common tasks
+- **Beautiful UI** - Smooth animations and intuitive design
+
 ### How It Works
 
 ```
