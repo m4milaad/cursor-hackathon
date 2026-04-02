@@ -16,6 +16,7 @@ export default function SamjhoPage() {
   const [explanation, setExplanation] = useState<string | null>(null)
   const [confidence, setConfidence] = useState<number>(0)
   const [processId, setProcessId] = useState<string>('')
+  const [isSpeaking, setIsSpeaking] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Generate process ID once on mount to avoid hydration mismatch
@@ -60,6 +61,7 @@ export default function SamjhoPage() {
     
     setAnalyzing(true)
     setExplanation(null)
+    setIsSpeaking(false)
     stopSpeaking()
     
     try {
@@ -73,14 +75,22 @@ export default function SamjhoPage() {
       setExplanation(simpleExplanation)
       
       // Step 3: Speak the explanation
+      setIsSpeaking(true)
       await speakForLocale(simpleExplanation, locale)
+      setIsSpeaking(false)
     } catch (error) {
       console.error('Analysis error:', error)
       setExplanation('Unable to analyze document. Please try again.')
+      setIsSpeaking(false)
     } finally {
       setAnalyzing(false)
     }
   }, [selectedImage, locale])
+
+  const handleStopSpeaking = useCallback(() => {
+    stopSpeaking()
+    setIsSpeaking(false)
+  }, [])
 
   const triggerFileSelect = useCallback(() => {
     fileInputRef.current?.click()
@@ -218,7 +228,18 @@ export default function SamjhoPage() {
                   {/* Simple Explanation */}
                   <div className="relative pl-8 py-2">
                     <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-[var(--color-secondary)]"></div>
-                    <h4 className="font-headline text-2xl text-[var(--color-primary)] mb-4 italic">Simple Explanation</h4>
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className="font-headline text-2xl text-[var(--color-primary)] italic">Simple Explanation</h4>
+                      {isSpeaking && (
+                        <button
+                          onClick={handleStopSpeaking}
+                          className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-full text-xs uppercase tracking-widest transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-sm">stop_circle</span>
+                          Stop Audio
+                        </button>
+                      )}
+                    </div>
                     <p className="font-body text-base text-[var(--color-on-surface-variant)] leading-relaxed whitespace-pre-wrap">
                       {explanation}
                     </p>

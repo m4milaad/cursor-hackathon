@@ -122,7 +122,7 @@ export function GlobalGuidePanel() {
         <div className="fixed inset-0 z-[100] flex items-start justify-center pt-20 px-4 bg-black/20 backdrop-blur-sm">
           <div
             ref={panelRef}
-            className="w-full max-w-2xl bg-[#fbf9f4] dark:bg-[#000d08] border-2 border-[#885207] shadow-2xl rounded-lg overflow-hidden animate-in slide-in-from-top-4 duration-300"
+            className="w-full max-w-2xl bg-white dark:bg-[#1a1a1a] border-2 border-[#885207] shadow-2xl rounded-lg overflow-hidden animate-in slide-in-from-top-4 duration-300"
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-[#885207] to-[#b8751e] text-white p-6 flex items-center justify-between">
@@ -161,7 +161,7 @@ export function GlobalGuidePanel() {
                             void handleGetGuidance()
                           }, 100)
                         }}
-                        className="flex items-center gap-2 p-3 bg-[var(--color-surface-container-low)] hover:bg-[var(--color-surface-container)] border border-[var(--color-outline-variant)] rounded text-left transition-colors text-sm"
+                        className="flex items-center gap-2 p-3 bg-[#f5f3ee] hover:bg-[#eae8e3] dark:bg-[#2a2a2a] dark:hover:bg-[#333333] border border-[#c1c8c3] dark:border-[#444444] rounded text-left transition-colors text-sm text-[#1b1c19] dark:text-[#e4e2dd]"
                       >
                         <span className="text-xl">{action.icon}</span>
                         <span>{action.label}</span>
@@ -182,7 +182,7 @@ export function GlobalGuidePanel() {
                 <textarea
                   id="guide-input"
                   rows={3}
-                  className="w-full bg-white dark:bg-[#001410] border-2 border-[var(--color-outline-variant)] focus:border-[#885207] p-4 rounded text-[var(--color-on-surface)] resize-none transition-colors"
+                  className="w-full bg-white dark:bg-[#2a2a2a] border-2 border-[#c1c8c3] dark:border-[#444444] focus:border-[#885207] p-4 rounded text-[#1b1c19] dark:text-[#e4e2dd] resize-none transition-colors"
                   placeholder="Example: Meri fasal kharab hai, kya karun?"
                   value={userInput}
                   onChange={(e) => setUserInput(e.target.value)}
@@ -207,7 +207,7 @@ export function GlobalGuidePanel() {
 
               {/* Guidance Result */}
               {guidance && (
-                <div className="bg-gradient-to-br from-[#885207]/10 to-[#b8751e]/10 border-2 border-[#885207] rounded-lg p-6 space-y-4 animate-in fade-in duration-300">
+                <div className="bg-gradient-to-br from-[#fff8f0] to-[#fff4e6] dark:from-[#2a2520] dark:to-[#2a2318] border-2 border-[#885207] rounded-lg p-6 space-y-4 animate-in fade-in duration-300">
                   {/* Module Badge */}
                   <div className="flex items-center gap-2">
                     <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#885207] text-white text-sm font-bold rounded-full">
@@ -217,14 +217,14 @@ export function GlobalGuidePanel() {
                       {guidance.module === 'RAAH' && '🧭'}
                       {guidance.module}
                     </span>
-                    <span className="text-xs text-[var(--color-on-surface-variant)] italic">
+                    <span className="text-xs text-[#414845] dark:text-[#c4c2bd] italic">
                       {guidance.action.replace(/_/g, ' ')}
                     </span>
                   </div>
 
                   {/* Message */}
-                  <div className="bg-white/50 dark:bg-black/20 p-4 rounded border-l-4 border-[#885207]">
-                    <p className="text-base text-[var(--color-on-surface)] font-medium">
+                  <div className="bg-white dark:bg-[#1a1a1a] p-4 rounded border-l-4 border-[#885207]">
+                    <p className="text-base text-[#1b1c19] dark:text-[#e4e2dd] font-medium">
                       {guidance.message}
                     </p>
                   </div>
@@ -237,12 +237,12 @@ export function GlobalGuidePanel() {
                     {guidance.steps.map((step, index) => (
                       <div
                         key={index}
-                        className="flex items-start gap-3 bg-white/70 dark:bg-black/30 p-3 rounded"
+                        className="flex items-start gap-3 bg-white dark:bg-[#1a1a1a] p-3 rounded"
                       >
                         <span className="flex-shrink-0 w-7 h-7 rounded-full bg-[#885207] text-white flex items-center justify-center text-sm font-bold">
                           {index + 1}
                         </span>
-                        <span className="pt-1 text-sm text-[var(--color-on-surface)]">
+                        <span className="pt-1 text-sm text-[#1b1c19] dark:text-[#e4e2dd]">
                           {step}
                         </span>
                       </div>
@@ -275,7 +275,7 @@ export function GlobalGuidePanel() {
 
               {/* Help Text */}
               {!guidance && !loading && (
-                <div className="text-xs text-[var(--color-on-surface-variant)] space-y-2 border-t border-[var(--color-outline-variant)] pt-4">
+                <div className="text-xs text-[#414845] dark:text-[#c4c2bd] space-y-2 border-t border-[#c1c8c3] dark:border-[#444444] pt-4">
                   <p className="font-semibold">💡 Examples:</p>
                   <ul className="space-y-1 pl-4">
                     <li>• "Ye notice kya kehta hai" → Samjho</li>

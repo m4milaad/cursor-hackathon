@@ -13,91 +13,130 @@ interface IntentResult {
 
 export function HomeHero() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [isListening, setIsListening] = useState(false)
+  const [isRecording, setIsRecording] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
   const [transcript, setTranscript] = useState('')
   const [error, setError] = useState('')
   const [result, setResult] = useState<IntentResult | null>(null)
-  const recognitionRef = useRef<any>(null)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+  const audioChunksRef = useRef<Blob[]>([])
   const router = useRouter()
 
-  useEffect(() => {
-    // Initialize browser speech recognition
-    if (typeof window !== 'undefined') {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
-      if (SpeechRecognition) {
-        recognitionRef.current = new SpeechRecognition()
-        recognitionRef.current.continuous = false
-        recognitionRef.current.interimResults = false
-        recognitionRef.current.lang = 'ur-PK' // Urdu
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      const mediaRecorder = new MediaRecorder(stream)
+      mediaRecorderRef.current = mediaRecorder
+      audioChunksRef.current = []
 
-        recognitionRef.current.onresult = async (event: any) => {
-          const transcript = event.results[0][0].transcript
-          setTranscript(transcript)
-          setIsListening(false)
-          setIsProcessing(true)
-
-          // Detect intent
-          try {
-            const response = await fetch('/api/intent-detection', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ query: transcript }),
-            })
-
-            if (!response.ok) throw new Error('Intent detection failed')
-
-            const data: IntentResult = await response.json()
-            setResult(data)
-
-            // Auto-navigate after 2 seconds
-            setTimeout(() => {
-              router.push(data.route)
-            }, 2000)
-          } catch (err) {
-            setError('Failed to detect intent. Please try again.')
-            setIsProcessing(false)
-          }
-        }
-
-        recognitionRef.current.onerror = (event: any) => {
-          console.error('Speech recognition error:', event.error)
-          setError('Voice recognition failed. Please try again.')
-          setIsListening(false)
-          setIsProcessing(false)
-        }
-
-        recognitionRef.current.onend = () => {
-          setIsListening(false)
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data)
         }
       }
-    }
 
-    return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop()
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' })
+        stream.getTracks().forEach(track => track.stop())
+        
+        setIsProcessing(true)
+        await processAudio(audioBlob)
       }
-    }
-  }, [router])
 
-  const startListening = () => {
-    if (!recognitionRef.current) {
-      setError('Voice recognition not supported in this browser')
-      return
+      mediaRecorder.start()
+      setIsRecording(true)
+      setError('')
+      setTranscript('')
+      setResult(null)
+    } catch (err) {
+      console.error('Error starting recording:', err)
+      setError('Could not access microphone. Please check permissions.')
     }
-
-    setError('')
-    setTranscript('')
-    setResult(null)
-    setIsListening(true)
-    recognitionRef.current.start()
   }
 
-  const stopListening = () => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop()
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop()
+      setIsRecording(false)
     }
-    setIsListening(false)
+  }
+
+  const processAudio = async (audioBlob: Blob) => {
+    try {
+      console.log('🎤 Processing audio, size:', audioBlob.size)
+      
+      // Step 1: Transcribe audio (Whisper auto-detects language)
+      const formData = new FormData()
+      formData.append('file', audioBlob, 'audio.webm')
+
+      console.log('📝 Calling transcribe API...')
+      const transcribeResponse = await fetch('/api/transcribe', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!transcribeResponse.ok) {
+        throw new Error('Transcription failed')
+      }
+
+      const transcribeData = await transcribeResponse.json()
+      const transcribedText = transcribeData.text || ''
+      
+      console.log('✅ Transcribed:', transcribedText)
+
+      if (!transcribedText) {
+        setError('Could not understand audio. Please try again.')
+        setIsProcessing(false)
+        return
+      }
+
+      setTranscript(transcribedText)
+
+      // Step 2: Detect intent and route
+      console.log('🎯 Calling intent detection API...')
+      const intentResponse = await fetch('/api/intent-detection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: transcribedText }),
+      })
+
+      if (!intentResponse.ok) {
+        throw new Error('Intent detection failed')
+      }
+
+      const intentData: IntentResult = await intentResponse.json()
+      console.log('✅ Intent detected:', intentData.intent, 'route:', intentData.route)
+      setResult(intentData)
+
+      // Auto-navigate after 2 seconds
+      setTimeout(() => {
+        console.log('🚀 Navigating to:', intentData.route)
+        const params = new URLSearchParams({
+          q: transcribedText,
+          autoSpeak: 'true'
+        })
+        router.push(`${intentData.route}?${params.toString()}`)
+      }, 2000)
+    } catch (err) {
+      console.error('❌ Processing error:', err)
+      setError('Failed to process audio. Please try again.')
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  const handleButtonClick = () => {
+    console.log('🔘 Button clicked! isRecording:', isRecording, 'isProcessing:', isProcessing)
+    alert('Button clicked! Check console for details.')
+    if (isRecording) {
+      console.log('⏹️ Stopping recording...')
+      stopRecording()
+    } else if (!isProcessing) {
+      console.log('▶️ Starting recording...')
+      startRecording()
+    } else {
+      console.log('⏳ Already processing, ignoring click')
+    }
   }
 
   return (
@@ -163,29 +202,29 @@ export function HomeHero() {
             </div>
           )}
 
-          {/* Primary Hero Mic Button with Green Speak functionality */}
-          <div className="relative group cursor-pointer mt-6 sm:mt-8">
+          {/* Primary Hero Mic Button - Dark themed */}
+          <div className="relative group cursor-pointer mt-6 sm:mt-8 z-30">
             <button
-              onClick={isListening ? stopListening : startListening}
+              onClick={handleButtonClick}
               disabled={isProcessing}
               className={`
                 w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 flex items-center justify-center relative z-10 rounded-full shadow-2xl transition-all duration-300
-                ${isListening 
+                ${isRecording 
                   ? 'bg-red-500 animate-pulse' 
                   : isProcessing
-                  ? 'bg-yellow-500 animate-spin'
-                  : 'bg-[var(--color-primary-container)] hover:opacity-90'
+                  ? 'bg-yellow-500'
+                  : 'bg-[#143d32] hover:bg-[#0f2e25]'
                 }
                 ${isProcessing ? 'cursor-wait' : 'cursor-pointer'}
                 text-white
               `}
-              aria-label={isListening ? 'Stop listening' : 'Start voice input'}
+              aria-label={isRecording ? 'Stop recording' : 'Start voice input'}
             >
               {isProcessing ? (
                 <span className="material-symbols-outlined text-3xl sm:text-4xl animate-spin">
                   sync
                 </span>
-              ) : isListening ? (
+              ) : isRecording ? (
                 <span className="material-symbols-outlined text-3xl sm:text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
                   stop
                 </span>
@@ -199,7 +238,7 @@ export function HomeHero() {
               )}
 
               {/* Pulse animation ring */}
-              {isListening && (
+              {isRecording && (
                 <span className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-75"></span>
               )}
             </button>
@@ -212,7 +251,7 @@ export function HomeHero() {
               textShadow: '0 1px 6px rgba(255,255,255,0.5)',
             }}
           >
-            {isListening ? 'Listening...' : isProcessing ? 'Processing...' : 'Tap to converse in Kashmiri or English'}
+            {isRecording ? 'Listening...' : isProcessing ? 'Processing...' : 'Tap to converse in any language'}
           </p>
         </div>
 

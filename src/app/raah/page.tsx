@@ -9,6 +9,7 @@ import { speechRecognitionLang } from '@/lib/localeForLlm'
 import { speakForLocale, stopSpeaking } from '@/lib/tts'
 import { transcribeAudio } from '@/lib/whisper'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 type WebSpeechRec = {
   lang: string
@@ -59,14 +60,28 @@ function createSpeechRecognition(lang: string): SpeechControl | null {
 
 export default function RaahPage() {
   const { locale, t } = useI18n()
+  const searchParams = useSearchParams()
   const [question, setQuestion] = useState('')
   const [answer, setAnswer] = useState('')
   const [busy, setBusy] = useState(false)
   const [recording, setRecording] = useState(false)
   const [browserListen, setBrowserListen] = useState(false)
   const [recErr, setRecErr] = useState<string | null>(null)
+  const [isSpeaking, setIsSpeaking] = useState(false)
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const chunks = useRef<Blob[]>([])
+
+  // Handle incoming query from green button
+  useEffect(() => {
+    const incomingQuery = searchParams?.get('q')
+    const autoSpeak = searchParams?.get('autoSpeak')
+    
+    if (incomingQuery && autoSpeak === 'true') {
+      setQuestion(incomingQuery)
+      // Auto-process the query
+      void ask(incomingQuery)
+    }
+  }, [searchParams])
 
   const ask = useCallback(
     async (q: string) => {
@@ -74,17 +89,25 @@ export default function RaahPage() {
       if (!trimmed) return
       setBusy(true)
       setAnswer('')
+      setIsSpeaking(false)
       stopSpeaking()
       try {
         const a = await answerVoiceQuestion(trimmed, locale)
         setAnswer(a)
+        setIsSpeaking(true)
         await speakForLocale(a, locale)
+        setIsSpeaking(false)
       } finally {
         setBusy(false)
       }
     },
     [locale],
   )
+
+  const handleStopSpeaking = useCallback(() => {
+    stopSpeaking()
+    setIsSpeaking(false)
+  }, [])
 
   const startBrowserSTT = useCallback(() => {
     const api = createSpeechRecognition(speechRecognitionLang(locale))
@@ -419,9 +442,20 @@ export default function RaahPage() {
             </div>
 
             <div className="border-l border-[var(--color-outline-variant)] opacity-90 pl-0 lg:pl-12">
-              <span className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary)] border-b border-[var(--color-outline-variant)] pb-2 opacity-80 block mb-8">
-                Intelligence Transcript
-              </span>
+              <div className="flex items-center justify-between border-b border-[var(--color-outline-variant)] pb-2 mb-8">
+                <span className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary)] opacity-80">
+                  Intelligence Transcript
+                </span>
+                {isSpeaking && answer && (
+                  <button
+                    onClick={handleStopSpeaking}
+                    className="flex items-center gap-1 px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-full text-[10px] uppercase tracking-widest transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-sm">stop_circle</span>
+                    Stop
+                  </button>
+                )}
+              </div>
               <div className="h-full min-h-[400px]">
                 {answer ? (
                   <div className="font-body text-lg text-[var(--color-on-surface)] leading-relaxed italic border-l-4 border-[var(--color-primary)] pl-6 py-2">

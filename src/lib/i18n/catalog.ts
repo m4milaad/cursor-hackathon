@@ -276,6 +276,16 @@ const hiOverrides: Record<string, string> = {
   'sch.loading': 'पढ़ रहे हैं…',
 }
 
+const urOverrides: Record<string, string> = {
+  'nav.home': 'گھر',
+  'samjho.btn': 'دستاویز سمجھائیں',
+  'zameen.btn': 'تجزیہ',
+  'raah.placeholder': 'سوال لکھیں',
+  'taleem.q.naukri': 'نوکری',
+  'common.send': 'بھیجیں',
+  'common.thinking': 'سوچ رہے ہیں…',
+}
+
 const ksOverrides: Record<string, string> = {
   'nav.home': 'گھر',
   'nav.brandTag': 'کٲشٕر · سٲتھی',
@@ -377,6 +387,7 @@ function merge(
 export const catalogs: Partial<Record<UiLocale, Record<string, string>>> = {
   en,
   hi: merge(en, hiOverrides),
+  ur: merge(en, urOverrides),
   ks: merge(en, ksOverrides),
 }
 

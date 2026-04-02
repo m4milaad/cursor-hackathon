@@ -2,14 +2,32 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, Suspense } from 'react'
 import { LanguageToggle } from '@/components/LanguageToggle'
 import { GlobalGuidePanel } from '@/components/GlobalGuidePanel'
+import { useAuth } from '@/lib/auth/AuthContext'
+import dynamic from 'next/dynamic'
+
+// Dynamically import the UserAccountPanel to avoid SSR issues with Convex
+const UserAccountPanel = dynamic(
+  () => import('@/components/UserAccountPanel').then(mod => ({ default: mod.UserAccountPanel })),
+  { ssr: false }
+)
 
 export function SiteHeader() {
   const path = usePathname() ?? ''
   const [panelOpen, setPanelOpen] = useState(false)
   const panelRef = useRef<HTMLDivElement | null>(null)
+  const { user, signOut } = useAuth()
+
+  const handleSignOut = () => {
+    signOut()
+    setPanelOpen(false)
+  }
+
+  const handleClosePanel = () => {
+    setPanelOpen(false)
+  }
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
@@ -81,95 +99,7 @@ export function SiteHeader() {
         </button>
 
         {panelOpen ? (
-          <div className="absolute right-0 top-[56px] w-[360px] md:w-[420px] bg-[#fbf9f4] border border-[var(--color-outline-variant)] shadow-[0_20px_60px_rgba(0,0,0,0.18)] max-h-[80vh] overflow-y-auto [mask-image:linear-gradient(to_bottom,transparent,black_8%,black_92%,transparent)] [scrollbar-width:thin]">
-            <div className="p-5 border-b border-[var(--color-outline-variant)]">
-              <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[#885207] mb-2">
-                Your Next Step
-              </p>
-              <p className="text-sm text-[#00271d] font-semibold">
-                Complete your CV to unlock job applications.
-              </p>
-            </div>
-
-            <div className="p-5 border-b border-[var(--color-outline-variant)]">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-[#00271d] text-[#fbf9f4] flex items-center justify-center text-[10px] uppercase tracking-[0.2em]">
-                  RA
-                </div>
-                <div>
-                  <p className="font-headline text-base text-[#00271d]">Ayesha Khan</p>
-                  <p className="text-xs text-[#885207]">Preparing for Govt Exams</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-5 border-b border-[var(--color-outline-variant)]">
-              <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[#885207] mb-3">Quick Actions</p>
-              <div className="grid grid-cols-2 gap-2">
-                <Link href="/raah" className="raasta-btn-secondary text-[10px] text-center flex items-center justify-center gap-1">
-                  <span className="material-symbols-outlined text-sm">mic</span>
-                  Talk
-                </Link>
-                <Link href="/taleem/naukri" className="raasta-btn-secondary text-[10px] text-center flex items-center justify-center gap-1">
-                  <span className="material-symbols-outlined text-sm">work</span>
-                  Jobs
-                </Link>
-                <Link href="/taleem/cv" className="raasta-btn-secondary text-[10px] text-center flex items-center justify-center gap-1">
-                  <span className="material-symbols-outlined text-sm">description</span>
-                  CV
-                </Link>
-                <Link href="/taleem/exam" className="raasta-btn-secondary text-[10px] text-center flex items-center justify-center gap-1">
-                  <span className="material-symbols-outlined text-sm">school</span>
-                  Study
-                </Link>
-              </div>
-            </div>
-
-            <details className="border-b border-[var(--color-outline-variant)]">
-              <summary className="cursor-pointer list-none px-5 py-4 flex items-center justify-between text-[#00271d]">
-                <span className="font-label text-[10px] uppercase tracking-[0.2em] text-[#885207]">Your Journey</span>
-                <span className="material-symbols-outlined text-sm">expand_more</span>
-              </summary>
-              <div className="px-5 pb-5 text-xs text-[#414845] space-y-2">
-                <div className="flex items-center justify-between">
-                  <span>Taleem: Skills learned</span>
-                  <span>3</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>Raah: Decisions made</span>
-                  <span>2</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>Jobs: Applications</span>
-                  <span>1</span>
-                </div>
-              </div>
-            </details>
-
-            <details className="border-b border-[var(--color-outline-variant)]">
-              <summary className="cursor-pointer list-none px-5 py-4 flex items-center justify-between text-[#00271d]">
-                <span className="font-label text-[10px] uppercase tracking-[0.2em] text-[#885207]">Personal Insights</span>
-                <span className="material-symbols-outlined text-sm">expand_more</span>
-              </summary>
-              <div className="px-5 pb-5 text-xs text-[#414845] space-y-2">
-                <div>You are improving consistency.</div>
-                <div>You explore careers often. Try focusing on one.</div>
-                <div>High potential in design and business.</div>
-              </div>
-            </details>
-
-            <div className="p-5 border-b border-[var(--color-outline-variant)]">
-              <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[#885207] mb-3">Settings</p>
-              <div className="grid grid-cols-1 gap-3 text-xs text-[#414845]">
-                <LanguageToggle />
-                <div className="grid grid-cols-2 gap-3">
-                  <span>Privacy</span>
-                  <span>Notifications</span>
-                  <span>Theme</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <UserAccountPanel onClose={handleClosePanel} onSignOut={handleSignOut} />
         ) : null}
       </div>
     </nav>

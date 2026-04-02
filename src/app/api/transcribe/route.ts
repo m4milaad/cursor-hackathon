@@ -50,6 +50,7 @@ export async function POST(req: Request) {
     const outbound = new FormData()
     outbound.append('file', file, 'audio.webm')
     outbound.append('model', 'whisper-1')
+    // Whisper will auto-detect language - no need to specify
 
     const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST',
@@ -67,14 +68,17 @@ export async function POST(req: Request) {
       return NextResponse.json({
         ok: true,
         text: '',
+        language: 'unknown',
         demo: true,
         error: 'Transcription service unavailable',
         requestId,
       })
     }
 
-    const data = (await res.json()) as { text?: string }
+    const data = (await res.json()) as { text?: string; language?: string }
     const text = data.text?.trim() ?? ''
+    const language = data.language || 'unknown'
+    
     if (requestId) {
       await completeLifecycleRequest(
         requestId,
@@ -85,6 +89,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       ok: true,
       text,
+      language,
       demo: false,
       requestId,
     })
@@ -100,6 +105,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       ok: true,
       text: '',
+      language: 'unknown',
       demo: true,
       error: 'Transcription failed',
       requestId,

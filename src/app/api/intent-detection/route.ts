@@ -1,9 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+// Simple language detection based on script/characters
+function detectLanguage(text: string): string {
+  // Check for Urdu/Arabic script
+  if (/[\u0600-\u06FF]/.test(text)) {
+    return 'ur' // Urdu
+  }
+  // Check for Devanagari script (Hindi)
+  if (/[\u0900-\u097F]/.test(text)) {
+    return 'hi' // Hindi
+  }
+  // Check for common English words
+  if (/\b(the|is|are|was|were|have|has|do|does|can|will|would|should)\b/i.test(text)) {
+    return 'en' // English
+  }
+  // Default to English if uncertain
+  return 'en'
+}
+
 // Intent detection using keyword matching (demo mode) or OpenAI (production)
 export async function POST(request: NextRequest) {
   try {
     const { query } = await request.json()
+
+    console.log('🎯 Intent Detection API called')
+    console.log('🎯 Query:', query)
 
     if (!query || typeof query !== 'string') {
       return NextResponse.json(
@@ -16,20 +37,25 @@ export async function POST(request: NextRequest) {
 
     // Check if OpenAI API key is available
     const hasOpenAI = !!process.env.OPENAI_API_KEY
+    console.log('🔑 OpenAI available:', hasOpenAI)
 
     let intent: 'samjho' | 'zameen' | 'taleem' | 'raah' | 'unknown' = 'unknown'
     let confidence = 0
 
     if (hasOpenAI) {
       // Production mode: Use OpenAI for intent detection
+      console.log('🤖 Using OpenAI for intent detection')
       const result = await detectIntentWithOpenAI(query)
       intent = result.intent
       confidence = result.confidence
+      console.log('✅ OpenAI result:', intent, 'confidence:', confidence)
     } else {
       // Demo mode: Use keyword matching
+      console.log('⚠️ Using keyword matching (demo mode)')
       const result = detectIntentWithKeywords(lowerQuery)
       intent = result.intent
       confidence = result.confidence
+      console.log('✅ Keyword result:', intent, 'confidence:', confidence)
     }
 
     // Map intent to route
@@ -41,15 +67,19 @@ export async function POST(request: NextRequest) {
       unknown: '/raah', // Default to Raah for unknown intents
     }
 
+    const route = routeMap[intent]
+    console.log('🚀 Routing to:', route)
+
     return NextResponse.json({
       intent,
       confidence,
       query,
-      route: routeMap[intent],
+      route,
       mode: hasOpenAI ? 'production' : 'demo',
+      detectedLanguage: detectLanguage(query),
     })
   } catch (error) {
-    console.error('Intent detection error:', error)
+    console.error('❌ Intent detection error:', error)
     return NextResponse.json(
       { error: 'Failed to detect intent' },
       { status: 500 }
