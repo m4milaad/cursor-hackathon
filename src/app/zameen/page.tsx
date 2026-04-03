@@ -6,7 +6,8 @@ import { useI18n } from '@/lib/i18n/context'
 import { speakForLocale, stopSpeaking } from '@/lib/tts'
 import { NewsCorner } from '@/components/NewsCorner'
 import { getZameenInfo } from '@/lib/firecrawl'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import type { MandiPrice } from '@/app/api/mandi-prices/route'
 
 export default function ZameenPage() {
   const { locale } = useI18n()
@@ -19,6 +20,22 @@ export default function ZameenPage() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [openTrends, setOpenTrends] = useState(false)
   const [trendKey, setTrendKey] = useState<'saffron' | 'walnuts' | 'apples'>('saffron')
+  const [mandiPrices, setMandiPrices] = useState<MandiPrice[]>([])
+  const [mandiLive, setMandiLive] = useState(false)
+  const [mandiLoading, setMandiLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/mandi-prices')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.prices?.length) {
+          setMandiPrices(data.prices)
+          setMandiLive(data.live ?? false)
+        }
+      })
+      .catch(() => {/* silently use fallback */})
+      .finally(() => setMandiLoading(false))
+  }, [])
 
   const trends = useMemo(
     () => ({
@@ -268,49 +285,37 @@ export default function ZameenPage() {
                   <h2 className="font-headline text-3xl">Live Mandi Prices</h2>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 bg-[var(--color-secondary)] rounded-full animate-pulse"></span>
+                  <span className={`w-2 h-2 rounded-full ${mandiLive ? 'bg-[var(--color-secondary)] animate-pulse' : 'bg-[var(--color-outline)]'}`}></span>
                   <span className="font-label text-[10px] uppercase tracking-widest text-[var(--color-secondary-container)]">
-                    Real-time
+                    {mandiLive ? 'Live' : 'Cached'}
                   </span>
                 </div>
               </div>
 
               <div className="space-y-12">
-                {/* Price Item 1 */}
-                <div className="border-b border-opacity-20 border-[var(--color-on-primary-fixed-variant)] pb-4">
-                  <div className="flex justify-between items-end mb-2">
-                    <span className="font-headline text-xl italic">Saffron (Grade A)</span>
-                    <span className="font-body text-2xl font-bold text-[var(--color-secondary)]">Rs.245,000 / kg</span>
+                {mandiLoading ? (
+                  <div className="flex items-center gap-3 opacity-60 py-8">
+                    <span className="w-4 h-4 border-2 border-[var(--color-secondary)] border-t-transparent rounded-full animate-spin" />
+                    <span className="font-label text-[10px] uppercase tracking-widest">Fetching live prices...</span>
                   </div>
-                  <div className="flex justify-between items-center text-[10px] font-label uppercase tracking-widest opacity-60">
-                    <span>Pampore Hub</span>
-                    <span className="text-[var(--color-secondary-fixed-dim)]">+2.4% </span>
+                ) : mandiPrices.map((item, i) => (
+                  <div key={i} className="border-b border-opacity-20 border-[var(--color-on-primary-fixed-variant)] pb-4">
+                    <div className="flex justify-between items-end mb-2">
+                      <span className="font-headline text-xl italic">{item.commodity}</span>
+                      <span className="font-body text-2xl font-bold text-[var(--color-secondary)]">
+                        {item.price} / {item.unit}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-[10px] font-label uppercase tracking-widest opacity-60">
+                      <span>{item.market}</span>
+                      {item.change && (
+                        <span className={item.changePositive ? 'text-[var(--color-secondary-fixed-dim)]' : 'text-[var(--color-error)]'}>
+                          {item.change}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
-                
-                {/* Price Item 2 */}
-                <div className="border-b border-opacity-20 border-[var(--color-on-primary-fixed-variant)] pb-4">
-                  <div className="flex justify-between items-end mb-2">
-                    <span className="font-headline text-xl italic">Walnuts (Shelled)</span>
-                    <span className="font-body text-2xl font-bold text-[var(--color-secondary)]">Rs.850 / kg</span>
-                  </div>
-                  <div className="flex justify-between items-center text-[10px] font-label uppercase tracking-widest opacity-60">
-                    <span>Srinagar Central</span>
-                    <span className="text-[var(--color-error)]">-0.8% </span>
-                  </div>
-                </div>
-
-                {/* Price Item 3 */}
-                <div className="border-b border-opacity-20 border-[var(--color-on-primary-fixed-variant)] pb-4">
-                  <div className="flex justify-between items-end mb-2">
-                    <span className="font-headline text-xl italic">Apples (Kullu)</span>
-                    <span className="font-body text-2xl font-bold text-[var(--color-secondary)]">Rs.1,200 / box</span>
-                  </div>
-                  <div className="flex justify-between items-center text-[10px] font-label uppercase tracking-widest opacity-60">
-                    <span>Sopore Mandi</span>
-                    <span className="text-[var(--color-secondary-fixed-dim)]">+5.1% </span>
-                  </div>
-                </div>
+                ))}
               </div>
 
               <button
