@@ -9,7 +9,7 @@ import { useI18n } from '@/lib/i18n/context'
 export default function SignUpPage() {
   const router = useRouter()
   const { signUp } = useAuth()
-  const { t, locale } = useI18n()
+  const { locale } = useI18n()
   
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -38,10 +38,10 @@ export default function SignUpPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="font-headline text-4xl font-bold text-[#00271d] dark:text-[#fbf9f4] mb-2">
-            {t('signup.title', 'Join RAASTA')}
+            Join RAASTA
           </h1>
           <p className="text-[#414845] dark:text-[#c4c2bd]">
-            {t('signup.subtitle', 'Start your journey to success')}
+            Start your journey to success
           </p>
         </div>
 
@@ -55,7 +55,7 @@ export default function SignUpPage() {
 
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-[#00271d] dark:text-[#fbf9f4] mb-2">
-                {t('signup.name', 'Full Name')}
+                Full Name
               </label>
               <input
                 id="name"
@@ -64,13 +64,13 @@ export default function SignUpPage() {
                 onChange={(e) => setName(e.target.value)}
                 required
                 className="w-full px-4 py-3 rounded-lg border border-[#e0ddd7] dark:border-[#00271d] bg-[#fbf9f4] dark:bg-[#000d08] text-[#00271d] dark:text-[#fbf9f4] focus:outline-none focus:ring-2 focus:ring-[#885207]"
-                placeholder={t('signup.namePlaceholder', 'Enter your name')}
+                placeholder="Enter your name"
               />
             </div>
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-[#00271d] dark:text-[#fbf9f4] mb-2">
-                {t('signup.email', 'Email')}
+                Email
               </label>
               <input
                 id="email"
@@ -85,7 +85,7 @@ export default function SignUpPage() {
 
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-[#00271d] dark:text-[#fbf9f4] mb-2">
-                {t('signup.phone', 'Phone (Optional)')}
+                Phone (Optional)
               </label>
               <input
                 id="phone"
@@ -99,7 +99,7 @@ export default function SignUpPage() {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-[#00271d] dark:text-[#fbf9f4] mb-2">
-                {t('signup.password', 'Password')}
+                Password
               </label>
               <input
                 id="password"
@@ -112,7 +112,7 @@ export default function SignUpPage() {
                 placeholder="••••••••"
               />
               <p className="mt-1 text-xs text-[#414845] dark:text-[#c4c2bd]">
-                {t('signup.passwordHint', 'At least 6 characters')}
+                At least 6 characters
               </p>
             </div>
 
@@ -121,15 +121,15 @@ export default function SignUpPage() {
               disabled={loading}
               className="w-full raasta-btn-primary py-3 text-base disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? t('signup.loading', 'Creating account...') : t('signup.button', 'Sign Up')}
+              {loading ? 'Creating account...' : 'Sign Up'}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-[#414845] dark:text-[#c4c2bd]">
-              {t('signup.hasAccount', 'Already have an account?')}{' '}
+              Already have an account?{' '}
               <Link href="/auth/signin" className="text-[#885207] hover:underline font-medium">
-                {t('signup.signinLink', 'Sign in')}
+                Sign in
               </Link>
             </p>
           </div>
@@ -137,7 +137,7 @@ export default function SignUpPage() {
 
         <div className="mt-6 text-center">
           <Link href="/" className="text-sm text-[#885207] hover:underline">
-            ← {t('signup.backHome', 'Back to home')}
+            ← Back to home
           </Link>
         </div>
       </div>

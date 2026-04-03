@@ -5,6 +5,7 @@ import { explainCropAdvice } from '@/lib/llm'
 import { useI18n } from '@/lib/i18n/context'
 import { speakForLocale, stopSpeaking } from '@/lib/tts'
 import { NewsCorner } from '@/components/NewsCorner'
+import { getZameenInfo } from '@/lib/firecrawl'
 import { useCallback, useMemo, useRef, useState } from 'react'
 
 export default function ZameenPage() {
@@ -14,6 +15,7 @@ export default function ZameenPage() {
   const [analyzing, setAnalyzing] = useState(false)
   const [result, setResult] = useState<string | null>(null)
   const [mandiInfo, setMandiInfo] = useState<string | null>(null)
+  const [isSpeaking, setIsSpeaking] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [openTrends, setOpenTrends] = useState(false)
   const [trendKey, setTrendKey] = useState<'saffron' | 'walnuts' | 'apples'>('saffron')
@@ -85,6 +87,7 @@ export default function ZameenPage() {
     
     setAnalyzing(true)
     setResult(null)
+    setIsSpeaking(false)
     stopSpeaking()
     
     try {
@@ -92,19 +95,36 @@ export default function ZameenPage() {
       const analysis = await analyzeCropImage(selectedImage)
       setMandiInfo(analysis.mandiHint)
       
-      // Step 2: Get detailed advice from LLM
-      const advice = await explainCropAdvice(analysis.summary, analysis.mandiHint, locale)
+      // Step 2: Get real-time mandi prices from web using Firecrawl
+      console.log('🔍 Fetching real-time mandi prices...')
+      const cropType = selectedImage.name.toLowerCase().includes('apple') ? 'apple' : 
+                      selectedImage.name.toLowerCase().includes('saffron') ? 'saffron' :
+                      selectedImage.name.toLowerCase().includes('walnut') ? 'walnut' : 'crop'
+      const mandiData = await getZameenInfo(`Kashmir mandi prices ${cropType} today latest`)
+      console.log('✅ Mandi data fetched:', mandiData.substring(0, 100))
+      
+      // Step 3: Get detailed advice from LLM with real mandi data
+      const combinedInfo = mandiData ? `${analysis.mandiHint}\n\nLatest Market Info:\n${mandiData}` : analysis.mandiHint
+      const advice = await explainCropAdvice(analysis.summary, combinedInfo, locale)
       setResult(advice)
       
-      // Step 3: Speak the result
+      // Step 4: Speak the result
+      setIsSpeaking(true)
       await speakForLocale(advice, locale)
+      setIsSpeaking(false)
     } catch (error) {
       console.error('Analysis error:', error)
       setResult('Unable to analyze image. Please try again.')
+      setIsSpeaking(false)
     } finally {
       setAnalyzing(false)
     }
   }, [selectedImage, locale])
+
+  const handleStopSpeaking = useCallback(() => {
+    stopSpeaking()
+    setIsSpeaking(false)
+  }, [])
 
   const triggerFileSelect = useCallback(() => {
     fileInputRef.current?.click()
@@ -207,9 +227,20 @@ export default function ZameenPage() {
             {/* Analysis Result */}
             {result && (
               <div className="bg-[var(--color-surface-container-high)] p-8 border-l-4 border-[var(--color-secondary)]">
-                <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary)] mb-4">
-                  AI Analysis Result
-                </p>
+                <div className="flex items-center justify-between mb-4">
+                  <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary)]">
+                    AI Analysis Result
+                  </p>
+                  {isSpeaking && (
+                    <button
+                      onClick={handleStopSpeaking}
+                      className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-full text-xs uppercase tracking-widest transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-sm">stop_circle</span>
+                      Stop Audio
+                    </button>
+                  )}
+                </div>
                 <div className="font-body text-base text-[var(--color-on-surface)] leading-relaxed whitespace-pre-wrap">
                   {result}
                 </div>

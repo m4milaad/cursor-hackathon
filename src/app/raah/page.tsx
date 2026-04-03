@@ -8,6 +8,7 @@ import { answerVoiceQuestion } from '@/lib/llm'
 import { speechRecognitionLang } from '@/lib/localeForLlm'
 import { speakForLocale, stopSpeaking } from '@/lib/tts'
 import { transcribeAudio } from '@/lib/whisper'
+import { getRaahInfo } from '@/lib/firecrawl'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 
@@ -92,7 +93,17 @@ export default function RaahPage() {
       setIsSpeaking(false)
       stopSpeaking()
       try {
-        const a = await answerVoiceQuestion(trimmed, locale)
+        // Get real-time information from web using Firecrawl
+        console.log('🔍 Fetching real-time information for:', trimmed)
+        const webInfo = await getRaahInfo(trimmed)
+        console.log('✅ Web info fetched:', webInfo.substring(0, 100))
+        
+        // Combine question with real-time data
+        const enhancedQuestion = webInfo 
+          ? `${trimmed}\n\nLatest Information from Web:\n${webInfo}`
+          : trimmed
+        
+        const a = await answerVoiceQuestion(enhancedQuestion, locale)
         setAnswer(a)
         setIsSpeaking(true)
         await speakForLocale(a, locale)

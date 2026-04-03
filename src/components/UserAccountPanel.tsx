@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth/AuthContext'
-import { useQuery } from 'convex/react'
-import { api } from '../../convex/_generated/api'
+// import { useQuery } from 'convex/react'
+// import { api } from '../../convex/_generated/api'
 import { LanguageToggle } from './LanguageToggle'
 
 interface UserAccountPanelProps {
@@ -15,14 +15,9 @@ export function UserAccountPanel({ onClose, onSignOut }: UserAccountPanelProps) 
   const { user } = useAuth()
   
   // Fetch user journey and insights if user is logged in
-  const userJourney = useQuery(
-    api.auth.getUserJourney,
-    user ? { userId: user.userId } : 'skip'
-  )
-  const userInsights = useQuery(
-    api.auth.getUserInsights,
-    user ? { userId: user.userId } : 'skip'
-  )
+  // TODO: Re-enable after running `npx convex dev` to regenerate API
+  const userJourney: any = null // useQuery(api.auth.getUserJourney, user ? { userId: user.userId } : 'skip')
+  const userInsights: any = null // useQuery(api.auth.getUserInsights, user ? { userId: user.userId } : 'skip')
 
   return (
     <div className="absolute right-0 top-[56px] w-[360px] md:w-[420px] bg-[#fbf9f4] border border-[var(--color-outline-variant)] shadow-[0_20px_60px_rgba(0,0,0,0.18)] max-h-[80vh] overflow-y-auto [mask-image:linear-gradient(to_bottom,transparent,black_8%,black_92%,transparent)] [scrollbar-width:thin]">

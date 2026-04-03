@@ -7,6 +7,7 @@ import { useI18n } from '@/lib/i18n/context'
 import { extractMarksheetText } from '@/lib/ocr'
 import { taleemLlm } from '@/lib/taleemApi'
 import { speakForLocale } from '@/lib/tts'
+import { getTaleemInfo } from '@/lib/firecrawl'
 import { useState } from 'react'
 
 const scholarshipCards = [
@@ -28,7 +29,18 @@ export default function ScholarshipPage() {
     setOut('')
     try {
       const ocrText = await extractMarksheetText(file)
-      const text = await taleemLlm({ locale, pillar: 'scholarship', ocrText })
+      
+      // Get real-time scholarship information from web
+      console.log('🔍 Fetching real-time scholarship information...')
+      const scholarshipInfo = await getTaleemInfo('Kashmir scholarships latest 2026 eligibility deadlines')
+      console.log('✅ Scholarship info fetched:', scholarshipInfo.substring(0, 100))
+      
+      // Combine marksheet data with real scholarship info
+      const enhancedOcrText = scholarshipInfo 
+        ? `${ocrText}\n\nLatest Scholarship Information:\n${scholarshipInfo}`
+        : ocrText
+      
+      const text = await taleemLlm({ locale, pillar: 'scholarship', ocrText: enhancedOcrText })
       setOut(text)
       await speakForLocale(text, locale)
     } finally {

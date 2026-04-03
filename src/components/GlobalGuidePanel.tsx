@@ -3,11 +3,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { getGuideAssistance, getFallbackRoute, type GuideResponse } from '@/lib/guideAssistant'
-import { useI18n } from '@/lib/i18n/context'
 
 export function GlobalGuidePanel() {
   const router = useRouter()
-  const { locale } = useI18n()
   const [isOpen, setIsOpen] = useState(false)
   const [userInput, setUserInput] = useState('')
   const [guidance, setGuidance] = useState<GuideResponse | null>(null)

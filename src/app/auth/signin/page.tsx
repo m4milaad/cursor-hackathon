@@ -4,12 +4,10 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/lib/auth/AuthContext'
-import { useI18n } from '@/lib/i18n/context'
 
 export default function SignInPage() {
   const router = useRouter()
   const { signIn } = useAuth()
-  const { t } = useI18n()
   
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -36,10 +34,10 @@ export default function SignInPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="font-headline text-4xl font-bold text-[#00271d] dark:text-[#fbf9f4] mb-2">
-            {t('signin.title', 'Welcome Back')}
+            Welcome Back
           </h1>
           <p className="text-[#414845] dark:text-[#c4c2bd]">
-            {t('signin.subtitle', 'Sign in to continue your journey')}
+            Sign in to continue your journey
           </p>
         </div>
 
@@ -53,7 +51,7 @@ export default function SignInPage() {
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-[#00271d] dark:text-[#fbf9f4] mb-2">
-                {t('signin.email', 'Email')}
+                Email
               </label>
               <input
                 id="email"
@@ -68,7 +66,7 @@ export default function SignInPage() {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-[#00271d] dark:text-[#fbf9f4] mb-2">
-                {t('signin.password', 'Password')}
+                Password
               </label>
               <input
                 id="password"
@@ -86,15 +84,15 @@ export default function SignInPage() {
               disabled={loading}
               className="w-full raasta-btn-primary py-3 text-base disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? t('signin.loading', 'Signing in...') : t('signin.button', 'Sign In')}
+              {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-[#414845] dark:text-[#c4c2bd]">
-              {t('signin.noAccount', "Don't have an account?")}{' '}
+              Don't have an account?{' '}
               <Link href="/auth/signup" className="text-[#885207] hover:underline font-medium">
-                {t('signin.signupLink', 'Sign up')}
+                Sign up
               </Link>
             </p>
           </div>
@@ -102,7 +100,7 @@ export default function SignInPage() {
 
         <div className="mt-6 text-center">
           <Link href="/" className="text-sm text-[#885207] hover:underline">
-            ← {t('signin.backHome', 'Back to home')}
+            ← Back to home
           </Link>
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useRef, useState, Suspense } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { LanguageToggle } from '@/components/LanguageToggle'
 import { GlobalGuidePanel } from '@/components/GlobalGuidePanel'
 import { useAuth } from '@/lib/auth/AuthContext'
@@ -18,7 +18,7 @@ export function SiteHeader() {
   const path = usePathname() ?? ''
   const [panelOpen, setPanelOpen] = useState(false)
   const panelRef = useRef<HTMLDivElement | null>(null)
-  const { user, signOut } = useAuth()
+  const { signOut } = useAuth()
 
   const handleSignOut = () => {
     signOut()

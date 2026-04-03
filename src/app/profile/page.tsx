@@ -2,14 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/lib/auth/AuthContext'
-import { useI18n } from '@/lib/i18n/context'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 export default function ProfilePage() {
   const router = useRouter()
   const { user, loading, updateProfile } = useAuth()
-  const { t } = useI18n()
   
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
@@ -26,7 +24,7 @@ export default function ProfilePage() {
     }
     if (user) {
       setName(user.name)
-      setPhone(user.phone || '')
+      setPhone('')
       setAge(user.profile?.age || '')
       setDistrict(user.profile?.district || '')
       setOccupation(user.profile?.occupation || '')
@@ -42,7 +40,6 @@ export default function ProfilePage() {
     try {
       await updateProfile({
         name,
-        phone: phone || undefined,
         profile: {
           age: age ? Number(age) : undefined,
           district: district || undefined,
@@ -75,13 +72,13 @@ export default function ProfilePage() {
       <div className="max-w-2xl mx-auto">
         <div className="mb-8">
           <Link href="/" className="text-sm text-[#885207] hover:underline">
-            ← {t('profile.backHome', 'Back to home')}
+            ← Back to home
           </Link>
           <h1 className="font-headline text-4xl font-bold text-[#00271d] dark:text-[#fbf9f4] mt-4 mb-2">
-            {t('profile.title', 'Your Profile')}
+            Your Profile
           </h1>
           <p className="text-[#414845] dark:text-[#c4c2bd]">
-            {t('profile.subtitle', 'Update your information to get better recommendations')}
+            Update your information to get better recommendations
           </p>
         </div>
 
@@ -100,7 +97,7 @@ export default function ProfilePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-[#00271d] dark:text-[#fbf9f4] mb-2">
-                  {t('profile.name', 'Full Name')}
+                  Full Name
                 </label>
                 <input
                   id="name"
@@ -114,7 +111,7 @@ export default function ProfilePage() {
 
               <div>
                 <label htmlFor="phone" className="block text-sm font-medium text-[#00271d] dark:text-[#fbf9f4] mb-2">
-                  {t('profile.phone', 'Phone')}
+                  Phone
                 </label>
                 <input
                   id="phone"
@@ -127,7 +124,7 @@ export default function ProfilePage() {
 
               <div>
                 <label htmlFor="age" className="block text-sm font-medium text-[#00271d] dark:text-[#fbf9f4] mb-2">
-                  {t('profile.age', 'Age')}
+                  Age
                 </label>
                 <input
                   id="age"
@@ -142,7 +139,7 @@ export default function ProfilePage() {
 
               <div>
                 <label htmlFor="district" className="block text-sm font-medium text-[#00271d] dark:text-[#fbf9f4] mb-2">
-                  {t('profile.district', 'District')}
+                  District
                 </label>
                 <input
                   id="district"
@@ -156,7 +153,7 @@ export default function ProfilePage() {
 
               <div>
                 <label htmlFor="occupation" className="block text-sm font-medium text-[#00271d] dark:text-[#fbf9f4] mb-2">
-                  {t('profile.occupation', 'Occupation')}
+                  Occupation
                 </label>
                 <input
                   id="occupation"
@@ -170,7 +167,7 @@ export default function ProfilePage() {
 
               <div>
                 <label htmlFor="education" className="block text-sm font-medium text-[#00271d] dark:text-[#fbf9f4] mb-2">
-                  {t('profile.education', 'Education')}
+                  Education
                 </label>
                 <input
                   id="education"
@@ -189,7 +186,7 @@ export default function ProfilePage() {
                 disabled={saving}
                 className="w-full raasta-btn-primary py-3 text-base disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {saving ? t('profile.saving', 'Saving...') : t('profile.save', 'Save Changes')}
+                {saving ? 'Saving...' : 'Save Changes'}
               </button>
             </div>
           </form>

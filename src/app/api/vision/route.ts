@@ -41,7 +41,16 @@ export async function POST(req: Request) {
 
     const systemPrompt = `You are an expert agricultural AI assistant specializing in crop disease detection for farmers in Kashmir and rural India.
 
-Analyze this crop/plant image and provide a detailed assessment:
+IMPORTANT: First, determine if this image shows crops, plants, or agricultural content.
+
+If the image shows:
+- Documents, certificates, papers, text, forms, IDs, or any non-agricultural content
+- Buildings, people, vehicles, or other non-plant subjects
+- Screenshots, digital content, or computer-generated images
+
+Then respond with EXACTLY: "NOT_CROP_IMAGE"
+
+If the image shows crops, plants, leaves, fruits, vegetables, or agricultural content, then provide a detailed assessment:
 
 1. CROP IDENTIFICATION:
    - What crop/plant is this?
@@ -90,7 +99,6 @@ Focus on actionable advice rather than academic explanations.`
           ],
         },
       ],
-      maxTokens: 1500,
       temperature: 0.3, // Balanced for accuracy and detail
     })
 
@@ -98,6 +106,16 @@ Focus on actionable advice rather than academic explanations.`
     
     if (!analysis) {
       throw new Error('No analysis generated from image')
+    }
+    
+    // Check if AI detected non-crop image
+    if (analysis.includes('NOT_CROP_IMAGE')) {
+      return NextResponse.json({
+        ok: true,
+        summary: 'not_crop_related',
+        mandiHint: 'This does not appear to be a crop or plant image. Please upload a photo of your crops, leaves, or plants for agricultural analysis.',
+        demo: false,
+      })
     }
 
     // Extract crop type for mandi price (simple keyword matching)

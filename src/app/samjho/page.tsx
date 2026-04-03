@@ -5,6 +5,8 @@ import { explainDocumentSimpleUrdu } from '@/lib/llm'
 import { useI18n } from '@/lib/i18n/context'
 import { speakForLocale, stopSpeaking } from '@/lib/tts'
 import { NewsCorner } from '@/components/NewsCorner'
+import { getSamjhoInfo } from '@/lib/firecrawl'
+import { VoiceDebugger } from '@/components/VoiceDebugger'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 export default function SamjhoPage() {
@@ -70,11 +72,22 @@ export default function SamjhoPage() {
       setOcrText(extractedText)
       setConfidence(Math.floor(Math.random() * 10) + 88) // Simulated confidence 88-97%
       
-      // Step 2: Get simple explanation from LLM
-      const simpleExplanation = await explainDocumentSimpleUrdu(extractedText, locale)
+      // Step 2: Get real-time context from web using Firecrawl
+      console.log('🔍 Fetching real-time document context...')
+      const docType = extractedText.toLowerCase().includes('land') ? 'land records' :
+                     extractedText.toLowerCase().includes('notice') ? 'government notice' :
+                     extractedText.toLowerCase().includes('certificate') ? 'certificate' : 'document'
+      const webContext = await getSamjhoInfo(`Kashmir ${docType} latest information`)
+      console.log('✅ Web context fetched:', webContext.substring(0, 100))
+      
+      // Step 3: Get simple explanation from LLM with real context
+      const enhancedText = webContext 
+        ? `${extractedText}\n\nLatest Context:\n${webContext}`
+        : extractedText
+      const simpleExplanation = await explainDocumentSimpleUrdu(enhancedText, locale)
       setExplanation(simpleExplanation)
       
-      // Step 3: Speak the explanation
+      // Step 4: Speak the explanation
       setIsSpeaking(true)
       await speakForLocale(simpleExplanation, locale)
       setIsSpeaking(false)
@@ -344,6 +357,9 @@ export default function SamjhoPage() {
           </div>
         </div>
       </div>
+      
+      {/* Voice Debugger - shows available TTS voices */}
+      <VoiceDebugger />
     </main>
   )
 }

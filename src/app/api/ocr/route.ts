@@ -99,7 +99,6 @@ If text is in Urdu/Hindi/Kashmiri, transliterate it to Roman script.`
           ],
         },
       ],
-      maxTokens: 2000,
       temperature: 0.1, // Low temperature for accurate OCR
     })
 

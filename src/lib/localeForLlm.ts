@@ -69,7 +69,52 @@ export function speechRecognitionLang(locale: UiLocale): string {
 /** Appended to every LLM system prompt so replies match the UI language. */
 export function localeInstruction(locale: UiLocale): string {
   const info = LOCALE_LABELS[locale] ?? LOCALE_LABELS.en
-  return `OUTPUT LANGUAGE: Respond entirely in ${info.name} using ${info.script} script. Keep sentences short and clear for text-to-speech.`
+  
+  if (locale === 'en') {
+    return `OUTPUT LANGUAGE: Respond entirely in English. Keep sentences short and clear for text-to-speech.`
+  }
+  
+  if (locale === 'ur') {
+    return `OUTPUT LANGUAGE REQUIREMENT (CRITICAL):
+- You MUST respond ENTIRELY in Urdu (اردو) using Arabic/Perso-Arabic script
+- Do NOT use English words or Latin script
+- Write RIGHT-TO-LEFT in proper Urdu script
+- Use simple, conversational Urdu that farmers and common people can understand
+- Keep sentences short and clear for text-to-speech
+- Example format: "یہ ایک دستاویز ہے۔ اس میں اہم معلومات ہیں۔"
+
+IMPORTANT: Your entire response must be in Urdu script only. No English allowed.`
+  }
+  
+  if (locale === 'hi') {
+    return `OUTPUT LANGUAGE REQUIREMENT (CRITICAL):
+- You MUST respond ENTIRELY in Hindi (हिंदी) using Devanagari script
+- Do NOT use English words or Latin script
+- Use simple, conversational Hindi that common people can understand
+- Keep sentences short and clear for text-to-speech
+- Example format: "यह एक दस्तावेज़ है। इसमें महत्वपूर्ण जानकारी है।"
+
+IMPORTANT: Your entire response must be in Hindi Devanagari script only. No English allowed.`
+  }
+  
+  if (locale === 'ks') {
+    return `OUTPUT LANGUAGE REQUIREMENT (CRITICAL):
+- You MUST respond ENTIRELY in Kashmiri (کٲشُر) using Arabic/Perso-Arabic script
+- Do NOT use English words or Latin script
+- Write RIGHT-TO-LEFT in proper Kashmiri script
+- Use simple, conversational Kashmiri that local people can understand
+- Keep sentences short and clear for text-to-speech
+
+IMPORTANT: Your entire response must be in Kashmiri script only. No English allowed.`
+  }
+  
+  return `OUTPUT LANGUAGE REQUIREMENT (CRITICAL):
+- You MUST respond ENTIRELY in ${info.name} using ${info.script} script
+- Do NOT use English words or Latin script
+- Use simple, conversational language that common people can understand
+- Keep sentences short and clear for text-to-speech
+
+IMPORTANT: Your entire response must be in ${info.name} script only. No English allowed.`
 }
 
 export function localeLabel(locale: UiLocale): string {

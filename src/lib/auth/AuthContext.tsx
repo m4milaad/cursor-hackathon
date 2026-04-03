@@ -1,8 +1,8 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
-import { useMutation, useQuery } from 'convex/react'
-import { api } from '../../../convex/_generated/api'
+// import { useMutation } from 'convex/react'
+// import { api } from '../../../convex/_generated/api'
 import type { Id } from '../../../convex/_generated/dataModel'
 
 interface User {
@@ -36,9 +36,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const signInMutation = useMutation(api.auth.signIn)
-  const signUpMutation = useMutation(api.auth.signUp)
-  const updateProfileMutation = useMutation(api.auth.updateProfile)
+  // TODO: Re-enable after running `npx convex dev` to regenerate API
+  // const signInMutation = useMutation(api.auth.signIn)
+  // const signUpMutation = useMutation(api.auth.signUp)
+  // const updateProfileMutation = useMutation(api.auth.updateProfile)
 
   // Load user from localStorage on mount
   useEffect(() => {
@@ -63,10 +64,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user])
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (_email: string, _password: string) => {
     try {
-      const result = await signInMutation({ email, password })
-      setUser(result)
+      // TODO: Re-enable after running `npx convex dev` to regenerate API
+      // const result = await signInMutation({ email, password })
+      // setUser(result)
+      throw new Error('Auth is temporarily disabled. Please run `npx convex dev` to enable.')
     } catch (error) {
       console.error('Sign in error:', error)
       throw error
@@ -74,15 +77,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signUp = async (
-    name: string,
-    email: string,
-    password: string,
-    phone?: string,
-    locale: string = 'en'
+    _name: string,
+    _email: string,
+    _password: string,
+    _phone?: string,
+    _locale: string = 'en'
   ) => {
     try {
-      const result = await signUpMutation({ name, email, password, phone, locale })
-      setUser(result)
+      // TODO: Re-enable after running `npx convex dev` to regenerate API
+      // const result = await signUpMutation({ name, email, password, phone, locale })
+      // setUser(result)
+      throw new Error('Auth is temporarily disabled. Please run `npx convex dev` to enable.')
     } catch (error) {
       console.error('Sign up error:', error)
       throw error
@@ -98,10 +103,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!user) return
 
     try {
-      await updateProfileMutation({
-        userId: user.userId,
-        ...updates,
-      })
+      // TODO: Re-enable after running `npx convex dev` to regenerate API
+      // await updateProfileMutation({
+      //   userId: user.userId,
+      //   ...updates,
+      // })
       setUser({ ...user, ...updates })
     } catch (error) {
       console.error('Update profile error:', error)

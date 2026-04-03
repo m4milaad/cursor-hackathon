@@ -4,6 +4,8 @@ import { PageIntro } from '@/components/PageIntro'
 import { TaleemVoiceForm } from '@/components/TaleemVoiceForm'
 import { useI18n } from '@/lib/i18n/context'
 import { taleemLlm } from '@/lib/taleemApi'
+import { getTaleemInfo } from '@/lib/firecrawl'
+import { useState } from 'react'
 
 const jobCards = [
   { title: 'Location-Based Jobs', body: 'Nearby opportunities with filters for remote or part-time.' },
@@ -14,6 +16,26 @@ const jobCards = [
 
 export default function NaukriPage() {
   const { locale, t } = useI18n()
+  const [loading, setLoading] = useState(false)
+
+  const handleJobSearch = async (message: string) => {
+    setLoading(true)
+    try {
+      // Get real-time job listings from web
+      console.log('🔍 Fetching real-time job listings...')
+      const jobInfo = await getTaleemInfo(`Kashmir jobs ${message} latest openings`)
+      console.log('✅ Job info fetched:', jobInfo.substring(0, 100))
+      
+      // Combine with AI analysis
+      const enhancedMessage = jobInfo 
+        ? `${message}\n\nLatest Job Listings:\n${jobInfo}`
+        : message
+      
+      return await taleemLlm({ locale, pillar: 'naukri', message: enhancedMessage })
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <main className="leaf-pattern flex-grow pt-24 min-h-screen">
@@ -67,8 +89,8 @@ export default function NaukriPage() {
         <TaleemVoiceForm
           label={t('naukri.label')}
           placeholder={t('naukri.ph')}
-          submitLabel={t('naukri.btn')}
-          onSubmit={(message) => taleemLlm({ locale, pillar: 'naukri', message })}
+          submitLabel={loading ? 'Searching...' : t('naukri.btn')}
+          onSubmit={handleJobSearch}
         />
       </section>
     </main>

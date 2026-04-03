@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { HeroScrollAnimation } from '@/components/HeroScrollAnimation'
 
@@ -65,6 +65,65 @@ export function HomeHero() {
     try {
       console.log('🎤 Processing audio, size:', audioBlob.size)
       
+      // Check if we should use demo mode (no API key or quota exceeded)
+      const useDemoMode = true // Force demo mode for now
+      
+      if (useDemoMode) {
+        console.log('🎭 Using DEMO mode (no API calls)')
+        
+        // Simulate processing delay
+        await new Promise(resolve => setTimeout(resolve, 1500))
+        
+        // Demo transcription - simulate user saying something about agriculture
+        const demoTranscripts = [
+          'My apple crop has a disease',
+          'I need help with my CV',
+          'What does this document say',
+          'I am confused about my future',
+          'Meri fasal kharab ho rahi hai',
+        ]
+        const transcribedText = demoTranscripts[Math.floor(Math.random() * demoTranscripts.length)]
+        
+        console.log('✅ Demo Transcribed:', transcribedText)
+        setTranscript(transcribedText)
+        
+        // Demo intent detection
+        await new Promise(resolve => setTimeout(resolve, 500))
+        
+        let intent: 'samjho' | 'zameen' | 'taleem' | 'raah' = 'raah'
+        if (transcribedText.toLowerCase().includes('crop') || transcribedText.toLowerCase().includes('fasal')) {
+          intent = 'zameen'
+        } else if (transcribedText.toLowerCase().includes('cv') || transcribedText.toLowerCase().includes('job')) {
+          intent = 'taleem'
+        } else if (transcribedText.toLowerCase().includes('document') || transcribedText.toLowerCase().includes('kagaz')) {
+          intent = 'samjho'
+        }
+        
+        const intentData: IntentResult = {
+          intent,
+          confidence: 0.85,
+          query: transcribedText,
+          route: `/${intent}`
+        }
+        
+        console.log('✅ Demo Intent detected:', intentData.intent, 'route:', intentData.route)
+        setResult(intentData)
+        
+        // Auto-navigate after 2 seconds
+        setTimeout(() => {
+          console.log('🚀 Navigating to:', intentData.route)
+          const params = new URLSearchParams({
+            q: transcribedText,
+            autoSpeak: 'true'
+          })
+          router.push(`${intentData.route}?${params.toString()}`)
+        }, 2000)
+        
+        setIsProcessing(false)
+        return
+      }
+      
+      // Real API mode (when quota is available)
       // Step 1: Transcribe audio (Whisper auto-detects language)
       const formData = new FormData()
       formData.append('file', audioBlob, 'audio.webm')
@@ -85,7 +144,12 @@ export function HomeHero() {
       console.log('✅ Transcribed:', transcribedText)
 
       if (!transcribedText) {
-        setError('Could not understand audio. Please try again.')
+        // Check if it's a quota error
+        if (transcribeData.error && transcribeData.error.includes('quota')) {
+          setError('OpenAI API quota exceeded. Please add credits to your account.')
+        } else {
+          setError('Could not understand audio. Please try again.')
+        }
         setIsProcessing(false)
         return
       }
@@ -127,7 +191,6 @@ export function HomeHero() {
 
   const handleButtonClick = () => {
     console.log('🔘 Button clicked! isRecording:', isRecording, 'isProcessing:', isProcessing)
-    alert('Button clicked! Check console for details.')
     if (isRecording) {
       console.log('⏹️ Stopping recording...')
       stopRecording()

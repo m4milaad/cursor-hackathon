@@ -1,7 +1,7 @@
 import type { UiLocale } from '@/lib/localeForLlm'
 
-function pick(m: Record<UiLocale, string>, locale: UiLocale): string {
-  return m[locale] ?? m.en
+function pick(m: Partial<Record<UiLocale, string>>, locale: UiLocale): string {
+  return m[locale] ?? m.en ?? 'Content not available'
 }
 
 export function demoSamjho(locale: UiLocale): string {

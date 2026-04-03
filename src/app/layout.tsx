@@ -7,7 +7,6 @@ import type { ReactNode } from 'react'
 import { AppProviders } from '@/components/AppProviders'
 import { SiteHeader } from '@/components/SiteHeader'
 import { SiteFooter } from '@/components/SiteFooter'
-import { ClientLayout } from '@/components/ClientLayout'
 import './globals.css'
 
 const notoSerif = Noto_Serif({
