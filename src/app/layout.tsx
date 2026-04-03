@@ -28,7 +28,10 @@ export const metadata: Metadata = {
   title: 'RAASTA — AI Companion for Life & Livelihood',
   description:
     'Your AI companion that speaks your language. Understand documents (Samjho), get crop advice (Zameen), build your future (Taleem), or just talk (Raah) — in English, Hindi & Kashmiri. Voice-first, no login required.',
-  keywords: ['AI assistant', 'Kashmir', 'rural India', 'voice AI', 'document understanding', 'crop advice', 'career guidance'],
+  
+  icons: {
+    icon: '/image.png',
+  },
   openGraph: {
     title: 'RAASTA — AI Companion for Life & Livelihood',
     description: 'Voice-first AI for rural India. Documents, agriculture, education & career — in your language.',
@@ -63,3 +66,4 @@ export default function RootLayout({
     </html>
   )
 }
+
