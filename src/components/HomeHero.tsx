@@ -18,145 +18,62 @@ export function HomeHero() {
   const [transcript, setTranscript] = useState('')
   const [error, setError] = useState('')
   const [result, setResult] = useState<IntentResult | null>(null)
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
-  const audioChunksRef = useRef<Blob[]>([])
   const router = useRouter()
 
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const mediaRecorder = new MediaRecorder(stream)
-      mediaRecorderRef.current = mediaRecorder
-      audioChunksRef.current = []
-
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunksRef.current.push(event.data)
+      // Use browser's built-in speech recognition (free, no API needed)
+      const { createBrowserSpeechRecognition, getSpeechRecognitionLanguage } = await import('@/lib/browserSpeech')
+      
+      const language = getSpeechRecognitionLanguage('en') // TODO: Get from user's selected language
+      
+      const recognition = createBrowserSpeechRecognition(
+        language,
+        (result) => {
+          // Got transcription result
+          console.log('✅ Transcribed:', result.transcript)
+          setTranscript(result.transcript)
+          setIsRecording(false)
+          setIsProcessing(true)
+          
+          // Detect intent and navigate
+          void processTranscript(result.transcript)
+        },
+        (error) => {
+          // Error occurred
+          console.error('❌ Speech recognition error:', error)
+          setError(error)
+          setIsRecording(false)
+        },
+        () => {
+          // Recognition ended
+          setIsRecording(false)
         }
+      )
+      
+      if (!recognition || !recognition.isSupported) {
+        setError('Speech recognition not supported in this browser. Please use Chrome, Edge, or Safari.')
+        return
       }
-
-      mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' })
-        stream.getTracks().forEach(track => track.stop())
-        
-        setIsProcessing(true)
-        await processAudio(audioBlob)
-      }
-
-      mediaRecorder.start()
+      
+      recognition.start()
       setIsRecording(true)
       setError('')
       setTranscript('')
       setResult(null)
     } catch (err) {
       console.error('Error starting recording:', err)
-      setError('Could not access microphone. Please check permissions.')
+      setError('Could not start speech recognition. Please check browser permissions.')
     }
   }
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop()
-      setIsRecording(false)
-    }
+    // Browser speech recognition stops automatically
+    setIsRecording(false)
   }
 
-  const processAudio = async (audioBlob: Blob) => {
+  const processTranscript = async (transcribedText: string) => {
     try {
-      console.log('🎤 Processing audio, size:', audioBlob.size)
-      
-      // Check if we should use demo mode (no API key or quota exceeded)
-      const useDemoMode = true // Force demo mode for now
-      
-      if (useDemoMode) {
-        console.log('🎭 Using DEMO mode (no API calls)')
-        
-        // Simulate processing delay
-        await new Promise(resolve => setTimeout(resolve, 1500))
-        
-        // Demo transcription - simulate user saying something about agriculture
-        const demoTranscripts = [
-          'My apple crop has a disease',
-          'I need help with my CV',
-          'What does this document say',
-          'I am confused about my future',
-          'Meri fasal kharab ho rahi hai',
-        ]
-        const transcribedText = demoTranscripts[Math.floor(Math.random() * demoTranscripts.length)]
-        
-        console.log('✅ Demo Transcribed:', transcribedText)
-        setTranscript(transcribedText)
-        
-        // Demo intent detection
-        await new Promise(resolve => setTimeout(resolve, 500))
-        
-        let intent: 'samjho' | 'zameen' | 'taleem' | 'raah' = 'raah'
-        if (transcribedText.toLowerCase().includes('crop') || transcribedText.toLowerCase().includes('fasal')) {
-          intent = 'zameen'
-        } else if (transcribedText.toLowerCase().includes('cv') || transcribedText.toLowerCase().includes('job')) {
-          intent = 'taleem'
-        } else if (transcribedText.toLowerCase().includes('document') || transcribedText.toLowerCase().includes('kagaz')) {
-          intent = 'samjho'
-        }
-        
-        const intentData: IntentResult = {
-          intent,
-          confidence: 0.85,
-          query: transcribedText,
-          route: `/${intent}`
-        }
-        
-        console.log('✅ Demo Intent detected:', intentData.intent, 'route:', intentData.route)
-        setResult(intentData)
-        
-        // Auto-navigate after 2 seconds
-        setTimeout(() => {
-          console.log('🚀 Navigating to:', intentData.route)
-          const params = new URLSearchParams({
-            q: transcribedText,
-            autoSpeak: 'true'
-          })
-          router.push(`${intentData.route}?${params.toString()}`)
-        }, 2000)
-        
-        setIsProcessing(false)
-        return
-      }
-      
-      // Real API mode (when quota is available)
-      // Step 1: Transcribe audio (Whisper auto-detects language)
-      const formData = new FormData()
-      formData.append('file', audioBlob, 'audio.webm')
-
-      console.log('📝 Calling transcribe API...')
-      const transcribeResponse = await fetch('/api/transcribe', {
-        method: 'POST',
-        body: formData,
-      })
-
-      if (!transcribeResponse.ok) {
-        throw new Error('Transcription failed')
-      }
-
-      const transcribeData = await transcribeResponse.json()
-      const transcribedText = transcribeData.text || ''
-      
-      console.log('✅ Transcribed:', transcribedText)
-
-      if (!transcribedText) {
-        // Check if it's a quota error
-        if (transcribeData.error && transcribeData.error.includes('quota')) {
-          setError('OpenAI API quota exceeded. Please add credits to your account.')
-        } else {
-          setError('Could not understand audio. Please try again.')
-        }
-        setIsProcessing(false)
-        return
-      }
-
-      setTranscript(transcribedText)
-
-      // Step 2: Detect intent and route
       console.log('🎯 Calling intent detection API...')
       const intentResponse = await fetch('/api/intent-detection', {
         method: 'POST',
@@ -183,7 +100,13 @@ export function HomeHero() {
       }, 2000)
     } catch (err) {
       console.error('❌ Processing error:', err)
-      setError('Failed to process audio. Please try again.')
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+      
+      if (errorMessage.includes('not configured')) {
+        setError('AI service not configured. Please use text input or restart the server.')
+      } else {
+        setError('Failed to process speech. Please try again or use text input.')
+      }
     } finally {
       setIsProcessing(false)
     }
@@ -196,7 +119,7 @@ export function HomeHero() {
       stopRecording()
     } else if (!isProcessing) {
       console.log('▶️ Starting recording...')
-      startRecording()
+      void startRecording()
     } else {
       console.log('⏳ Already processing, ignoring click')
     }

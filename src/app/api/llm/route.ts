@@ -1,23 +1,16 @@
 import { NextResponse } from 'next/server'
-import { openai } from '@ai-sdk/openai'
-import { generateText } from 'ai'
+import { generateOpenRouterText, isOpenRouterAvailable } from '@/lib/openrouter'
 import {
   demoZameen,
   fallbackRaahAnswer,
 } from '@/lib/demoLocalized'
-import { localeInstruction, parseUiLocale, type UiLocale } from '@/lib/localeForLlm'
+import { parseUiLocale, type UiLocale } from '@/lib/localeForLlm'
 import { taleemDemoFallback, taleemPrompts } from '@/lib/taleem-server'
 import {
   completeLifecycleRequest,
   createLifecycleRequest,
   failLifecycleRequest,
 } from '@/lib/server/convexLifecycle'
-
-const MODEL = openai('gpt-4o-mini')
-
-function withLocale(system: string, locale: UiLocale): string {
-  return `${system.trim()}\n\n${localeInstruction(locale)}`
-}
 
 function generateSimpleFallback(ocrText: string, locale: UiLocale): string {
   // Simple rule-based explanation based on extracted text
@@ -59,103 +52,18 @@ async function aiChat(
   user: string,
   locale: UiLocale = 'en',
 ): Promise<string | null> {
-  try {
-    // Add language enforcement at the beginning of the system prompt
-    const languageEnforcement = getLanguageEnforcement(locale)
-    const enhancedSystem = `${languageEnforcement}\n\n${system}`
-    
-    const result = await generateText({
-      model: MODEL,
-      system: enhancedSystem,
-      prompt: user,
-      temperature: 0.4,
-    })
-    return result.text?.trim() ?? null
-  } catch (error) {
-    console.error('AI Gateway chat error', error)
+  if (!isOpenRouterAvailable()) {
+    console.error('OpenRouter not configured')
     return null
   }
-}
 
-function getLanguageEnforcement(locale: UiLocale): string {
-  if (locale === 'en') {
-    return 'RESPOND IN ENGLISH ONLY.'
+  try {
+    const text = await generateOpenRouterText(system, user, locale)
+    return text || null
+  } catch (error) {
+    console.error('AI chat error:', error)
+    return null
   }
-  
-  if (locale === 'ur') {
-    return `🚨 ABSOLUTE REQUIREMENT 🚨
-
-YOU ARE FORBIDDEN FROM USING ENGLISH OR LATIN SCRIPT.
-
-YOUR ENTIRE RESPONSE MUST BE IN URDU (اردو) USING ARABIC SCRIPT ONLY.
-
-EXAMPLE OF CORRECT FORMAT:
-"یہ ایک سرکاری دستاویز ہے۔ اس میں اہم معلومات شامل ہیں۔ براہ کرم تاریخیں احتیاط سے پڑھیں۔"
-
-BEGIN YOUR URDU RESPONSE BELOW (NO ENGLISH ALLOWED):
----`
-  }
-  
-  if (locale === 'hi') {
-    return `🚨 ABSOLUTE REQUIREMENT 🚨
-
-YOU ARE FORBIDDEN FROM USING ENGLISH OR LATIN SCRIPT.
-
-YOUR ENTIRE RESPONSE MUST BE IN HINDI (हिंदी) USING DEVANAGARI SCRIPT ONLY.
-
-EXAMPLE OF CORRECT FORMAT:
-"यह एक सरकारी दस्तावेज़ है। इसमें महत्वपूर्ण जानकारी है। कृपया तारीखों को ध्यान से पढ़ें।"
-
-BEGIN YOUR HINDI RESPONSE BELOW (NO ENGLISH ALLOWED):
----`
-  }
-  
-  if (locale === 'ks') {
-    return `🚨 ABSOLUTE REQUIREMENT 🚨
-
-YOU ARE FORBIDDEN FROM USING ENGLISH OR LATIN SCRIPT.
-
-YOUR ENTIRE RESPONSE MUST BE IN KASHMIRI (کٲشُر) USING ARABIC SCRIPT ONLY.
-
-BEGIN YOUR KASHMIRI RESPONSE BELOW (NO ENGLISH ALLOWED):
----`
-  }
-  
-  const info = LOCALE_LABELS[locale] ?? LOCALE_LABELS.en
-  return `🚨 ABSOLUTE REQUIREMENT 🚨
-
-YOU ARE FORBIDDEN FROM USING ENGLISH OR LATIN SCRIPT.
-
-YOUR ENTIRE RESPONSE MUST BE IN ${info.name.toUpperCase()} USING ${info.script.toUpperCase()} SCRIPT ONLY.
-
-BEGIN YOUR ${info.name.toUpperCase()} RESPONSE BELOW (NO ENGLISH ALLOWED):
----`
-}
-
-const LOCALE_LABELS: Record<UiLocale, { name: string; script: string }> = {
-  en: { name: 'English', script: 'Latin' },
-  hi: { name: 'Hindi', script: 'Devanagari' },
-  ur: { name: 'Urdu', script: 'Arabic (Perso-Arabic)' },
-  bn: { name: 'Bengali', script: 'Bengali' },
-  ta: { name: 'Tamil', script: 'Tamil' },
-  te: { name: 'Telugu', script: 'Telugu' },
-  mr: { name: 'Marathi', script: 'Devanagari' },
-  gu: { name: 'Gujarati', script: 'Gujarati' },
-  kn: { name: 'Kannada', script: 'Kannada' },
-  ml: { name: 'Malayalam', script: 'Malayalam' },
-  pa: { name: 'Punjabi', script: 'Gurmukhi' },
-  or: { name: 'Odia', script: 'Odia' },
-  as: { name: 'Assamese', script: 'Assamese' },
-  sd: { name: 'Sindhi', script: 'Arabic (Perso-Arabic)' },
-  ks: { name: 'Kashmiri', script: 'Arabic (Perso-Arabic)' },
-  ne: { name: 'Nepali', script: 'Devanagari' },
-  kok: { name: 'Konkani', script: 'Devanagari' },
-  mai: { name: 'Maithili', script: 'Devanagari' },
-  doi: { name: 'Dogri', script: 'Devanagari' },
-  sat: { name: 'Santali', script: 'Ol Chiki' },
-  mni: { name: 'Manipuri (Meitei)', script: 'Meitei Mayek' },
-  brx: { name: 'Bodo', script: 'Devanagari' },
-  sa: { name: 'Sanskrit', script: 'Devanagari' },
 }
 
 export async function POST(req: Request) {
@@ -183,21 +91,9 @@ export async function POST(req: Request) {
         input: body.ocrText,
       })
       
-      const system = withLocale(
-        `You are Samjho, powered by HAQQ. Explain government or legal documents in simple language for people with low literacy. Short paragraphs, warm and clear. Include deadlines and next steps.`,
-        locale,
-      )
+      const system = `You are Samjho, powered by HAQQ. Explain government or legal documents in simple language for people with low literacy. Short paragraphs, warm and clear. Include deadlines and next steps.`
       
-      // Add language instruction to the user message too
-      let userMessage = `Document text:\n${body.ocrText}\n\nExplain what this means and what the reader should do.`
-      
-      if (locale === 'ur') {
-        userMessage += `\n\n[IMPORTANT: Respond ONLY in Urdu (اردو) script. Example: "یہ ایک دستاویز ہے۔"]`
-      } else if (locale === 'hi') {
-        userMessage += `\n\n[IMPORTANT: Respond ONLY in Hindi (हिंदी) Devanagari script. Example: "यह एक दस्तावेज़ है।"]`
-      } else if (locale === 'ks') {
-        userMessage += `\n\n[IMPORTANT: Respond ONLY in Kashmiri (کٲشُر) script.]`
-      }
+      const userMessage = `Document text:\n${body.ocrText}\n\nExplain what this means and what the reader should do.`
       
       const aiText = await aiChat(system, userMessage, locale)
       
@@ -265,10 +161,7 @@ export async function POST(req: Request) {
       
       const mandi =
         typeof body.mandiHint === 'string' ? body.mandiHint : ''
-      const system = withLocale(
-        `You are Zameen, powered by WADI. Give practical crop and disease advice. Mention treatment timing and mandi (market) price when data is provided. Keep it voice-friendly.`,
-        locale,
-      )
+      const system = `You are Zameen, powered by WADI. Give practical crop and disease advice. Mention treatment timing and mandi (market) price when data is provided. Keep it voice-friendly.`
       const user = `Vision summary: ${body.visionSummary}\nMarket note: ${mandi}`
       const aiText = await aiChat(system, user, locale)
       const text = aiText ?? demoZameen(locale)
@@ -294,10 +187,7 @@ export async function POST(req: Request) {
         locale,
         input: body.question,
       })
-      const system = withLocale(
-        `You are Raah, the voice layer of RAASTA. Help people in Kashmir and rural India with government schemes, farming, documents, jobs, and education (Taleem). Be concise. No long bullet lists unless asked.`,
-        locale,
-      )
+      const system = `You are Raah, the voice layer of RAASTA. Help people in Kashmir and rural India with government schemes, farming, documents, jobs, and education (Taleem). Be concise. No long bullet lists unless asked.`
       const aiText = await aiChat(system, body.question, locale)
       const text =
         aiText ??
@@ -353,8 +243,7 @@ export async function POST(req: Request) {
           requestId,
         })
       }
-      const system = withLocale(prompts.system, locale)
-      const aiText = await aiChat(system, prompts.user, locale)
+      const aiText = await aiChat(prompts.system, prompts.user, locale)
       const text = aiText ?? fallback
       if (requestId) {
         await completeLifecycleRequest(

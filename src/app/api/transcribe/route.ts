@@ -61,18 +61,24 @@ export async function POST(req: Request) {
     if (!res.ok) {
       const err = await res.text()
       console.error('Whisper transcription error', err)
+      
+      // Check if it's a quota error
+      const isQuotaError = err.includes('quota') || err.includes('insufficient_quota')
+      
       if (requestId) {
         await failLifecycleRequest(requestId, err)
       }
-      // Fallback to demo mode
+      
       return NextResponse.json({
-        ok: true,
+        ok: false,
         text: '',
         language: 'unknown',
-        demo: true,
-        error: 'Transcription service unavailable',
+        demo: false,
+        error: isQuotaError 
+          ? 'OpenAI API quota exceeded. Please add credits or use an alternative AI provider (Google Gemini is free).'
+          : 'Transcription service unavailable. Please try again.',
         requestId,
-      })
+      }, { status: res.status })
     }
 
     const data = (await res.json()) as { text?: string; language?: string }
@@ -101,14 +107,13 @@ export async function POST(req: Request) {
         error instanceof Error ? error.message : 'Transcription failed',
       )
     }
-    // Return demo mode fallback
     return NextResponse.json({
-      ok: true,
+      ok: false,
       text: '',
       language: 'unknown',
-      demo: true,
-      error: 'Transcription failed',
+      demo: false,
+      error: error instanceof Error ? error.message : 'Transcription failed. Please try again.',
       requestId,
-    })
+    }, { status: 500 })
   }
 }
