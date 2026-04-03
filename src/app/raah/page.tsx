@@ -9,7 +9,7 @@ import { speechRecognitionLang } from '@/lib/localeForLlm'
 import { speakForLocale, stopSpeaking } from '@/lib/tts'
 import { transcribeAudio } from '@/lib/whisper'
 import { getRaahInfo } from '@/lib/firecrawl'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 type WebSpeechRec = {
@@ -59,7 +59,7 @@ function createSpeechRecognition(lang: string): SpeechControl | null {
   }
 }
 
-export default function RaahPage() {
+function RaahPageContent() {
   const { locale, t } = useI18n()
   const searchParams = useSearchParams()
   const [question, setQuestion] = useState('')
@@ -483,5 +483,21 @@ export default function RaahPage() {
         </div>
       </section>
     </main>
+  )
+}
+
+export default function RaahPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="leaf-pattern flex-grow pt-24 min-h-screen flex items-center justify-center">
+          <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-on-surface-variant)]">
+            Loading…
+          </p>
+        </main>
+      }
+    >
+      <RaahPageContent />
+    </Suspense>
   )
 }
