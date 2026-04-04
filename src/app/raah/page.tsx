@@ -11,6 +11,7 @@ import { transcribeAudio } from '@/lib/whisper'
 import { getRaahInfo } from '@/lib/firecrawl'
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { RaahModulePanel } from '@/components/RaahModulePanel'
 
 type WebSpeechRec = {
   lang: string
@@ -71,6 +72,7 @@ function RaahPageContent() {
   const [isSpeaking, setIsSpeaking] = useState(false)
   const mediaRecorder = useRef<MediaRecorder | null>(null)
   const chunks = useRef<Blob[]>([])
+  const [activeModule, setActiveModule] = useState<string | null>(null)
 
   // Handle incoming query from green button
   useEffect(() => {
@@ -171,7 +173,7 @@ function RaahPageContent() {
         setAnswer('')
         stopSpeaking()
         try {
-          const { text, demo } = await transcribeAudio(blob)
+          const { text, demo } = await transcribeAudio(blob, locale)
           if (text) {
             setQuestion(text)
             await ask(text)
@@ -243,6 +245,7 @@ function RaahPageContent() {
   )
 
   return (
+    <>
     <main className="leaf-pattern flex-grow pt-24 min-h-screen">
       <button
         type="button"
@@ -343,7 +346,12 @@ function RaahPageContent() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {featureBlocks.map((f) => (
-            <div key={f.title} className="group border border-[var(--color-outline-variant)] bg-[var(--color-surface-container-low)] overflow-hidden">
+            <button
+              key={f.title}
+              type="button"
+              onClick={() => f.title !== 'Talk To Raah' ? setActiveModule(f.title) : document.getElementById('talk-to-raah')?.scrollIntoView({ behavior: 'smooth' })}
+              className="group border border-[var(--color-outline-variant)] bg-[var(--color-surface-container-low)] overflow-hidden text-left hover:shadow-[0_12px_40px_rgba(0,0,0,0.1)] transition-shadow cursor-pointer"
+            >
               <div className="h-44 overflow-hidden">
                 <img
                   alt={f.title}
@@ -352,12 +360,15 @@ function RaahPageContent() {
                 />
               </div>
               <div className="p-6">
-                <h3 className="font-headline text-xl text-[var(--color-primary)]">{f.title}</h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="font-headline text-xl text-[var(--color-primary)]">{f.title}</h3>
+                  <span className="material-symbols-outlined text-[var(--color-secondary)] opacity-0 group-hover:opacity-100 transition-opacity">arrow_forward</span>
+                </div>
                 <p className="mt-3 text-sm text-[var(--color-on-surface-variant)] leading-relaxed">
                   {f.body}
                 </p>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </section>
@@ -483,6 +494,11 @@ function RaahPageContent() {
         </div>
       </section>
     </main>
+
+    {activeModule && (
+      <RaahModulePanel module={activeModule} onClose={() => setActiveModule(null)} />
+    )}
+    </>
   )
 }
 

@@ -111,7 +111,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const t = useCallback(
     (key: string, vars?: Record<string, string>) => {
       const hasCatalog =
-        locale === 'en' || locale === 'hi' || locale === 'ks'
+        locale === 'en' || locale === 'hi' || locale === 'ks' || locale === 'ur'
       const base = translate('en' as UiLocale, key)
       let s = hasCatalog ? translate(locale, key) : base
       if (!hasCatalog && s) {

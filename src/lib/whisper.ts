@@ -1,8 +1,9 @@
 export type TranscribeResult = { text: string; demo: boolean }
 
-export async function transcribeAudio(blob: Blob): Promise<TranscribeResult> {
+export async function transcribeAudio(blob: Blob, locale?: string): Promise<TranscribeResult> {
   const form = new FormData()
   form.append('file', blob, 'clip.webm')
+  if (locale) form.append('locale', locale)
   const res = await fetch('/api/transcribe', { method: 'POST', body: form })
   const data = (await res.json()) as {
     ok?: boolean

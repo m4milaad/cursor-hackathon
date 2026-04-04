@@ -106,6 +106,7 @@ export async function POST(req: Request) {
       sub?: string
       message?: string
       locale?: string
+      systemPrompt?: string
     }
     const locale = parseUiLocale(body.locale)
     
@@ -214,11 +215,28 @@ export async function POST(req: Request) {
         locale,
         input: body.question,
       })
-      const system = `You are Raah, the voice layer of RAASTA. Help people in Kashmir and rural India with government schemes, farming, documents, jobs, and education (Taleem). Be concise. No long bullet lists unless asked.`
+      // Use custom system prompt from modules, or enhanced default
+      const system = typeof body.systemPrompt === 'string' && body.systemPrompt.length > 20
+        ? body.systemPrompt
+        : `You are Raah, an empathetic AI life mentor built for people in Kashmir and rural India. You give practical, warm, and thoughtful advice.
+
+RULES:
+- Always provide DETAILED, STRUCTURED responses
+- Use numbered lists, pros/cons tables, and clear sections
+- Give SPECIFIC suggestions, not generic advice
+- Include real-world examples relevant to Kashmir/India context
+- End with actionable next steps the person can take TODAY
+- Be warm and mentor-like, not robotic
+- If someone asks about a decision, ALWAYS give:
+  1. Pros and cons of each option
+  2. Your honest recommendation with reasoning
+  3. Creative alternatives they may not have considered
+  4. Specific resources, websites, or programs that can help
+  5. A realistic timeline for their situation`
       const aiText = await aiChat(system, body.question, locale)
       const text =
         aiText ??
-        fallbackRaahAnswer(body.question, locale)
+        fallbackRaahAnswer(body.question, locale, system)
       if (requestId) {
         await completeLifecycleRequest(
           requestId,

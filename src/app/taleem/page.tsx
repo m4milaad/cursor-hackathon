@@ -7,6 +7,7 @@ import { useCallback, useEffect, useId, useState } from 'react'
 import type { LiveJob } from '@/app/api/taleem/jobs/route'
 import { VoiceCvPanel } from '@/components/VoiceCvPanel'
 import { ExamPrepPanel } from '@/components/ExamPrepPanel'
+import { GoalGuidancePanel } from '@/components/GoalGuidancePanel'
 
 const categories = [
   {
@@ -368,54 +369,12 @@ export default function TaleemHubPage() {
               What do you want to build or become?
             </h2>
             <p className="text-sm text-[var(--color-on-surface-variant)] mt-4 leading-relaxed">
-              Speak or type, and Taleem responds like a guide. No blank forms. Just a conversation that moves you forward.
+              Tell AI your goal and get a personalized roadmap, business plan, scholarship list, or learning resources — all tailored for you.
             </p>
-            <div className="mt-8 flex gap-3">
-              <button className="bg-[var(--color-primary)] text-[var(--color-on-primary)] px-6 py-3 font-label text-[10px] uppercase tracking-[0.2em] hover:bg-[var(--color-secondary)] transition-colors flex items-center gap-2">
-                <span className="material-symbols-outlined text-base">mic</span>
-                Speak
-              </button>
-              <button className="border border-[var(--color-outline-variant)] px-6 py-3 font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-primary)] hover:border-[var(--color-secondary)] hover:text-[var(--color-secondary)] transition-colors flex items-center gap-2">
-                <span className="material-symbols-outlined text-base">edit</span>
-                Type
-              </button>
-            </div>
           </div>
           <div className="lg:col-span-7">
             <div className="bg-[var(--color-surface-container-lowest)] border border-[var(--color-outline-variant)] p-6 md:p-8">
-              <div className="flex items-start gap-4 mb-6">
-                <div className="w-10 h-10 rounded-full bg-[var(--color-primary-container)] flex items-center justify-center text-[var(--color-on-primary)] font-label text-xs uppercase">
-                  AI
-                </div>
-                <div>
-                  <p className="font-headline text-lg text-[var(--color-primary)]">
-                    Tell me about your goal.
-                  </p>
-                  <p className="text-sm text-[var(--color-on-surface-variant)]">
-                    Example: I want to open a small shop or prepare for JKSSB.
-                  </p>
-                </div>
-              </div>
-              <div className="border border-[var(--color-outline-variant)] bg-[var(--color-surface-container-low)] p-4 min-h-[120px] text-sm text-[var(--color-on-surface-variant)]">
-                Start typing your plan here...
-              </div>
-              <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-                {[
-                  'Business plan outline',
-                  'Skill roadmap in 6 weeks',
-                  'Scholarships to watch',
-                ].map((s) => (
-                  <div
-                    key={s}
-                    className="border border-[var(--color-outline-variant)] p-4 text-sm bg-[var(--color-surface-container-lowest)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.08)] transition-shadow"
-                  >
-                    {s}
-                  </div>
-                ))}
-              </div>
-              <button className="mt-6 w-full bg-[var(--color-secondary)] text-[var(--color-on-secondary)] py-3 font-label text-[10px] uppercase tracking-[0.2em] hover:bg-opacity-90 transition-colors">
-                Get Guidance
-              </button>
+              <GoalGuidancePanel />
             </div>
           </div>
         </div>

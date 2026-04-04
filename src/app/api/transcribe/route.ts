@@ -16,6 +16,8 @@ export async function POST(req: Request) {
   }
 
   const file = form.get('file')
+  const locale = (form.get('locale') as string) || 'en'
+  
   if (!(file instanceof Blob) || file.size === 0) {
     return NextResponse.json(
       { ok: false, error: 'Missing audio file', demo: false },
@@ -25,10 +27,11 @@ export async function POST(req: Request) {
 
   requestId = await createLifecycleRequest({
     mode: 'transcribe',
-    locale: 'en',
+    locale,
     input: `audio:${file.size}`,
   })
 
+  // ... (keeping the OPENAI_API_KEY check)
   if (!process.env.OPENAI_API_KEY) {
     if (requestId) {
       await completeLifecycleRequest(
@@ -47,7 +50,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const data = await transcribeWithWhisper(file, 'audio.webm')
+    const data = await transcribeWithWhisper(file, 'audio.webm', { language: locale })
 
     if (!data.ok) {
       if (requestId) {
