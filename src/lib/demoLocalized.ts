@@ -92,25 +92,84 @@ Remember: You don't have to have everything figured out today.`
     }
 
     if (systemPrompt.includes('Path Builder') || systemPrompt.includes('Goal Guidance AI')) {
-      return `Here is your detailed roadmap:
+      const isBusiness = question.toLowerCase().includes('business plan')
+      const isScholarship = question.toLowerCase().includes('scholarships')
+      const isResources = question.toLowerCase().includes('resources')
+      
+      // Attempt to extract the actual goal
+      let goalText = question.split('\\n')[0].replace(/Create a.*?who wants to:/i, '').replace(/[^a-zA-Z0-9 ]/g, '').trim()
+      if (!goalText || goalText.length < 3) goalText = 'achieve this goal'
+
+      if (isBusiness) {
+        return `Here is a business plan outline for you to **${goalText}**:
+
+**1. Executive Summary**
+* Clarify your vision to ${goalText}.
+* Target Audience: Local market in Kashmir/India.
+
+**2. Initial Setup & Costs**
+* Basic infrastructure and tools: ₹10,000 - ₹50,000
+* Marketing (Local & Social Media): ₹5,000
+
+**3. Execution Timeline**
+* **Month 1:** Market research, securing tools/space, and registering the business.
+* **Month 2-3:** Launching MVP (Minimum Viable Product), gathering first customers.
+* **Month 4+:** Scaling based on revenue.
+
+**4. Government Schemes to Explore**
+* Startup India Seed Fund
+* Mudra Yojana (Shishu tier for early stage)
+* J&K Entrepreneurship Development Institute (JKEDI) schemes`
+      }
+
+      if (isScholarship) {
+         return `Here are some financial aid options and scholarships to help you **${goalText}**:
+
+**1. Government Scholarships (NSP)**
+* Post-Matric / Pre-Matric Scholarships.
+* Prime Minister's Special Scholarship Scheme (PMSSS) for J&K students.
+
+**2. Institutional Aid**
+* Fellowships from specific universities you apply to.
+* UGC grants for higher education.
+
+**3. Specialized Funds**
+* AICTE Pragati Scholarship for Girls.
+* Local NGO educational funds in your district.
+
+*Action Step:* Visit scholarships.gov.in and create your profile this week.`
+      }
+
+      if (isResources) {
+         return `Top free resources to help you **${goalText}**:
+
+**1. Online Platforms**
+* YouTube (Search for detailed Indian educators/channels on ${goalText})
+* Coursera (Apply for Financial Aid for free certificates)
+* NPTEL / Swayam (Government of India free courses)
+
+**2. Tools & Communities**
+* Search Telegram for local J&K/India study or network groups.
+* Use free AI tools (like Raasta!) for mock interviews or practice.
+
+Start dedicating 45 minutes a day to any one of these platforms.`
+      }
+
+      // Default Roadmap
+      return `Here is your detailed roadmap to **${goalText}**:
 
 **1. Learn the Basics (Weeks 1-4)**
-* Start with foundational courses on FreeCodeCamp or YouTube.
+* Start with foundational concepts regarding ${goalText}.
 * Practice 1 hour daily.
-* **Quick Win:** Make your first simple webpage.
+* **Quick Win:** Find one mentor or join one community related to this.
 
-**2. Build Projects (Months 2-3)**
-* Apply what you learned into 2-3 small local projects.
-* Use tools like GitHub to store your progress.
+**2. Build & Apply (Months 2-3)**
+* Apply what you learned into 2-3 small practical tests or projects.
+* Stay consistent even when it feels slow.
 
 **3. Explore Opportunities (Month 4+)**
 * Look into PMKVY or local programs for certifications if needed.
-* Start networking with local entrepreneurs or tech hubs in your area.
-
-**Resources:**
-* Coursera (apply for financial aid)
-* NPTEL for structured learning
-* Local community centers
+* Start networking with local hubs or applying for entry-level positions.
 
 Keep going, steady progress is better than perfection.`
     }
@@ -127,16 +186,16 @@ Keep going, steady progress is better than perfection.`
 * Option B provides a predictable trajectory without major surprises.
 
 **Recommendation:**
-Based on the current environment in your region, having a stable foundation (Option B) while acquiring new skills on the side is often the most practical approach. Consider choosing the safer route to secure your footing, then pivot slowly.`
+Based on your input, having a stable foundation while acquiring new skills on the side is often the most practical approach. Consider choosing the safer route to secure your footing, then pivot slowly.`
     }
     
     if (systemPrompt.includes('Life Journal') || systemPrompt.includes('Daily Check-in')) {
-      return `Thank you for sharing that with me. It sounds like you're carrying a lot today, but acknowledging it is a big step. 
+      return `Thank you for sharing that with me. Acknowledging your thoughts is a big step. 
 
-* **Insight:** I notice you're placing a lot of expectations on yourself. 
+* **Insight:** You're processing a lot right now. Give yourself credit for showing up.
 * **Reflection:** What is one small thing you can do for yourself today to ease that pressure?
 
-Rating: 6/10. Tip: Try to take 5 minutes just to breathe without any screens or distractions.`
+Tip: Try to take 5 minutes just to breathe without any screens or distractions.`
     }
   }
 
