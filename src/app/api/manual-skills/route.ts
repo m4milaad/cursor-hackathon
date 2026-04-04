@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getConvexHttp, api } from '@/lib/jobs/convexServer'
+import { upsertUserProfile } from '@/lib/jobs/jobStore'
 
 export const runtime = 'nodejs'
 
@@ -9,14 +9,6 @@ type Body = {
 }
 
 export async function POST(req: Request) {
-  const convex = getConvexHttp()
-  if (!convex) {
-    return NextResponse.json(
-      { ok: false, error: 'Database not configured', source: 'error' as const },
-      { status: 503 },
-    )
-  }
-
   let body: Body
   try {
     body = (await req.json()) as Body
@@ -45,7 +37,7 @@ export async function POST(req: Request) {
     .filter(Boolean)
     .slice(0, 80)
 
-  await convex.mutation(api.jobs.setManualSkills, {
+  upsertUserProfile({
     deviceId: body.deviceId.trim(),
     skills,
   })

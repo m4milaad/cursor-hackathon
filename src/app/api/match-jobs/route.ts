@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
-import { getConvexHttp, api } from '@/lib/jobs/convexServer'
+import { filterJobs, getUserProfile, upsertJobs, getJobCount } from '@/lib/jobs/jobStore'
 import { matchJobsWithAi } from '@/lib/jobs/jobAi'
+import { runJobScrape } from '@/lib/jobs/scrapeEngine'
 
 export const runtime = 'nodejs'
 export const maxDuration = 120
@@ -10,26 +11,11 @@ type Body = {
   skills?: string[]
   location?: 'kashmir' | 'india' | 'global' | 'near_me'
   job_type?: 'any' | 'remote' | 'onsite' | 'hybrid'
-  work_type?:
-    | 'any'
-    | 'full_time'
-    | 'part_time'
-    | 'internship'
-    | 'freelance'
-  lat?: number
-  lng?: number
+  work_type?: 'any' | 'full_time' | 'part_time' | 'internship' | 'freelance'
   limit?: number
 }
 
 export async function POST(req: Request) {
-  const convex = getConvexHttp()
-  if (!convex) {
-    return NextResponse.json(
-      { ok: false, error: 'Database not configured', source: 'error' as const },
-      { status: 503 },
-    )
-  }
-
   let body: Body
   try {
     body = (await req.json()) as Body
@@ -42,41 +28,33 @@ export async function POST(req: Request) {
 
   const deviceId = body.deviceId?.trim()
   let skills = body.skills ?? []
-  let resumeSnippet: string | undefined
 
+  // Merge skills from profile
   if (deviceId) {
-    const profile = await convex.query(api.jobs.getUserJobProfile, {
-      deviceId,
-    })
+    const profile = getUserProfile(deviceId)
     if (profile?.skills?.length) {
       skills = [...new Set([...skills, ...profile.skills])]
     }
-    resumeSnippet = profile?.resumeData?.rawExcerpt
   }
 
   const locationScope = body.location ?? 'india'
   const jobType = body.job_type ?? 'any'
   const workType = body.work_type ?? 'any'
-  const limitPool = 45
 
-  let nearKeywords: string[] | undefined
-  if (
-    locationScope === 'near_me' &&
-    typeof body.lat === 'number' &&
-    typeof body.lng === 'number'
-  ) {
-    const { reverseGeocodeKeywords } = await import('@/lib/jobs/geocode')
-    nearKeywords = await reverseGeocodeKeywords(body.lat, body.lng)
+  // Auto-scrape if no jobs in store
+  if (getJobCount() === 0 && process.env.FIRECRAWL_API_KEY) {
+    try {
+      const { jobs: scraped } = await runJobScrape()
+      if (scraped.length > 0) upsertJobs(scraped)
+    } catch { /* ignore */ }
   }
 
-  /** Pool for AI matching: location / type filters only — skill fit is scored by the model. */
-  const jobRows = await convex.query(api.jobs.listJobs, {
+  // Get a pool of jobs for AI matching (no skill filter — let AI score)
+  const jobRows = filterJobs({
     locationScope,
     jobType,
     workType,
-    skillFilters: undefined,
-    nearKeywords,
-    limit: limitPool,
+    limit: 45,
   })
 
   if (jobRows.length === 0) {
@@ -84,11 +62,12 @@ export async function POST(req: Request) {
       ok: true,
       data: { matches: [] },
       source: 'empty' as const,
+      message: 'No jobs in store. Ensure FIRECRAWL_API_KEY is set and scraping has run.',
     })
   }
 
-  const pool = jobRows.slice(0, limitPool).map((j) => ({
-    id: j._id as string,
+  const pool = jobRows.map(j => ({
+    id: j.id,
     title: j.title,
     company: j.company,
     location: j.location,
@@ -101,6 +80,8 @@ export async function POST(req: Request) {
     skills.length > 0
       ? skills
       : ['General professional', 'Open to learning', 'Communication']
+
+  const resumeSnippet = deviceId ? getUserProfile(deviceId)?.resumeData?.rawExcerpt : undefined
 
   let matches: Awaited<ReturnType<typeof matchJobsWithAi>>
   try {
@@ -118,16 +99,12 @@ export async function POST(req: Request) {
   }
 
   if (pool.length > 0 && matches.length === 0) {
-    return NextResponse.json(
-      {
-        ok: false,
-        error:
-          'AI matching returned no results. Set OPENROUTER_API_KEY or GEMINI_API_KEY.',
-        data: { matches: [], jobIdsConsidered: pool.map((p) => p.id) },
-        source: 'error' as const,
-      },
-      { status: 503 },
-    )
+    return NextResponse.json({
+      ok: false,
+      error: 'AI matching returned no results. Set OPENROUTER_API_KEY or GEMINI_API_KEY.',
+      data: { matches: [], jobIdsConsidered: pool.map(p => p.id) },
+      source: 'error' as const,
+    }, { status: 503 })
   }
 
   const max = Math.min(body.limit ?? 15, 30)
@@ -137,7 +114,7 @@ export async function POST(req: Request) {
     ok: true,
     data: {
       matches: top,
-      jobIdsConsidered: pool.map((p) => p.id),
+      jobIdsConsidered: pool.map(p => p.id),
     },
     source: 'ai-only' as const,
   })

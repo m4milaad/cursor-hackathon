@@ -1,23 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getConvexHttp, api } from '@/lib/jobs/convexServer'
+import { upsertUserProfile } from '@/lib/jobs/jobStore'
 import { parseResumeWithAi } from '@/lib/jobs/jobAi'
-import {
-  extractResumeText,
-  fallbackResumeSkills,
-} from '@/lib/jobs/resumeText'
+import { extractResumeText, fallbackResumeSkills } from '@/lib/jobs/resumeText'
 
 export const runtime = 'nodejs'
 export const maxDuration = 120
 
 export async function POST(req: NextRequest) {
-  const convex = getConvexHttp()
-  if (!convex) {
-    return NextResponse.json(
-      { ok: false, error: 'Database not configured', source: 'error' as const },
-      { status: 503 },
-    )
-  }
-
   const form = await req.formData()
   const file = form.get('file')
   const deviceIdRaw = form.get('deviceId')
@@ -68,7 +57,8 @@ export async function POST(req: NextRequest) {
     roles = fb.roles
   }
 
-  await convex.mutation(api.jobs.upsertUserJobProfile, {
+  // Save to local store
+  upsertUserProfile({
     deviceId,
     skills,
     resumeData: {

@@ -1,9 +1,9 @@
-﻿'use client'
+'use client'
 
 import { useI18n } from '@/lib/i18n/context'
 import { NewsCorner } from '@/components/NewsCorner'
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useId, useState } from 'react'
 import type { LiveJob } from '@/app/api/taleem/jobs/route'
 import type { QuizItem } from '@/app/api/taleem/quiz/route'
 
@@ -55,10 +55,24 @@ const featureStrip = [
   },
 ] as const
 
+type MatchRow = {
+  jobId: string
+  title: string
+  company: string
+  location: string
+  applyLink: string
+  matchScore: number
+  matchingSkills: string[]
+  missingSkills: string[]
+  recommendation: string
+}
+
+const DEVICE_KEY = 'raasta-job-device'
+
 export default function TaleemHubPage() {
   const { t } = useI18n()
+  const formId = useId()
   const [openFeature, setOpenFeature] = useState<'Jobs' | 'Voice CV' | 'Exam Prep' | null>(null)
-  const [jobLocation, setJobLocation] = useState('Srinagar')
   const [voiceMode, setVoiceMode] = useState<'idle' | 'recording' | 'processing'>('idle')
   const [examTopic, setExamTopic] = useState('JKSSB - General Awareness')
 
@@ -67,16 +81,137 @@ export default function TaleemHubPage() {
   const [quizItems, setQuizItems] = useState<QuizItem[]>([])
   const [quizLoading, setQuizLoading] = useState(false)
 
+  // --- Advanced Job System state ---
+  const [deviceId, setDeviceId] = useState<string | null>(null)
+  const [locationScope, setLocationScope] = useState<'kashmir' | 'india' | 'global'>('kashmir')
+  const [jobTypeFilter, setJobTypeFilter] = useState<'any' | 'remote' | 'onsite' | 'hybrid'>('any')
+  const [workTypeFilter, setWorkTypeFilter] = useState<'any' | 'full_time' | 'part_time' | 'internship' | 'freelance'>('any')
+  const [skillInput, setSkillInput] = useState('')
+  const [skillTags, setSkillTags] = useState<string[]>([])
+  const [aiMatches, setAiMatches] = useState<MatchRow[]>([])
+  const [matchLoading, setMatchLoading] = useState(false)
+  const [uploadLoading, setUploadLoading] = useState(false)
+  const [jobMessage, setJobMessage] = useState<string | null>(null)
+  const [jobPhase, setJobPhase] = useState<'idle' | 'scraping' | 'matching' | 'done'>('idle')
+
+  // Init device ID
   useEffect(() => {
-    if (openFeature === 'Jobs' && jobMatches.length === 0) {
+    let id = typeof window !== 'undefined' ? localStorage.getItem(DEVICE_KEY) : null
+    if (!id) {
+      id = globalThis.crypto.randomUUID()
+      localStorage.setItem(DEVICE_KEY, id)
+    }
+    setDeviceId(id)
+  }, [])
+
+  // Auto-load jobs when Jobs modal opens
+  useEffect(() => {
+    if (openFeature === 'Jobs' && jobMatches.length === 0 && !jobsLoading) {
       setJobsLoading(true)
-      fetch(`/api/taleem/jobs?location=${encodeURIComponent(jobLocation)}`)
+      setJobMessage('Fetching jobs from scraped sources…')
+      setJobPhase('scraping')
+      fetch(`/api/taleem/jobs?location=${encodeURIComponent(locationScope)}&job_type=${jobTypeFilter}&work_type=${workTypeFilter}&live=1`)
         .then(r => r.json())
-        .then(d => { if (d.jobs) setJobMatches(d.jobs) })
-        .catch(() => {})
+        .then(d => {
+          if (d.jobs && d.jobs.length > 0) {
+            setJobMatches(d.jobs)
+            setJobMessage(`${d.jobs.length} jobs loaded from ${d.source || 'store'}`)
+            setJobPhase('done')
+          } else {
+            setJobMessage(d.scrapeErrors?.length ? `Scrape issues: ${d.scrapeErrors.join('; ')}` : 'No jobs found yet. Ensure FIRECRAWL_API_KEY is set.')
+            setJobPhase('idle')
+          }
+        })
+        .catch(() => { setJobMessage('Error fetching jobs.'); setJobPhase('idle') })
         .finally(() => setJobsLoading(false))
     }
-  }, [openFeature, jobLocation, jobMatches.length])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openFeature])
+
+  // Refetch jobs when filters change (debounced)
+  const refetchJobs = useCallback(async () => {
+    setJobsLoading(true)
+    setJobMessage('Applying filters…')
+    try {
+      const skills = skillTags.length > 0 ? `&skills=${encodeURIComponent(skillTags.join(','))}` : ''
+      const r = await fetch(`/api/taleem/jobs?location=${encodeURIComponent(locationScope)}&job_type=${jobTypeFilter}&work_type=${workTypeFilter}${skills}&live=1`)
+      const d = await r.json()
+      if (d.jobs) {
+        setJobMatches(d.jobs)
+        setJobMessage(d.jobs.length > 0 ? `${d.jobs.length} jobs match your filters` : 'No jobs match these filters.')
+      }
+    } catch { setJobMessage('Error fetching jobs.') }
+    finally { setJobsLoading(false) }
+  }, [locationScope, jobTypeFilter, workTypeFilter, skillTags])
+
+  // Run AI matching
+  const runAiMatch = useCallback(async () => {
+    if (!deviceId) return
+    setMatchLoading(true)
+    setJobMessage('Running AI skill matching…')
+    setJobPhase('matching')
+    try {
+      const r = await fetch('/api/match-jobs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          deviceId,
+          skills: skillTags,
+          location: locationScope,
+          job_type: jobTypeFilter,
+          work_type: workTypeFilter,
+          limit: 12,
+        }),
+      })
+      const d = await r.json()
+      if (d.ok && d.data?.matches?.length) {
+        setAiMatches(d.data.matches)
+        setJobMessage(`${d.data.matches.length} AI-matched jobs ranked for you`)
+        setJobPhase('done')
+      } else {
+        setAiMatches([])
+        setJobMessage(d.error ?? 'AI matching returned no results.')
+        setJobPhase('done')
+      }
+    } catch { setJobMessage('AI matching failed.'); setJobPhase('idle') }
+    finally { setMatchLoading(false) }
+  }, [deviceId, skillTags, locationScope, jobTypeFilter, workTypeFilter])
+
+  // Upload resume
+  const uploadResume = useCallback(async (file: File | null) => {
+    if (!file || !deviceId) return
+    setUploadLoading(true)
+    setJobMessage('Parsing resume with AI…')
+    try {
+      const fd = new FormData()
+      fd.set('file', file)
+      fd.set('deviceId', deviceId)
+      const r = await fetch('/api/upload-resume', { method: 'POST', body: fd })
+      const d = await r.json()
+      if (d.ok && d.data?.skills?.length) {
+        setSkillTags(prev => [...new Set([...prev, ...d.data.skills])])
+        setJobMessage(`Resume parsed! ${d.data.skills.length} skills extracted. Run AI Match to see personalized results.`)
+        // Also save as manual skills
+        await fetch('/api/manual-skills', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ deviceId, skills: d.data.skills }),
+        })
+      } else {
+        setJobMessage(d.error ?? 'Resume parsing failed.')
+      }
+    } catch { setJobMessage('Resume upload error.') }
+    finally { setUploadLoading(false) }
+  }, [deviceId])
+
+  // Add skill tag
+  const addSkillTag = () => {
+    const val = skillInput.trim()
+    if (val && !skillTags.includes(val)) {
+      setSkillTags(prev => [...prev, val])
+    }
+    setSkillInput('')
+  }
 
   useEffect(() => {
     if (openFeature === 'Exam Prep' && quizItems.length === 0) {
@@ -330,56 +465,257 @@ export default function TaleemHubPage() {
             </div>
 
             {openFeature === 'Jobs' && (
-              <div className="p-6 md:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <div className="lg:col-span-5">
-                  <p className="text-sm text-[var(--color-on-surface-variant)] mb-6">
-                    Smart matches update as your profile grows. Apply in a single tap using your saved profile.
-                  </p>
-                  <label className="text-xs uppercase tracking-widest text-[var(--color-secondary)]">
-                    Location
-                  </label>
-                  <input
-                    value={jobLocation}
-                    onChange={(e) => setJobLocation(e.target.value)}
-                    className="raasta-input w-full mt-2"
-                    placeholder="Enter your district"
-                  />
-                  <div className="mt-6 space-y-4 text-sm">
-                    <div className="bg-[var(--color-surface-container-low)] p-4 border border-[var(--color-outline-variant)]">
-                      <p className="font-label text-[10px] uppercase tracking-widest text-[var(--color-on-surface-variant)] mb-2">
-                        AI Suggestions
-                      </p>
-                      <p>Agri assistant, Warehouse planner, Community educator</p>
+              <div className="p-6 md:p-10">
+                {/* Status bar */}
+                {jobMessage && (
+                  <div className="mb-6 bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)] px-4 py-3 flex items-center gap-3">
+                    {(jobsLoading || matchLoading || uploadLoading) && (
+                      <span className="w-4 h-4 border-2 border-[var(--color-secondary)] border-t-transparent rounded-full animate-spin shrink-0" />
+                    )}
+                    <span className="text-sm text-[var(--color-on-surface-variant)]">{jobMessage}</span>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                  {/* Left Panel: Controls */}
+                  <div className="lg:col-span-5 space-y-5">
+                    <p className="text-sm text-[var(--color-on-surface-variant)]">
+                      Upload your resume for AI skill extraction, or add skills manually. Then hit <strong>AI Match</strong> to get personalized job rankings.
+                    </p>
+
+                    {/* Resume Upload */}
+                    <div className="bg-[var(--color-surface-container-low)] border border-dashed border-[var(--color-secondary)] p-4">
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <span className="material-symbols-outlined text-[var(--color-secondary)] text-2xl">upload_file</span>
+                        <div>
+                          <p className="font-label text-xs uppercase tracking-widest text-[var(--color-secondary)]">
+                            {uploadLoading ? 'Parsing Resume…' : 'Upload Resume (PDF / DOCX)'}
+                          </p>
+                          <p className="text-xs text-[var(--color-on-surface-variant)] mt-1">AI extracts skills, experience &amp; roles</p>
+                        </div>
+                        <input
+                          id={formId}
+                          type="file"
+                          accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                          className="hidden"
+                          disabled={uploadLoading || !deviceId}
+                          onChange={(e) => {
+                            const f = e.target.files?.[0]
+                            void uploadResume(f ?? null)
+                            e.target.value = ''
+                          }}
+                        />
+                      </label>
                     </div>
-                    <div className="bg-[var(--color-surface-container-low)] p-4 border border-[var(--color-outline-variant)]">
-                      <p className="font-label text-[10px] uppercase tracking-widest text-[var(--color-on-surface-variant)] mb-2">
-                        One-Click Apply
-                      </p>
-                      <p>Uses your saved CV + Voice intro to fill the form instantly.</p>
+
+                    {/* Filters */}
+                    <div className="grid grid-cols-3 gap-3">
+                      <div>
+                        <label className="text-[10px] uppercase tracking-widest text-[var(--color-secondary)] block mb-1">Location</label>
+                        <select
+                          className="raasta-input w-full text-sm"
+                          value={locationScope}
+                          onChange={(e) => setLocationScope(e.target.value as typeof locationScope)}
+                        >
+                          <option value="kashmir">Kashmir</option>
+                          <option value="india">India</option>
+                          <option value="global">Global</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-[10px] uppercase tracking-widest text-[var(--color-secondary)] block mb-1">Job Type</label>
+                        <select
+                          className="raasta-input w-full text-sm"
+                          value={jobTypeFilter}
+                          onChange={(e) => setJobTypeFilter(e.target.value as typeof jobTypeFilter)}
+                        >
+                          <option value="any">Any</option>
+                          <option value="remote">Remote</option>
+                          <option value="onsite">On-site</option>
+                          <option value="hybrid">Hybrid</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-[10px] uppercase tracking-widest text-[var(--color-secondary)] block mb-1">Work Type</label>
+                        <select
+                          className="raasta-input w-full text-sm"
+                          value={workTypeFilter}
+                          onChange={(e) => setWorkTypeFilter(e.target.value as typeof workTypeFilter)}
+                        >
+                          <option value="any">Any</option>
+                          <option value="full_time">Full-time</option>
+                          <option value="part_time">Part-time</option>
+                          <option value="internship">Internship</option>
+                          <option value="freelance">Freelance</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Skills Input */}
+                    <div>
+                      <label className="text-[10px] uppercase tracking-widest text-[var(--color-secondary)] block mb-1">Your Skills</label>
+                      <div className="flex gap-2">
+                        <input
+                          className="raasta-input flex-1 text-sm"
+                          value={skillInput}
+                          onChange={(e) => setSkillInput(e.target.value)}
+                          onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addSkillTag() } }}
+                          placeholder="e.g. React, Python, Teaching…"
+                        />
+                        <button
+                          type="button"
+                          onClick={addSkillTag}
+                          className="bg-[var(--color-secondary)] text-[var(--color-on-secondary)] px-3 py-1 text-xs uppercase tracking-widest"
+                        >
+                          Add
+                        </button>
+                      </div>
+                      {skillTags.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-3">
+                          {skillTags.map(tag => (
+                            <span
+                              key={tag}
+                              className="inline-flex items-center gap-1.5 bg-[var(--color-primary-container)] text-[var(--color-on-primary)] px-3 py-1 text-xs"
+                            >
+                              {tag}
+                              <button
+                                type="button"
+                                onClick={() => setSkillTags(prev => prev.filter(t => t !== tag))}
+                                className="hover:text-[var(--color-secondary)] text-sm leading-none">
+                                ×
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Action buttons */}
+                    <div className="flex flex-wrap gap-3">
+                      <button
+                        type="button"
+                        onClick={() => void refetchJobs()}
+                        disabled={jobsLoading}
+                        className="bg-[var(--color-primary)] text-[var(--color-on-primary)] px-5 py-2.5 font-label text-[10px] uppercase tracking-[0.15em] hover:bg-[var(--color-secondary)] transition-colors disabled:opacity-50 flex items-center gap-2"
+                      >
+                        <span className="material-symbols-outlined text-base">search</span>
+                        {jobsLoading ? 'Loading…' : 'Fetch Jobs'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => void runAiMatch()}
+                        disabled={matchLoading || !deviceId}
+                        className="border border-[var(--color-secondary)] text-[var(--color-secondary)] px-5 py-2.5 font-label text-[10px] uppercase tracking-[0.15em] hover:bg-[var(--color-secondary)] hover:text-[var(--color-on-secondary)] transition-colors disabled:opacity-50 flex items-center gap-2"
+                      >
+                        <span className="material-symbols-outlined text-base">psychology</span>
+                        {matchLoading ? 'Matching…' : 'AI Match'}
+                      </button>
                     </div>
                   </div>
-                </div>
-                <div className="lg:col-span-7">
-                  <div className="space-y-4">
-                    {jobMatches.map((job) => (
-                      <div
-                        key={job.title}
-                        className="border border-[var(--color-outline-variant)] bg-[var(--color-surface-container-low)] p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-                      >
-                        <div>
-                          <p className="font-headline text-lg">{job.title}</p>
-                          <p className="text-xs uppercase tracking-widest text-[var(--color-on-surface-variant)] mt-1">
-                            {job.org} • {job.location}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <span className="text-sm text-[var(--color-secondary)] font-bold">
-                            {job.match}% match
-                          </span>
-                          <button className="raasta-btn-primary">Apply</button>
+
+                  {/* Right Panel: Results */}
+                  <div className="lg:col-span-7 space-y-6">
+                    {/* AI Matches (if available) */}
+                    {aiMatches.length > 0 && (
+                      <div>
+                        <h4 className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary)] mb-3">
+                          AI-Ranked Matches
+                        </h4>
+                        <div className="space-y-3">
+                          {aiMatches.map((m) => (
+                            <div
+                              key={m.jobId}
+                              className="border border-[var(--color-outline-variant)] bg-[var(--color-surface-container-low)] p-5 transition-all hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]"
+                            >
+                              <div className="flex items-start justify-between gap-3">
+                                <div>
+                                  <p className="font-headline text-lg text-[var(--color-primary)]">{m.title}</p>
+                                  <p className="text-xs uppercase tracking-widest text-[var(--color-on-surface-variant)] mt-1">
+                                    {m.company} • {m.location}
+                                  </p>
+                                </div>
+                                <div className="text-right shrink-0">
+                                  <span className="text-xl font-bold text-[var(--color-secondary)]">
+                                    {m.matchScore}%
+                                  </span>
+                                  <p className="text-[10px] uppercase tracking-widest text-[var(--color-on-surface-variant)]">match</p>
+                                </div>
+                              </div>
+                              <p className="text-sm text-[var(--color-on-surface-variant)] mt-3">{m.recommendation}</p>
+                              <div className="flex flex-wrap gap-4 mt-3">
+                                {m.matchingSkills?.length > 0 && (
+                                  <p className="text-xs">
+                                    <span className="text-green-700 dark:text-green-400">✓ </span>
+                                    {m.matchingSkills.join(', ')}
+                                  </p>
+                                )}
+                                {m.missingSkills?.length > 0 && (
+                                  <p className="text-xs">
+                                    <span className="text-amber-700 dark:text-amber-300">↑ Grow: </span>
+                                    {m.missingSkills.join(', ')}
+                                  </p>
+                                )}
+                              </div>
+                              <a
+                                href={m.applyLink}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="mt-3 inline-block raasta-btn-primary text-xs"
+                              >
+                                Apply →
+                              </a>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                    ))}
+                    )}
+
+                    {/* Scraped Job Listings */}
+                    <div>
+                      <h4 className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary)] mb-3">
+                        {aiMatches.length > 0 ? 'All Scraped Jobs' : 'Jobs from Live Sources'}
+                      </h4>
+                      {jobsLoading && jobMatches.length === 0 && (
+                        <div className="flex items-center gap-3 py-8">
+                          <span className="w-5 h-5 border-2 border-[var(--color-secondary)] border-t-transparent rounded-full animate-spin" />
+                          <span className="text-sm text-[var(--color-on-surface-variant)]">Scraping job boards…</span>
+                        </div>
+                      )}
+                      <div className="space-y-3">
+                        {jobMatches.map((job) => (
+                          <div
+                            key={job.id || job.title + job.org}
+                            className="border border-[var(--color-outline-variant)] bg-[var(--color-surface-container-low)] p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 transition-all hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]"
+                          >
+                            <div className="min-w-0">
+                              <p className="font-headline text-lg">{job.title}</p>
+                              <p className="text-xs uppercase tracking-widest text-[var(--color-on-surface-variant)] mt-1">
+                                {job.org} • {job.location}
+                              </p>
+                              {job.skills && (
+                                <p className="text-xs text-[var(--color-on-surface-variant)] mt-2 truncate">
+                                  Skills: {job.skills}
+                                </p>
+                              )}
+                            </div>
+                            <a
+                              href={job.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="raasta-btn-primary text-xs shrink-0"
+                            >
+                              Apply
+                            </a>
+                          </div>
+                        ))}
+                        {jobMatches.length === 0 && !jobsLoading && (
+                          <div className="text-sm text-[var(--color-on-surface-variant)] py-6 text-center border border-dashed border-[var(--color-outline-variant)] p-6">
+                            <span className="material-symbols-outlined text-3xl mb-2 block opacity-40">work_off</span>
+                            No jobs loaded yet. Click <strong>Fetch Jobs</strong> to scrape live job boards, or upload a resume and click <strong>AI Match</strong>.
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -1,0 +1,58 @@
+[
+  {
+    "title": "Software Engineer",
+    "company": "See listing",
+    "location": "India",
+    "jobType": "unknown",
+    "workType": "full_time",
+    "skillsRequired": [],
+    "description": "1,000+ Software Engineer jobs in India - LinkedIn",
+    "applyLink": "https://in.linkedin.com/jobs/software-engineer-jobs",
+    "source": "linkedin_jobs",
+    "applyLinkHash": "bd5a20b94d43a6e76eb66ab61f8c8d7b134964899c1a8aa7cd743a9042088d61",
+    "scrapedAt": 1775325855057,
+    "id": "job_bd5a20b94d43_1775325855057"
+  },
+  {
+    "title": "Entry Level Software Engineer",
+    "company": "See listing",
+    "location": "India",
+    "jobType": "unknown",
+    "workType": "full_time",
+    "skillsRequired": [],
+    "description": "161 Entry Level Software Engineer jobs in India - LinkedIn",
+    "applyLink": "https://in.linkedin.com/jobs/entry-level-software-engineer-jobs",
+    "source": "linkedin_jobs",
+    "applyLinkHash": "5b6834a559fe3df51ffad451a69d8823f4ae36a470b5227ff1ca34f8df95b769",
+    "scrapedAt": 1775325855057,
+    "id": "job_5b6834a559fe_1775325855057"
+  },
+  {
+    "title": "Software Development Engineer",
+    "company": "See listing",
+    "location": "India",
+    "jobType": "unknown",
+    "workType": "full_time",
+    "skillsRequired": [],
+    "description": "38,000+ Software Development Engineer jobs in India - LinkedIn",
+    "applyLink": "https://in.linkedin.com/jobs/software-development-engineer-jobs",
+    "source": "linkedin_jobs",
+    "applyLinkHash": "e16868ff0523a03a005a165af58af410a90a42da1991ffe5dcea9959eff9ad1a",
+    "scrapedAt": 1775325855057,
+    "id": "job_e16868ff0523_1775325855057"
+  },
+  {
+    "title": "Customer Support Executive",
+    "company": "See listing",
+    "location": "Jammu",
+    "jobType": "unknown",
+    "workType": "full_time",
+    "skillsRequired": [],
+    "description": "56 Jobs in Lar, Jammu & Kashmir, India (7 new) · Customer Support Executive · Architect · Counselor · Studio Coordinator · Collection Manager - Two Wheeler Loans - ...",
+    "applyLink": "https://www.linkedin.com/jobs/search?keywords=&location=%E7%83%AD%E9%97%A8%E6%A2%A6%E5%B9%BBSF%E6%8E%A8%E8%8D%90QQ%E8%A3%99628323353%E7%A7%81%E6%9C%8D10,lAR",
+    "source": "linkedin_jobs",
+    "applyLinkHash": "331b2a55a9c1b79b112e2d802985773570cef4710c689c2518cc82d674e99f20",
+    "scrapedAt": 1775325855057,
+    "id": "job_331b2a55a9c1_1775325855057"
+  }
+]
