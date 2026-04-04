@@ -5,7 +5,9 @@ import { TaleemSubTabs } from '@/components/TaleemSubTabs'
 import { TaleemVoiceForm } from '@/components/TaleemVoiceForm'
 import { useI18n } from '@/lib/i18n/context'
 import { taleemLlm } from '@/lib/taleemApi'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import type { PeerStory } from '@/app/api/taleem/stories/route'
+import type { Helpline } from '@/app/api/taleem/helplines/route'
 
 const wellnessCards = [
   { title: 'Voice Venting', body: 'Speak freely. The AI listens without judgment.' },
@@ -14,14 +16,14 @@ const wellnessCards = [
   { title: 'Crisis Support', body: 'If distress is detected, we guide to help.' },
 ] as const
 
-const STORY_KEYS = [
-  { titleKey: 'suk.story1t', bodyKey: 'suk.story1b' },
-  { titleKey: 'suk.story2t', bodyKey: 'suk.story2b' },
-] as const
-
 export default function SukoonPage() {
   const { locale, t } = useI18n()
   const [tab, setTab] = useState<string>('checkin')
+  const [stories, setStories] = useState<PeerStory[]>([])
+  const [storiesLoading, setStoriesLoading] = useState(false)
+  const [helplines, setHelplines] = useState<Helpline[]>([])
+  const [helplinesLoading, setHelplinesLoading] = useState(false)
+  const [lastCheckin, setLastCheckin] = useState('')
 
   const tabs = useMemo(
     () => [
@@ -31,6 +33,37 @@ export default function SukoonPage() {
     ],
     [t],
   )
+
+  // Fetch AI-generated stories when tab opens
+  useEffect(() => {
+    if (tab === 'stories' && stories.length === 0) {
+      setStoriesLoading(true)
+      const ctx = lastCheckin ? `&context=${encodeURIComponent(lastCheckin.slice(0, 100))}` : ''
+      fetch(`/api/taleem/stories${ctx}`)
+        .then(r => r.json())
+        .then(d => { if (d.stories) setStories(d.stories) })
+        .catch(() => {})
+        .finally(() => setStoriesLoading(false))
+    }
+  }, [tab, stories.length, lastCheckin])
+
+  // Fetch dynamic helplines when tab opens
+  useEffect(() => {
+    if (tab === 'helpline' && helplines.length === 0) {
+      setHelplinesLoading(true)
+      fetch('/api/taleem/helplines')
+        .then(r => r.json())
+        .then(d => { if (d.helplines) setHelplines(d.helplines) })
+        .catch(() => {})
+        .finally(() => setHelplinesLoading(false))
+    }
+  }, [tab, helplines.length])
+
+  const handleCheckin = async (message: string) => {
+    setLastCheckin(message)
+    setStories([]) // reset stories so they regenerate with new context
+    return taleemLlm({ locale, pillar: 'sukoon', sub: 'checkin', message })
+  }
 
   return (
     <main className="leaf-pattern flex-grow pt-24 min-h-screen">
@@ -89,9 +122,7 @@ export default function SukoonPage() {
               label={t('suk.check.label')}
               placeholder={t('suk.check.ph')}
               submitLabel={t('suk.check.btn')}
-              onSubmit={(message) =>
-                taleemLlm({ locale, pillar: 'sukoon', sub: 'checkin', message })
-              }
+              onSubmit={handleCheckin}
             />
             <p className="mt-4 text-xs text-[var(--raasta-muted)]">
               {t('suk.warn')}
@@ -100,35 +131,75 @@ export default function SukoonPage() {
         )}
 
         {tab === 'stories' && (
-          <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {STORY_KEYS.map((s) => (
-              <li key={s.titleKey} className="raasta-card p-5">
-                <p className="font-headline text-lg text-[var(--color-primary)]">
-                  {t(s.titleKey)}
-                </p>
-                <p className="mt-2 text-sm leading-relaxed text-[var(--raasta-ink)]">
-                  {t(s.bodyKey)}
-                </p>
-              </li>
-            ))}
-          </ul>
+          <div>
+            {storiesLoading ? (
+              <div className="flex items-center gap-3 py-10 opacity-60">
+                <span className="w-4 h-4 border-2 border-[var(--color-secondary)] border-t-transparent rounded-full animate-spin" />
+                <span className="text-sm">Generating peer stories...</span>
+              </div>
+            ) : (
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {stories.map((s, i) => (
+                  <li key={i} className="raasta-card p-5">
+                    <p className="font-headline text-lg text-[var(--color-primary)]">
+                      {s.title}
+                    </p>
+                    <p className="mt-2 text-sm leading-relaxed text-[var(--raasta-ink)]">
+                      {s.body}
+                    </p>
+                    {s.theme && (
+                      <p className="mt-3 text-xs uppercase tracking-widest text-[var(--color-secondary)] opacity-60">
+                        {s.theme.replace(/_/g, ' ')}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         )}
 
         {tab === 'helpline' && (
-          <div className="raasta-card p-6 space-y-4">
+          <div className="space-y-4">
             <p className="text-sm text-[var(--raasta-muted)]">{t('suk.help.p')}</p>
-            <a
-              href="tel:9999666555"
-              className="block rounded-[var(--radius-lg)] border-2 border-[var(--color-secondary)] bg-[var(--color-secondary-fixed)] px-4 py-4 text-center font-semibold text-[var(--color-primary)]"
-            >
-              {t('suk.help.v')}
-            </a>
-            <a
-              href="tel:9152987821"
-              className="raasta-btn-secondary block text-center"
-            >
-              {t('suk.help.i')}
-            </a>
+            {helplinesLoading ? (
+              <div className="flex items-center gap-3 py-6 opacity-60">
+                <span className="w-4 h-4 border-2 border-[var(--color-secondary)] border-t-transparent rounded-full animate-spin" />
+                <span className="text-sm">Loading helplines...</span>
+              </div>
+            ) : helplines.length === 0 ? (
+              <div className="raasta-card p-6 space-y-4">
+                <a href="tel:9999666555" className="block rounded-[var(--radius-lg)] border-2 border-[var(--color-secondary)] bg-[var(--color-secondary-fixed)] px-4 py-4 text-center font-semibold text-[var(--color-primary)]">
+                  Vandrevala Foundation — 9999666555
+                </a>
+                <a href="tel:9152987821" className="raasta-btn-secondary block text-center">
+                  iCall (TISS) — 9152987821
+                </a>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {helplines.map((h, i) => (
+                  <div key={i} className={`raasta-card p-5 ${h.type === 'crisis' || i === 0 ? 'border-2 border-[var(--color-secondary)]' : ''}`}>
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="font-headline text-base text-[var(--color-primary)]">{h.name}</p>
+                        <p className="text-xs uppercase tracking-widest text-[var(--color-secondary)] mt-1">{h.type} • {h.coverage}</p>
+                      </div>
+                      <span className={`text-xs px-2 py-1 rounded-full ${h.type === 'government' ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
+                        {h.type}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm text-[var(--raasta-muted)]">{h.description}</p>
+                    <a
+                      href={`tel:${h.phone.replace(/\D/g, '')}`}
+                      className="mt-3 block text-center bg-[var(--color-primary)] text-[var(--color-on-primary)] py-2 text-sm font-semibold hover:bg-[var(--color-secondary)] transition-colors"
+                    >
+                      Call {h.phone}
+                    </a>
+                  </div>
+                ))}
+              </div>
+            )}
             <p className="text-xs text-[var(--raasta-muted)]">{t('suk.help.e')}</p>
           </div>
         )}

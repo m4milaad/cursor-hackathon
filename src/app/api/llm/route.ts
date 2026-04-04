@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { generateOpenRouterText, isOpenRouterAvailable } from '@/lib/openrouter'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 import {
   demoZameen,
   fallbackRaahAnswer,
@@ -11,6 +12,28 @@ import {
   createLifecycleRequest,
   failLifecycleRequest,
 } from '@/lib/server/convexLifecycle'
+
+function getLanguageInstruction(locale: UiLocale): string {
+  if (locale === 'ur') return 'Respond ENTIRELY in Urdu (اردو) script only.'
+  if (locale === 'hi') return 'Respond ENTIRELY in Hindi (हिंदी) Devanagari script only.'
+  if (locale === 'ks') return 'Respond ENTIRELY in Kashmiri (کٲشُر) script only.'
+  return 'Respond in English.'
+}
+
+async function geminiChat(system: string, user: string, locale: UiLocale): Promise<string | null> {
+  const key = process.env.GEMINI_API_KEY
+  if (!key) return null
+  try {
+    const genAI = new GoogleGenerativeAI(key)
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    const langInstruction = getLanguageInstruction(locale)
+    const result = await model.generateContent(`${langInstruction}\n\n${system}\n\nUser: ${user}`)
+    return result.response.text().trim() || null
+  } catch (e) {
+    console.error('Gemini chat error:', e)
+    return null
+  }
+}
 
 function generateSimpleFallback(ocrText: string, locale: UiLocale): string {
   // Simple rule-based explanation based on extracted text
@@ -52,18 +75,22 @@ async function aiChat(
   user: string,
   locale: UiLocale = 'en',
 ): Promise<string | null> {
-  if (!isOpenRouterAvailable()) {
-    console.error('OpenRouter not configured')
-    return null
+  // Try OpenRouter first
+  if (isOpenRouterAvailable()) {
+    try {
+      const text = await generateOpenRouterText(system, user, locale)
+      if (text) return text
+    } catch (error) {
+      console.error('OpenRouter failed, trying Gemini:', error)
+    }
   }
 
-  try {
-    const text = await generateOpenRouterText(system, user, locale)
-    return text || null
-  } catch (error) {
-    console.error('AI chat error:', error)
-    return null
-  }
+  // Fallback to Gemini
+  const geminiText = await geminiChat(system, user, locale)
+  if (geminiText) return geminiText
+
+  console.error('All AI providers failed')
+  return null
 }
 
 export async function POST(req: Request) {

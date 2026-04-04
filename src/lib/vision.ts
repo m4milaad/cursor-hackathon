@@ -38,23 +38,21 @@ export async function analyzeCropImage(photo: File): Promise<CropAnalysis> {
       error?: string
     }
     
-    // If API returns demo or empty, use local analysis
-    if (data.demo || !data.summary) {
-      console.log('Vision API returned demo, using simple fallback')
-      return analyzeImageLocally(photo)
-    }
-    
     if (data.ok === false) {
       throw new Error(data.error ?? 'Vision analysis failed')
     }
-    
+
+    // Use whatever summary came back — demo or real
     return {
       summary: data.summary ?? 'Unable to analyze image',
       mandiHint: data.mandiHint ?? 'Check local mandi for prices',
     }
   } catch (error) {
     console.error('Vision analysis error:', error)
-    return analyzeImageLocally(photo)
+    return {
+      summary: 'Unable to analyze the image at this time. Please try again.',
+      mandiHint: 'Check your local mandi for current prices.',
+    }
   }
 }
 

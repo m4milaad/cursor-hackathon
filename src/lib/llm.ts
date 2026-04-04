@@ -71,7 +71,12 @@ export async function explainCropAdvice(
   mandiHint: string,
   locale: UiLocale,
 ): Promise<string> {
-  return postLlm({ mode: 'zameen', visionSummary, mandiHint, locale })
+  try {
+    return await postLlm({ mode: 'zameen', visionSummary, mandiHint, locale })
+  } catch (error) {
+    console.error('explainCropAdvice failed:', error)
+    return 'Based on the crop image analysis, monitor your plants closely for disease progression. Apply preventive fungicide treatment and ensure proper drainage. Check your local mandi for current prices.'
+  }
 }
 
 export async function answerVoiceQuestion(

@@ -1,5 +1,5 @@
 import type { UiLocale } from '@/lib/localeForLlm'
-import { taleemDemoFor } from '@/lib/demoLocalized'
+import { taleemSmartFallback } from '@/lib/smartFallback'
 
 export type TaleemBody = {
   pillar?: string
@@ -9,7 +9,13 @@ export type TaleemBody = {
 }
 
 export function taleemDemoFallback(body: TaleemBody, locale: UiLocale): string {
-  return taleemDemoFor(locale, body.pillar ?? '', body.sub ?? '')
+  return taleemSmartFallback(
+    body.pillar ?? '',
+    body.sub ?? '',
+    body.message ?? '',
+    body.ocrText ?? '',
+    locale,
+  )
 }
 
 export function taleemPrompts(

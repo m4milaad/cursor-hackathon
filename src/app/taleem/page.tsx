@@ -1,9 +1,11 @@
-'use client'
+﻿'use client'
 
 import { useI18n } from '@/lib/i18n/context'
 import { NewsCorner } from '@/components/NewsCorner'
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import type { LiveJob } from '@/app/api/taleem/jobs/route'
+import type { QuizItem } from '@/app/api/taleem/quiz/route'
 
 const categories = [
   {
@@ -60,23 +62,37 @@ export default function TaleemHubPage() {
   const [voiceMode, setVoiceMode] = useState<'idle' | 'recording' | 'processing'>('idle')
   const [examTopic, setExamTopic] = useState('JKSSB - General Awareness')
 
-  const jobMatches = useMemo(
-    () => [
-      { title: 'Agri Field Coordinator', org: 'Pampore Co-Op', match: 86, location: 'Pampore' },
-      { title: 'Data Entry Assistant', org: 'Srinagar Hub', match: 74, location: 'Srinagar' },
-      { title: 'Supply Chain Intern', org: 'Kashmir Traders', match: 69, location: 'Baramulla' },
-    ],
-    [],
-  )
+  const [jobMatches, setJobMatches] = useState<LiveJob[]>([])
+  const [jobsLoading, setJobsLoading] = useState(false)
+  const [quizItems, setQuizItems] = useState<QuizItem[]>([])
+  const [quizLoading, setQuizLoading] = useState(false)
 
-  const quizItems = useMemo(
-    () => [
-      { q: 'What is the capital of Jammu & Kashmir (summer)?', a: 'Srinagar' },
-      { q: 'Which river is known as the lifeline of Kashmir?', a: 'Jhelum' },
-      { q: 'What does RTI stand for?', a: 'Right to Information' },
-    ],
-    [],
-  )
+  useEffect(() => {
+    if (openFeature === 'Jobs' && jobMatches.length === 0) {
+      setJobsLoading(true)
+      fetch(`/api/taleem/jobs?location=${encodeURIComponent(jobLocation)}`)
+        .then(r => r.json())
+        .then(d => { if (d.jobs) setJobMatches(d.jobs) })
+        .catch(() => {})
+        .finally(() => setJobsLoading(false))
+    }
+  }, [openFeature, jobLocation, jobMatches.length])
+
+  useEffect(() => {
+    if (openFeature === 'Exam Prep' && quizItems.length === 0) {
+      setQuizLoading(true)
+      fetch(`/api/taleem/quiz?topic=${encodeURIComponent(examTopic)}`)
+        .then(r => r.json())
+        .then(d => { if (d.quiz) setQuizItems(d.quiz) })
+        .catch(() => {})
+        .finally(() => setQuizLoading(false))
+    }
+  }, [openFeature, examTopic, quizItems.length])
+
+  const handleExamTopicChange = (newTopic: string) => {
+    setExamTopic(newTopic)
+    setQuizItems([])
+  }
 
   return (
     <main className="leaf-pattern flex-grow pt-24 min-h-screen text-[var(--color-on-surface)]">
@@ -449,7 +465,7 @@ export default function TaleemHubPage() {
                   </label>
                   <select
                     value={examTopic}
-                    onChange={(e) => setExamTopic(e.target.value)}
+                    onChange={(e) => handleExamTopicChange(e.target.value)}
                     className="raasta-input w-full mt-2"
                   >
                     <option>JKSSB - General Awareness</option>
@@ -466,7 +482,12 @@ export default function TaleemHubPage() {
                       AI Quiz
                     </p>
                     <div className="space-y-4">
-                      {quizItems.map((item) => (
+                      {quizLoading ? (
+                        <div className="flex items-center gap-3 py-6 opacity-60">
+                          <span className="w-4 h-4 border-2 border-[var(--color-secondary)] border-t-transparent rounded-full animate-spin" />
+                          <span className="text-sm">Generating AI questions...</span>
+                        </div>
+                      ) : quizItems.map((item) => (
                         <div
                           key={item.q}
                           className="border border-[var(--color-outline-variant)] bg-[var(--color-surface-container-lowest)] p-4 text-sm"
