@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server'
-import { getConvexHttp, api } from '@/lib/jobs/convexServer'
 import {
   generateVoiceCvFromTranscript,
   translateCvToEnglish,
 } from '@/lib/voiceCv/cvAi'
+import { saveCv, newPublicId } from '@/lib/voiceCv/cvStore'
+import { upsertUserProfile } from '@/lib/jobs/jobStore'
 
 export const runtime = 'nodejs'
 export const maxDuration = 120
@@ -16,22 +17,7 @@ type Body = {
   translateToEnglish?: boolean
 }
 
-function newPublicId(): string {
-  const bytes = new Uint8Array(16)
-  globalThis.crypto.getRandomValues(bytes)
-  const hex = [...bytes].map((b) => b.toString(16).padStart(2, '0')).join('')
-  return `vc_${hex}`
-}
-
 export async function POST(req: Request) {
-  const convex = getConvexHttp()
-  if (!convex) {
-    return NextResponse.json(
-      { ok: false, error: 'Database not configured' },
-      { status: 503 },
-    )
-  }
-
   let body: Body
   try {
     body = (await req.json()) as Body
@@ -52,8 +38,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         ok: false,
-        error:
-          'CV generation failed. Set OPENROUTER_API_KEY or GEMINI_API_KEY.',
+        error: 'CV generation failed. Set OPENROUTER_API_KEY or GEMINI_API_KEY.',
       },
       { status: 503 },
     )
@@ -61,13 +46,14 @@ export async function POST(req: Request) {
 
   let cvEnglish = undefined
   if (body.translateToEnglish) {
-    cvEnglish = await translateCvToEnglish(ai.cv)
+    cvEnglish = (await translateCvToEnglish(ai.cv)) ?? undefined
   }
 
   const publicId = newPublicId()
   const deviceId = body.deviceId?.trim()
 
-  await convex.mutation(api.voiceCv.createVoiceCv, {
+  // Save CV to local store
+  saveCv({
     publicId,
     deviceId: deviceId || undefined,
     name: ai.cv.name,
@@ -80,12 +66,13 @@ export async function POST(req: Request) {
     detectedLanguage: body.language ?? 'auto',
     improvements: ai.improvements,
     inferredSkillNotes: ai.inferredSkillNotes || undefined,
-    cvEnglish: cvEnglish ?? undefined,
+    cvEnglish,
   })
 
+  // Also update job profile for matching
   if (deviceId) {
     const allSkills = [...new Set([...ai.cv.skills])]
-    await convex.mutation(api.jobs.upsertUserJobProfile, {
+    upsertUserProfile({
       deviceId,
       skills: allSkills,
       resumeData: {

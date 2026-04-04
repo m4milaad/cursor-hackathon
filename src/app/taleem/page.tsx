@@ -5,7 +5,8 @@ import { NewsCorner } from '@/components/NewsCorner'
 import Link from 'next/link'
 import { useCallback, useEffect, useId, useState } from 'react'
 import type { LiveJob } from '@/app/api/taleem/jobs/route'
-import type { QuizItem } from '@/app/api/taleem/quiz/route'
+import { VoiceCvPanel } from '@/components/VoiceCvPanel'
+import { ExamPrepPanel } from '@/components/ExamPrepPanel'
 
 const categories = [
   {
@@ -73,13 +74,8 @@ export default function TaleemHubPage() {
   const { t } = useI18n()
   const formId = useId()
   const [openFeature, setOpenFeature] = useState<'Jobs' | 'Voice CV' | 'Exam Prep' | null>(null)
-  const [voiceMode, setVoiceMode] = useState<'idle' | 'recording' | 'processing'>('idle')
-  const [examTopic, setExamTopic] = useState('JKSSB - General Awareness')
-
   const [jobMatches, setJobMatches] = useState<LiveJob[]>([])
   const [jobsLoading, setJobsLoading] = useState(false)
-  const [quizItems, setQuizItems] = useState<QuizItem[]>([])
-  const [quizLoading, setQuizLoading] = useState(false)
 
   // --- Advanced Job System state ---
   const [deviceId, setDeviceId] = useState<string | null>(null)
@@ -213,21 +209,7 @@ export default function TaleemHubPage() {
     setSkillInput('')
   }
 
-  useEffect(() => {
-    if (openFeature === 'Exam Prep' && quizItems.length === 0) {
-      setQuizLoading(true)
-      fetch(`/api/taleem/quiz?topic=${encodeURIComponent(examTopic)}`)
-        .then(r => r.json())
-        .then(d => { if (d.quiz) setQuizItems(d.quiz) })
-        .catch(() => {})
-        .finally(() => setQuizLoading(false))
-    }
-  }, [openFeature, examTopic, quizItems.length])
-
-  const handleExamTopicChange = (newTopic: string) => {
-    setExamTopic(newTopic)
-    setQuizItems([])
-  }
+  // Exam prep is now handled by ExamPrepPanel component
 
   return (
     <main className="leaf-pattern flex-grow pt-24 min-h-screen text-[var(--color-on-surface)]">
@@ -722,125 +704,11 @@ export default function TaleemHubPage() {
             )}
 
             {openFeature === 'Voice CV' && (
-              <div className="p-6 md:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <div className="lg:col-span-5">
-                  <p className="text-sm text-[var(--color-on-surface-variant)] mb-6">
-                    Record once, we format it into a clean CV and shareable profile link.
-                  </p>
-                  <div className="bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)] p-5">
-                    <p className="text-xs uppercase tracking-widest text-[var(--color-on-surface-variant)] mb-2">
-                      Language
-                    </p>
-                    <div className="flex gap-2">
-                      {['Urdu', 'Kashmiri', 'English'].map((lang) => (
-                        <span
-                          key={lang}
-                          className="border border-[var(--color-outline-variant)] px-3 py-1 text-xs uppercase tracking-widest"
-                        >
-                          {lang}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <div className="lg:col-span-7">
-                  <div className="bg-[var(--color-primary-container)] text-[var(--color-on-primary)] p-6 border border-[var(--color-outline-variant)]">
-                    <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary-fixed)] mb-4">
-                      Voice Intro
-                    </p>
-                    <div className="flex items-center gap-4">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setVoiceMode((prev) =>
-                            prev === 'recording' ? 'processing' : 'recording',
-                          )
-                        }
-                        className="w-14 h-14 rounded-full bg-[var(--color-secondary)] text-[var(--color-on-secondary)] flex items-center justify-center"
-                      >
-                        <span className="material-symbols-outlined">
-                          {voiceMode === 'recording' ? 'stop' : 'mic'}
-                        </span>
-                      </button>
-                      <div>
-                        <p className="font-headline text-lg">
-                          {voiceMode === 'recording'
-                            ? 'Recording...'
-                            : voiceMode === 'processing'
-                            ? 'Processing voice to CV'
-                            : 'Tap to record'}
-                        </p>
-                        <p className="text-xs uppercase tracking-widest text-[var(--color-secondary-fixed-dim)]">
-                          Multilingual supported
-                        </p>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setVoiceMode('processing')}
-                      className="mt-6 w-full bg-[var(--color-secondary)] text-[var(--color-on-secondary)] py-3 font-label text-[10px] uppercase tracking-[0.2em] hover:bg-opacity-90 transition-colors"
-                    >
-                      Generate CV & Profile
-                    </button>
-                    <div className="mt-6 bg-[var(--color-surface-container-lowest)] text-[var(--color-on-surface)] p-4 text-sm border border-[var(--color-outline-variant)]">
-                      Shareable profile link will appear here after generation.
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <VoiceCvPanel deviceId={deviceId} />
             )}
 
             {openFeature === 'Exam Prep' && (
-              <div className="p-6 md:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
-                <div className="lg:col-span-4">
-                  <p className="text-sm text-[var(--color-on-surface-variant)] mb-6">
-                    Choose a topic and start a focused practice session with smart revision.
-                  </p>
-                  <label className="text-xs uppercase tracking-widest text-[var(--color-secondary)]">
-                    Topic
-                  </label>
-                  <select
-                    value={examTopic}
-                    onChange={(e) => handleExamTopicChange(e.target.value)}
-                    className="raasta-input w-full mt-2"
-                  >
-                    <option>JKSSB - General Awareness</option>
-                    <option>Police Recruitment - Aptitude</option>
-                    <option>Class 12 - Biology</option>
-                  </select>
-                  <div className="mt-6 bg-[var(--color-surface-container-low)] p-4 border border-[var(--color-outline-variant)] text-sm">
-                    Smart revision will prioritize weak areas after your first quiz.
-                  </div>
-                </div>
-                <div className="lg:col-span-8">
-                  <div className="bg-[var(--color-surface-container-low)] border border-[var(--color-outline-variant)] p-6">
-                    <p className="font-label text-[10px] uppercase tracking-[0.2em] text-[var(--color-secondary)] mb-4">
-                      AI Quiz
-                    </p>
-                    <div className="space-y-4">
-                      {quizLoading ? (
-                        <div className="flex items-center gap-3 py-6 opacity-60">
-                          <span className="w-4 h-4 border-2 border-[var(--color-secondary)] border-t-transparent rounded-full animate-spin" />
-                          <span className="text-sm">Generating AI questions...</span>
-                        </div>
-                      ) : quizItems.map((item) => (
-                        <div
-                          key={item.q}
-                          className="border border-[var(--color-outline-variant)] bg-[var(--color-surface-container-lowest)] p-4 text-sm"
-                        >
-                          <p className="font-headline text-base text-[var(--color-primary)]">{item.q}</p>
-                          <p className="text-xs text-[var(--color-on-surface-variant)] mt-2">
-                            Answer: {item.a}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                    <button className="mt-6 w-full bg-[var(--color-secondary)] text-[var(--color-on-secondary)] py-3 font-label text-[10px] uppercase tracking-[0.2em] hover:bg-opacity-90 transition-colors">
-                      Start Practice
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <ExamPrepPanel />
             )}
           </div>
         </div>

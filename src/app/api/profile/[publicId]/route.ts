@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getConvexHttp, api } from '@/lib/jobs/convexServer'
+import { getCvByPublicId } from '@/lib/voiceCv/cvStore'
 
 export const runtime = 'nodejs'
 
@@ -10,19 +10,12 @@ export async function GET(
   _req: Request,
   context: { params: Promise<{ publicId: string }> },
 ) {
-  const convex = getConvexHttp()
-  if (!convex) {
-    return NextResponse.json({ ok: false, error: 'Database not configured' }, { status: 503 })
-  }
-
   const { publicId } = await context.params
   if (!publicId?.trim()) {
     return NextResponse.json({ ok: false, error: 'Missing id' }, { status: 400 })
   }
 
-  const doc = await convex.query(api.voiceCv.getByPublicId, {
-    publicId: publicId.trim(),
-  })
+  const doc = getCvByPublicId(publicId.trim())
 
   if (!doc) {
     return NextResponse.json({ ok: false, error: 'Profile not found' }, { status: 404 })
