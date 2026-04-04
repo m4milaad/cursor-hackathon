@@ -27,6 +27,7 @@ export function TaleemVoiceForm({
   const [out, setOut] = useState('')
   const [busy, setBusy] = useState(false)
   const voice = useVoiceRecorder({
+    locale,
     onTranscript: (spokenText) => {
       setText((previous) =>
         previous.trim() ? `${previous.trim()} ${spokenText}` : spokenText,
@@ -62,8 +63,8 @@ export function TaleemVoiceForm({
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <button
           type="button"
-          className="raasta-btn-secondary text-sm"
-          disabled={busy || voice.transcribing}
+          className={`raasta-btn-secondary text-sm flex items-center gap-2 ${voice.recording ? 'border-red-500 text-red-600' : ''}`}
+          disabled={busy || !voice.supported}
           onClick={() => {
             voice.clearError()
             if (voice.recording) {
@@ -73,11 +74,17 @@ export function TaleemVoiceForm({
             }
           }}
         >
-          {voice.recording
-            ? 'Stop Mic'
-            : voice.transcribing
-              ? 'Transcribing...'
-              : 'Use Mic'}
+          {voice.recording ? (
+            <>
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              Stop Mic
+            </>
+          ) : (
+            <>
+              <span className="material-symbols-outlined text-base">mic</span>
+              Use Mic
+            </>
+          )}
         </button>
         <button
           type="button"
@@ -93,6 +100,11 @@ export function TaleemVoiceForm({
       </div>
       {voice.error ? (
         <p className="mt-3 text-xs text-[var(--color-error)]">{voice.error}</p>
+      ) : null}
+      {!voice.supported ? (
+        <p className="mt-3 text-xs text-[var(--raasta-muted)]">
+          Voice input not supported in this browser — please type your message.
+        </p>
       ) : null}
       <VoiceOutput text={out} />
     </div>

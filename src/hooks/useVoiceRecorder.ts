@@ -1,72 +1,108 @@
 'use client'
 
-import { transcribeAudio } from '@/lib/whisper'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 type UseVoiceRecorderOptions = {
   onTranscript: (text: string) => void
+  locale?: string
 }
 
-export function useVoiceRecorder({ onTranscript }: UseVoiceRecorderOptions) {
-  const mediaRecorder = useRef<MediaRecorder | null>(null)
-  const mediaStream = useRef<MediaStream | null>(null)
-  const chunks = useRef<Blob[]>([])
+function localeToSpeechLang(locale?: string): string {
+  switch (locale) {
+    case 'ur': return 'ur-PK'
+    case 'hi': return 'hi-IN'
+    case 'ks': return 'hi-IN' // Kashmiri not widely supported; hi-IN is closest
+    case 'en':
+    default:   return 'en-US'
+  }
+}
+
+// Extend window type for browser SpeechRecognition
+declare global {
+  interface Window {
+    SpeechRecognition: typeof SpeechRecognition
+    webkitSpeechRecognition: typeof SpeechRecognition
+  }
+}
+
+export function useVoiceRecorder({ onTranscript, locale }: UseVoiceRecorderOptions) {
+  const recognitionRef = useRef<SpeechRecognition | null>(null)
   const [recording, setRecording] = useState(false)
   const [transcribing, setTranscribing] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [supported, setSupported] = useState(true)
+
+  useEffect(() => {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!SR) setSupported(false)
+  }, [])
 
   const start = useCallback(async () => {
     setError(null)
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      mediaStream.current = stream
-      chunks.current = []
-      const mr = new MediaRecorder(stream, { mimeType: 'audio/webm' })
-      mediaRecorder.current = mr
 
-      mr.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          chunks.current.push(event.data)
-        }
-      }
-
-      mr.onstop = async () => {
-        setRecording(false)
-        mediaStream.current?.getTracks().forEach((track) => track.stop())
-        mediaStream.current = null
-
-        setTranscribing(true)
-        try {
-          const blob = new Blob(chunks.current, { type: 'audio/webm' })
-          chunks.current = []
-          const result = await transcribeAudio(blob)
-          if (!result.text) {
-            setError(
-              result.demo
-                ? 'Transcription is unavailable right now (demo mode).'
-                : 'No speech detected. Please try again.',
-            )
-            return
-          }
-          onTranscript(result.text)
-        } catch {
-          setError('Unable to transcribe audio. Please try again.')
-        } finally {
-          setTranscribing(false)
-        }
-      }
-
-      mr.start()
-      setRecording(true)
-    } catch {
-      setError('Microphone access was denied.')
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (!SR) {
+      setError('Voice input is not supported in this browser. Please type your message.')
+      return
     }
+
+    try {
+      // Request mic permission first so we get a clear error if denied
+      await navigator.mediaDevices.getUserMedia({ audio: true })
+    } catch {
+      setError('Microphone access was denied. Please allow microphone access and try again.')
+      return
+    }
+
+    const recognition = new SR()
+    recognitionRef.current = recognition
+
+    // Set language based on UI locale
+    recognition.lang = localeToSpeechLang(locale)
+    recognition.continuous = false
+    recognition.interimResults = false
+    recognition.maxAlternatives = 1
+
+    recognition.onstart = () => {
+      setRecording(true)
+      setTranscribing(false)
+    }
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0]?.[0]?.transcript?.trim()
+      if (transcript) {
+        onTranscript(transcript)
+      } else {
+        setError('No speech detected. Please try again.')
+      }
+    }
+
+    recognition.onerror = (event) => {
+      setRecording(false)
+      setTranscribing(false)
+      if (event.error === 'not-allowed' || event.error === 'permission-denied') {
+        setError('Microphone access was denied. Please allow microphone access in your browser settings.')
+      } else if (event.error === 'no-speech') {
+        setError('No speech detected. Please speak clearly and try again.')
+      } else if (event.error === 'network') {
+        setError('Network error during voice recognition. Please check your connection.')
+      } else {
+        setError(`Voice recognition error: ${event.error}. Please try typing instead.`)
+      }
+    }
+
+    recognition.onend = () => {
+      setRecording(false)
+      setTranscribing(false)
+      recognitionRef.current = null
+    }
+
+    recognition.start()
   }, [onTranscript])
 
   const stop = useCallback(() => {
-    const mr = mediaRecorder.current
-    if (!mr || mr.state === 'inactive') return
-    mr.stop()
+    recognitionRef.current?.stop()
+    setRecording(false)
   }, [])
 
   const clearError = useCallback(() => setError(null), [])
@@ -75,6 +111,7 @@ export function useVoiceRecorder({ onTranscript }: UseVoiceRecorderOptions) {
     recording,
     transcribing,
     error,
+    supported,
     start,
     stop,
     clearError,

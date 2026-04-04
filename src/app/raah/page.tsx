@@ -386,14 +386,14 @@ function RaahPageContent() {
                 <button
                   type="button"
                   className={`w-full mt-4 font-label text-[10px] uppercase tracking-widest px-8 py-3 transition-colors duration-300 ${
-                    recording
+                    browserListen
                       ? 'bg-[var(--color-secondary)] text-[var(--color-on-secondary)] animate-pulse'
                       : 'bg-[var(--color-primary-container)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary)]'
                   }`}
-                  onClick={recording ? stopRecordWhisper : startRecordWhisper}
-                  disabled={busy || browserListen}
+                  onClick={startBrowserSTT}
+                  disabled={busy || browserListen || recording}
                 >
-                  {recording ? t('raah.whisperStop') : t('raah.whisperRec')}
+                  {browserListen ? 'Listening... (speak now)' : t('raah.whisperRec')}
                 </button>
               </div>
 
