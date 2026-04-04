@@ -300,6 +300,31 @@ export function getAvailableModels() {
 }
 
 /**
+ * Structured JSON-oriented completion (no locale wrapper). Use for resume parsing and job matching.
+ */
+export async function generateOpenRouterStructured(
+  systemPrompt: string,
+  userPrompt: string,
+  model: string = DEFAULT_TEXT_MODEL,
+): Promise<string> {
+  if (!openrouter) {
+    throw new Error('OpenRouter API key not configured. Add OPENROUTER_API_KEY to .env.local')
+  }
+
+  const completion = await openrouter.chat.completions.create({
+    model,
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt },
+    ],
+    temperature: 0.2,
+    max_tokens: 4096,
+  })
+
+  return (completion.choices[0]?.message?.content ?? '').trim()
+}
+
+/**
  * Test OpenRouter connection
  */
 export async function testOpenRouterConnection(): Promise<boolean> {

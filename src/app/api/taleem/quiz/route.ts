@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import FirecrawlApp from '@mendable/firecrawl-js'
+import Firecrawl from '@mendable/firecrawl-js'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
 export type QuizItem = {
@@ -7,14 +7,6 @@ export type QuizItem = {
   a: string
   topic: string
 }
-
-const FALLBACK_QUIZ: QuizItem[] = [
-  { q: 'What is the capital of Jammu & Kashmir (summer)?', a: 'Srinagar', topic: 'General' },
-  { q: 'Which river is known as the lifeline of Kashmir?', a: 'Jhelum', topic: 'Geography' },
-  { q: 'What does RTI stand for?', a: 'Right to Information', topic: 'Civics' },
-  { q: 'Who is the head of a district in J&K?', a: 'Deputy Commissioner (DC)', topic: 'Administration' },
-  { q: 'What is the full form of JKSSB?', a: 'Jammu & Kashmir Services Selection Board', topic: 'General' },
-]
 
 async function generateWithGemini(topic: string): Promise<QuizItem[]> {
   const key = process.env.GEMINI_API_KEY
@@ -44,21 +36,23 @@ async function scrapeAndGenerate(topic: string): Promise<QuizItem[]> {
   const apiKey = process.env.FIRECRAWL_API_KEY
   if (!apiKey) return []
 
-  const app = new FirecrawlApp({ apiKey })
+  const app = new Firecrawl({ apiKey })
   try {
     const result = await Promise.race([
-      app.v1.search(`${topic} previous year questions answers India exam`, { limit: 3 }) as Promise<any>,
+      app.search(`${topic} previous year questions answers India exam`, {
+        limit: 3,
+        scrapeOptions: { formats: ['markdown'], onlyMainContent: true },
+      }) as Promise<{ web?: { markdown?: string }[] }>,
       new Promise<never>((_, reject) => setTimeout(() => reject(new Error('timeout')), 10000)),
     ])
 
-    const combined = (result?.data ?? [])
-      .map((item: any) => item.markdown || item.description || '')
+    const combined = (result?.web ?? [])
+      .map((item) => item.markdown || '')
       .join('\n\n')
       .slice(0, 3000)
 
     if (!combined.trim()) return []
 
-    // Use Gemini to extract/generate questions from scraped content
     const key = process.env.GEMINI_API_KEY
     if (!key) return []
 
@@ -83,7 +77,6 @@ Return ONLY a JSON array, no markdown:
   return []
 }
 
-// Cache per topic
 const quizCache: Record<string, { data: QuizItem[]; ts: number }> = {}
 const CACHE_TTL = 24 * 60 * 60 * 1000
 
@@ -95,11 +88,18 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: true, quiz: quizCache[topic].data, source: 'cache' })
   }
 
-  // Try scrape + AI first, then AI-only, then fallback
   let quiz = await scrapeAndGenerate(topic)
   if (quiz.length < 3) quiz = await generateWithGemini(topic)
-  if (quiz.length < 3) quiz = FALLBACK_QUIZ
+  if (quiz.length < 3) {
+    return NextResponse.json({
+      ok: false,
+      quiz: [] as QuizItem[],
+      source: 'empty',
+      error:
+        'No quiz could be generated. Configure FIRECRAWL_API_KEY and GEMINI_API_KEY, or use Taleem Exam Prep.',
+    })
+  }
 
   quizCache[topic] = { data: quiz, ts: Date.now() }
-  return NextResponse.json({ ok: true, quiz, source: quiz === FALLBACK_QUIZ ? 'fallback' : 'ai' })
+  return NextResponse.json({ ok: true, quiz, source: 'ai' })
 }

@@ -4,6 +4,7 @@ import {
   createLifecycleRequest,
   failLifecycleRequest,
 } from '@/lib/server/convexLifecycle'
+import { transcribeWithWhisper } from '@/lib/server/transcribeWhisper'
 
 export async function POST(req: Request) {
   let requestId: string | null = null
@@ -22,14 +23,13 @@ export async function POST(req: Request) {
     )
   }
 
-  const apiKey = process.env.OPENAI_API_KEY
   requestId = await createLifecycleRequest({
     mode: 'transcribe',
     locale: 'en',
     input: `audio:${file.size}`,
   })
 
-  if (!apiKey) {
+  if (!process.env.OPENAI_API_KEY) {
     if (requestId) {
       await completeLifecycleRequest(
         requestId,
@@ -47,55 +47,36 @@ export async function POST(req: Request) {
   }
 
   try {
-    const outbound = new FormData()
-    outbound.append('file', file, 'audio.webm')
-    outbound.append('model', 'whisper-1')
-    // Whisper will auto-detect language - no need to specify
+    const data = await transcribeWithWhisper(file, 'audio.webm')
 
-    const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${apiKey}` },
-      body: outbound,
-    })
-
-    if (!res.ok) {
-      const err = await res.text()
-      console.error('Whisper transcription error', err)
-      
-      // Check if it's a quota error
-      const isQuotaError = err.includes('quota') || err.includes('insufficient_quota')
-      
+    if (!data.ok) {
       if (requestId) {
-        await failLifecycleRequest(requestId, err)
+        await failLifecycleRequest(requestId, data.error ?? 'whisper failed')
       }
-      
-      return NextResponse.json({
-        ok: false,
-        text: '',
-        language: 'unknown',
-        demo: false,
-        error: isQuotaError 
-          ? 'OpenAI API quota exceeded. Please add credits or use an alternative AI provider (Google Gemini is free).'
-          : 'Transcription service unavailable. Please try again.',
-        requestId,
-      }, { status: res.status })
+      return NextResponse.json(
+        {
+          ok: false,
+          text: '',
+          language: data.language,
+          demo: false,
+          error: data.error,
+          requestId,
+        },
+        { status: 502 },
+      )
     }
 
-    const data = (await res.json()) as { text?: string; language?: string }
-    const text = data.text?.trim() ?? ''
-    const language = data.language || 'unknown'
-    
     if (requestId) {
       await completeLifecycleRequest(
         requestId,
-        text || 'Transcription succeeded with empty result',
+        data.text || 'Transcription succeeded with empty result',
         'openai-whisper',
       )
     }
     return NextResponse.json({
       ok: true,
-      text,
-      language,
+      text: data.text,
+      language: data.language,
       demo: false,
       requestId,
     })
@@ -107,13 +88,19 @@ export async function POST(req: Request) {
         error instanceof Error ? error.message : 'Transcription failed',
       )
     }
-    return NextResponse.json({
-      ok: false,
-      text: '',
-      language: 'unknown',
-      demo: false,
-      error: error instanceof Error ? error.message : 'Transcription failed. Please try again.',
-      requestId,
-    }, { status: 500 })
+    return NextResponse.json(
+      {
+        ok: false,
+        text: '',
+        language: 'unknown',
+        demo: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Transcription failed. Please try again.',
+        requestId,
+      },
+      { status: 500 },
+    )
   }
 }
